@@ -48,3 +48,33 @@ public:
             return -1;
     }
 };
+
+// 解法二
+class Solution {
+public:
+    int FirstNotRepeatingChar(string str) {
+        if(str.empty())
+            return -1;
+        
+        int* table = new int[256];
+        for(int i = 0; i < 256; i++)
+            table[i] = -1;
+        
+        for(int i = 0; str[i] != '\0'; i++)
+        {
+            if(table[str[i]] == -1)
+                table[str[i]] = i;
+            else
+                table[str[i]] = -2;
+        }
+        
+        int min = 260;
+        for(int i = 0; i < 256; i++)
+        {
+            if(table[i] >= 0 && table[i] < min)
+                min = table[i];
+        }
+        
+        return min;
+    }
+};
