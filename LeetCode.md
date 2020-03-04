@@ -578,6 +578,131 @@ class MyStack:
 
 
 
+# [994. 腐烂的橘子](https://leetcode-cn.com/problems/rotting-oranges/)
+
+在给定的网格中，每个单元格可以有以下三个值之一：
+
+- 值 `0` 代表空单元格；
+- 值 `1` 代表新鲜橘子；
+- 值 `2` 代表腐烂的橘子。
+
+每分钟，任何与腐烂的橘子（在 4 个正方向上）相邻的新鲜橘子都会腐烂。
+
+返回直到单元格中没有新鲜橘子为止所必须经过的最小分钟数。如果不可能，返回 `-1`。
+
+**提示：**
+
+1. `1 <= grid.length <= 10`
+2. `1 <= grid[0].length <= 10`
+3. `grid[i][j]` 仅为 `0`、`1` 或 `2`
+
+
+
+## 解法
+
+广度优先遍历。时间复杂度：$O(mn)$，空间复杂度：$O(mn)$
+
+
+
+## 代码
+
+``` cpp
+class Solution {
+public:
+    int orangesRotting(vector<vector<int>>& grid) {
+        int row = grid.size();
+        int col = grid[0].size();
+
+        // int** dis = new int*[row];
+        // for(int i = 0; i < row; i++)
+        //     dis[i] = new int[col];
+        int dis[10][10];
+        memset(dis, -1, sizeof(dis));
+        
+        int dir_x[4]={0, 1, 0, -1};
+        int dir_y[4]={1, 0, -1, 0};
+
+        queue<pair<int, int>> q;
+
+        int count = 0;
+        for(int i = 0; i < row; i++)
+            for(int j = 0; j < col; j++)
+            {
+                if(grid[i][j] == 2)
+                {
+                    q.push(make_pair(i, j));
+                    dis[i][j] = 0;
+                }
+                if(grid[i][j] == 1)
+                    count ++;
+            }
+        
+        int ans = 0;
+        while(!q.empty())
+        {
+            pair<int, int> point = q.front();
+            q.pop();
+
+            for(int i = 0; i < 4; i++)
+            {
+                int x = point.first + dir_x[i];
+                int y = point.second + dir_y[i];
+                if(x < 0 || x >= row || y < 0 || y >= col || dis[x][y] != -1 || grid[x][y] == 0)
+                    continue;
+                dis[x][y] = dis[point.first][point.second] + 1;
+                q.push(make_pair(x, y));
+                if(grid[x][y] == 1)
+                {
+                    count--;
+                    if(!count)
+                    {
+                        ans = dis[x][y];
+                        break;
+                    }
+                }
+            }
+        }
+
+        // delete dis;
+        return count? -1 : ans;
+    }
+};
+```
+
+```python
+class Solution(object):
+    def orangesRotting(self, grid):
+        R, C = len(grid), len(grid[0])
+
+        # queue - all starting cells with rotting oranges
+        queue = collections.deque()
+        for r, row in enumerate(grid):
+            for c, val in enumerate(row):
+                if val == 2:
+                    queue.append((r, c, 0))
+
+        def neighbors(r, c):
+            for nr, nc in ((r-1,c),(r,c-1),(r+1,c),(r,c+1)):
+                if 0 <= nr < R and 0 <= nc < C:
+                    yield nr, nc
+
+        d = 0
+        while queue:
+            r, c, d = queue.popleft()
+            for nr, nc in neighbors(r, c):
+                if grid[nr][nc] == 1:
+                    grid[nr][nc] = 2
+                    queue.append((nr, nc, d+1))
+
+        if any(1 in row for row in grid):
+            return -1
+        return d
+
+# https://leetcode-cn.com/problems/rotting-oranges/solution/fu-lan-de-ju-zi-by-leetcode-solution/
+```
+
+
+
 # [面试题 10.01. 合并排序的数组](https://leetcode-cn.com/problems/sorted-merge-lcci/)
 
 给定两个排序后的数组 A 和 B，其中 A 的末端有足够的缓冲空间容纳 B。 编写一个方法，将 B 合并入 A 并排序。
