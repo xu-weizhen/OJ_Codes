@@ -63,15 +63,6 @@ public:
 
 
 
-## 结果
-
-| 执行用时 | 内存消耗 | 语言  |
-| :---- | ------- | ------- |
-| 56 ms | 14.7 MB | Python3 |
-| 8 ms | 12.3 MB | Cpp  |
-
-
-
 # 2.两数相加
 
 给出两个**非空**的链表用来表示两个非负的整数。其中，它们各自的位数是按照**逆序**的方式存储的，并且它们的每个节点只能存储**一位**数字。
@@ -199,15 +190,6 @@ class Solution:
         result = result.next
         return result
 ```
-
-
-
-## 结果
-
-| 执行用时 | 内存消耗 | 语言    |
-| :------- | :------- | :------ |
-| 28 ms    | 72.5 MB  | Cpp     |
-| 84 ms    | 13.4 MB  | Python3 |
 
 
 
@@ -356,13 +338,86 @@ class Solution:
 
 
 
-## 结果
+# [4. 寻找两个有序数组的中位数](https://leetcode-cn.com/problems/median-of-two-sorted-arrays/)
 
-|  方法  | 执行用时 | 内存消耗 |  语言   |
-| :----: | :------: | :------: | :-----: |
-|   /    |  124 ms  | 13.4 MB  | Python3 |
-| 方法一 |  28 ms   |  9.7 MB  |   Cpp   |
-| 方法二 |  40 ms   | 11.8 MB  |   Cpp   |
+
+给定两个大小为 m 和 n 的有序数组 `nums1` 和 `nums2`。
+
+请你找出这两个有序数组的中位数，并且要求算法的时间复杂度为 O(log(m + n))。
+
+你可以假设 `nums1` 和 `nums2` 不会同时为空。
+
+**示例 1:**
+
+```
+nums1 = [1, 3]
+nums2 = [2]
+
+则中位数是 2.0
+```
+
+**示例 2:**
+
+```
+nums1 = [1, 2]
+nums2 = [3, 4]
+
+则中位数是 (2 + 3)/2 = 2.5
+```
+
+
+
+## 解法
+
+将两个数组的前半部分和后半部分分别存入两个数组 left 和 right。若 left 中最大值大于 right 中最小值，则交换这两个值，直到 left 中的值全部小于 right 中的值，从而得到中位数。时间复杂度为：$O(max(m,n)\log(\frac{m+n}{2}))$，空间复杂度为：$O(m+n)$。$m, n$为两个数组的长度。
+
+
+
+## 代码
+
+``` python
+class Solution:
+    def findMedianSortedArrays(self, nums1: List[int], nums2: List[int]) -> float:
+        len_1 = len(nums1)
+        len_2 = len(nums2)
+        
+        if len_1 == 0 or len_2 == 0:
+            if len_2 == 0:
+                nums2 = nums1
+                len_2 = len_1
+            if len_2 % 2 == 0:
+                return (nums2[len_2 // 2] + nums2[len_2 // 2 - 1]) / 2
+            else:
+                return nums2[len_2 // 2]
+            
+        if len_1 % 2 == 0 and len_2 % 2 == 0:
+            half_1 = len_1 // 2
+            half_2 = len_2 // 2
+        elif len_1 % 2 == 0 and len_2 % 2 != 0:
+            half_1 = len_1 // 2
+            half_2 = len_2 // 2 + 1
+        else:
+            half_1 = len_1 // 2 + 1
+            half_2 = len_2 // 2
+
+        left = nums1[:half_1] + nums2[:half_2]
+        right = nums1[half_1:] + nums2[half_2:]
+
+        left.sort()
+        right.sort()
+
+        while left[-1] > right[0]:
+            left[-1], right[0] = right[0], left[-1]
+            left.sort()
+            right.sort()
+
+        if (len_1 + len_2) % 2 == 0:
+            return  (left[-1] + right[0]) / 2
+        else:
+            return left[-1]
+```
+
+
 
 # [206. 反转链表](https://leetcode-cn.com/problems/reverse-linked-list/)
 
@@ -463,14 +518,6 @@ var reverseList = function(head) {
 
 
 
-## 结果
-
-| 执行用时 | 内存消耗 |    语言    |
-| :------: | :------: | :--------: |
-|  80 ms   | 36.6 MB  | Javascript |
-|   8 ms   | 10.2 MB  |    Cpp     |
-|  36 ms   | 14.4 MB  |  Python3   |
-
 #  [225. 用队列实现栈](https://leetcode-cn.com/problems/implement-stack-using-queues/)
 
 使用队列实现栈的下列操作：
@@ -566,15 +613,6 @@ class MyStack:
     def empty(self) -> bool:
         return len(self.q) == 0
 ```
-
-
-
-## 结果
-
-| 执行用时 | 内存消耗 | 语言    |
-| :------- | :------- | :------ |
-| 56 ms    | 13.4 MB  | Python3 |
-| 4 ms     | 9.5 MB   | Cpp     |
 
 
 
@@ -703,6 +741,97 @@ class Solution(object):
 
 
 
+# [1103. 分糖果 II](https://leetcode-cn.com/problems/distribute-candies-to-people/)
+
+排排坐，分糖果。
+
+我们买了一些糖果 candies，打算把它们分给排好队的 n = num_people 个小朋友。
+
+给第一个小朋友 1 颗糖果，第二个小朋友 2 颗，依此类推，直到给最后一个小朋友 n 颗糖果。
+
+然后，我们再回到队伍的起点，给第一个小朋友 n + 1 颗糖果，第二个小朋友 n + 2 颗，依此类推，直到给最后一个小朋友 2 * n 颗糖果。
+
+重复上述过程（每次都比上一次多给出一颗糖果，当到达队伍终点后再次从队伍起点开始），直到我们分完所有的糖果。注意，就算我们手中的剩下糖果数不够（不比前一次发出的糖果多），这些糖果也会全部发给当前的小朋友。
+
+返回一个长度为 num_people、元素之和为 candies 的数组，以表示糖果的最终分发情况（即 ans[i] 表示第 i 个小朋友分到的糖果数）。
+
+
+示例 1：
+```
+输入：candies = 7, num_people = 4
+输出：[1,2,3,1]
+解释：
+第一次，ans[0] += 1，数组变为 [1,0,0,0]。
+第二次，ans[1] += 2，数组变为 [1,2,0,0]。
+第三次，ans[2] += 3，数组变为 [1,2,3,0]。
+第四次，ans[3] += 1（因为此时只剩下 1 颗糖果），最终数组变为 [1,2,3,1]。
+```
+示例 2：
+```
+输入：candies = 10, num_people = 3
+输出：[5,2,3]
+解释：
+第一次，ans[0] += 1，数组变为 [1,0,0]。
+第二次，ans[1] += 2，数组变为 [1,2,0]。
+第三次，ans[2] += 3，数组变为 [1,2,3]。
+第四次，ans[0] += 4，最终数组变为 [5,2,3]。
+```
+
+提示：
+
++ `1 <= candies <= 10^9​`
++ `1 <= num_people <= 1000`
+
+
+
+## 解法
+
++ 方法一：暴力法。模拟发糖，发完为止。时间复杂度：$\mathcal{O}(max(\sqrt{G}, N))$，空间复杂度：$\mathcal{O}(1)$。 $G$为糖果数量，$N$ 为人数。 
++ 方法二：利用等差数列计算可完整发完的轮数，再模拟最后一轮。时间复杂度：$\mathcal{O}(N)$，空间复杂度：$\mathcal{O}(1)$。 
++ 方法三：利用等差数列计算可完整发完的人数，再计算未能完整发完的人数。（官方题解）时间复杂度：$\mathcal{O}(N)$，空间复杂度：$\mathcal{O}(1)$。 
+
+
+
+## 代码
+
+``` python
+# 方法二
+class Solution:
+    def distributeCandies(self, candies: int, num_people: int) -> List[int]:
+        loop = 0
+        n =  num_people
+        while n * (n + 1) / 2 <= candies:
+            loop += 1
+            n = num_people * (loop + 1)
+        
+        if loop == 0:
+            result = [0 for i in range(num_people)]
+            base = 1
+        else:
+            result = []
+            base = loop * (num_people * (loop - 1) + 2) // 2 
+
+            for i in range(0, num_people):
+                result.append(base)
+                candies -= base
+                base += loop
+            
+            base = num_people * loop + 1
+        
+        if candies:
+            index = 0
+            while base < candies:
+                result[index] += base
+                candies -= base
+                base += 1
+                index += 1
+            result[index] += candies
+            
+        return result
+```
+
+
+
 # [面试题 10.01. 合并排序的数组](https://leetcode-cn.com/problems/sorted-merge-lcci/)
 
 给定两个排序后的数组 A 和 B，其中 A 的末端有足够的缓冲空间容纳 B。 编写一个方法，将 B 合并入 A 并排序。
@@ -777,11 +906,3 @@ class Solution:
 ```
 
 
-
-## 结果
-
-|  方法  | 执行用时 | 内存消耗 |  语言   |
-| :----: | :------: | :------: | :-----: |
-| 方法一 |  32 ms   | 13.4 MB  | Python3 |
-| 方法一 |   4 ms   | 11.5 MB  |   Cpp   |
-| 方法三 |   4 ms   | 11.5 MB  |   Cpp   |
