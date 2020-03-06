@@ -336,7 +336,8 @@ class Solution:
         return max(result, now - head)
 ```
 
-
+> + push_back()：向容器中加入一个右值元素(临时对象)时，首先会调用构造函数构造这个临时对象，然后调用拷贝构造函数将这个临时对象放入容器中。原来的临时变量释放。
+> + emplace_back()：  c++11加入。 在容器尾部添加一个元素，这个元素原地构造，不需要触发拷贝构造和转移构造。 
 
 # [4. 寻找两个有序数组的中位数](https://leetcode-cn.com/problems/median-of-two-sorted-arrays/)
 
@@ -415,6 +416,81 @@ class Solution:
             return  (left[-1] + right[0]) / 2
         else:
             return left[-1]
+```
+
+
+
+# [5. 最长回文子串](https://leetcode-cn.com/problems/longest-palindromic-substring/)
+
+给定一个字符串 `s`，找到 `s` 中最长的回文子串。你可以假设 `s` 的最大长度为 1000。
+
+**示例 1：**
+
+```
+输入: "babad"
+输出: "bab"
+注意: "aba" 也是一个有效答案。
+```
+
+**示例 2：**
+
+```
+输入: "cbbd"
+输出: "bb"
+```
+
+
+
+## 解法
+
+考虑字符串中的每个字符作为中心点，向两边扩展，寻找最长回文子串。时间复杂度：$O(n^2)$ ，空间复杂度：$O(1)$ 。
+
+
+
+## 代码
+
+``` python
+class Solution:
+    def longestPalindrome(self, s: str) -> str:
+        result = [0, 0]             # [长度，起始下标]
+        for i in range(0, len(s)):
+            res = self.extend(s, i)
+            if res[0] > result[0]:
+                result = res
+        
+        string = ""
+        index = result[1]
+        for i in range(0, result[0]):
+            string += s[index]
+            index += 1
+
+        return string
+    
+    def extend(self, s, index):
+        # 中心为一个字符
+        length1 = 1
+        index1 = index - 1
+        index2 = index + 1
+        while index1 >= 0 and index2 < len(s) and s[index1] == s[index2]:
+            index1 -= 1
+            index2 += 1
+            length1 += 2
+        res = [length1, index1 + 1]
+        
+        # 中心为两个字符
+        length2 = 0
+        if index + 1 < len(s) and s[index] == s[index + 1]:
+            index1 = index - 1
+            index2 = index + 2
+            length2 = 2
+            while index1 >= 0 and index2 < len(s) and s[index1] == s[index2]:
+                index1 -= 1
+                index2 += 1
+                length2 += 2
+        
+        if length2 > res[0]:
+            res = [length2, index1 + 1]
+        return res
 ```
 
 
@@ -905,4 +981,73 @@ class Solution:
         A.sort()
 ```
 
+
+
+# [面试题57 - II. 和为s的连续正数序列](https://leetcode-cn.com/problems/he-wei-sde-lian-xu-zheng-shu-xu-lie-lcof/)
+
+输入一个正整数 `target` ，输出所有和为 `target` 的连续正整数序列（至少含有两个数）。
+
+序列内的数字由小到大排列，不同序列按照首个数字从小到大排列。
+
+ 
+
+**示例 1：**
+
+```
+输入：target = 9
+输出：[[2,3,4],[4,5]]
+```
+
+**示例 2：**
+
+```
+输入：target = 15
+输出：[[1,2,3,4,5],[4,5,6],[7,8]]
+```
+
+ 
+
+**限制：**
+
+- `1 <= target <= 10^5`
+
+
+
+## 解法
+
+双指针。时间复杂度：$O(target)$，空间复杂度：$O(1)$。
+
+
+
+## 代码
+
+``` python
+class Solution:
+    def findContinuousSequence(self, target: int) -> List[List[int]]:
+        if target <= 2:
+            return []
+
+        index1 = 1
+        index2 = 2
+        s = index1 + index2
+        result = []
+
+        while index2 <= target / 2 + 1:
+            if s == target:
+                t = []
+                for i in range(index1, index2 + 1):
+                    t.append(i)
+                result.append(t)
+                index2 += 1
+                s += index2
+            
+            if s < target:
+                index2 += 1
+                s += index2
+            else:
+                s -= index1
+                index1 += 1
+        
+        return result
+```
 
