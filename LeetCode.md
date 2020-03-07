@@ -1,3 +1,7 @@
+[toc]
+
+
+
 # 1.两数之和
 
 给定一个整数数组`nums`和一个目标值`target`，请你在该数组中找出和为目标值的那**两个**整数，并返回他们的数组下标。
@@ -491,6 +495,76 @@ class Solution:
         if length2 > res[0]:
             res = [length2, index1 + 1]
         return res
+```
+
+
+
+# [6. Z 字形变换](https://leetcode-cn.com/problems/zigzag-conversion/)
+
+将一个给定字符串根据给定的行数，以从上往下、从左到右进行 Z 字形排列。
+
+比如输入字符串为 `"LEETCODEISHIRING"` 行数为 3 时，排列如下：
+
+```
+L   C   I   R
+E T O E S I I G
+E   D   H   N
+```
+
+之后，你的输出需要从左往右逐行读取，产生出一个新的字符串，比如：`"LCIRETOESIIGEDHN"`。
+
+请你实现这个将字符串进行指定行数变换的函数：
+
+```
+string convert(string s, int numRows);
+```
+
+**示例 1:**
+
+```
+输入: s = "LEETCODEISHIRING", numRows = 3
+输出: "LCIRETOESIIGEDHN"
+```
+
+**示例 2:**
+
+```
+输入: s = "LEETCODEISHIRING", numRows = 4
+输出: "LDREOEIIECIHNTSG"
+解释:
+
+L     D     R
+E   O E   I I
+E C   I H   N
+T     S     G
+```
+
+
+
+## 解法
+
+使用`numRows`个字符串，分别保存第`n`行的字符，将原字符串中的字符按题目要求依次分配到对应字符串，最后拼接起来。
+
+
+
+## 代码
+
+``` python
+class Solution:
+    def convert(self, s: str, numRows: int) -> str:
+        result = []
+        for i in range(numRows):
+            result.append('')
+        
+        index = 0
+        strde = 1
+        for ch in s:
+            result[index] += ch
+            if index + strde < 0 or index + strde >= numRows:
+                strde = -strde
+            index += strde
+        
+        return ''.join(result)
 ```
 
 
@@ -1049,5 +1123,76 @@ class Solution:
                 index1 += 1
         
         return result
+```
+
+
+
+# [面试题59 - II. 队列的最大值](https://leetcode-cn.com/problems/dui-lie-de-zui-da-zhi-lcof/)
+
+请定义一个队列并实现函数 `max_value` 得到队列里的最大值，要求函数`max_value`、`push_back` 和 `pop_front` 的**均摊**时间复杂度都是O(1)。
+
+若队列为空，`pop_front` 和 `max_value` 需要返回 -1
+
+**示例 1：**
+
+```
+输入: 
+["MaxQueue","push_back","push_back","max_value","pop_front","max_value"]
+[[],[1],[2],[],[],[]]
+输出: [null,null,null,2,1,2]
+```
+
+**示例 2：**
+
+```
+输入: 
+["MaxQueue","pop_front","max_value"]
+[[],[],[]]
+输出: [null,-1,-1]
+```
+
+ 
+
+**限制：**
+
+- `1 <= push_back,pop_front,max_value的总操作数 <= 10000`
+- `1 <= value <= 10^5`
+
+
+
+## 解法
+
+使用一个双端队列保存当前数组的递减最大值序列。
+
+
+
+## 代码
+
+``` python
+import queue
+class MaxQueue:
+
+    def __init__(self):
+        self.queue = queue.Queue()
+        self.maxvalue = queue.deque()
+
+    def max_value(self) -> int:
+        return self.maxvalue[0] if self.maxvalue else -1
+
+    def push_back(self, value: int) -> None:
+        while self.maxvalue and self.maxvalue[-1] < value:
+            self.maxvalue.pop()
+        self.maxvalue.append(value)
+
+        self.queue.put(value)
+
+    def pop_front(self) -> int:
+        if self.queue.empty():
+            return -1
+        
+        ans = self.queue.get()
+        if ans == self.maxvalue[0]:
+            self.maxvalue.popleft()
+        return ans
 ```
 
