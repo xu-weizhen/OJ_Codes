@@ -19,7 +19,8 @@
 
 
 
-## 解法
+
+**解法**
 
 
 + 解法一：使用两个循环判断和是否为`target`。
@@ -31,7 +32,7 @@
 
 
 
-## 代码
+**代码**
 
 ``` python
 class Solution:
@@ -85,13 +86,13 @@ public:
 
 
 
-## 解法
+**解法**
 
 注意：最高位相加产生进位的情况
 
 
 
-## 代码
+**代码**
 
 ``` C++
 /**
@@ -225,7 +226,7 @@ class Solution:
 
 
 
-## 解法
+**解法**
 
 + 从头到尾扫描字符，将当前确定的最长子串的所有字符放进一个列表，... 时间复杂度：$O(n^2)$，空间复杂度：$O(m)$ m为字符集大小
 
@@ -233,7 +234,7 @@ class Solution:
 
 
 
-## 代码
+**代码**
 
 ``` C++
 // 方法一
@@ -372,13 +373,13 @@ nums2 = [3, 4]
 
 
 
-## 解法
+**解法**
 
 将两个数组的前半部分和后半部分分别存入两个数组 left 和 right。若 left 中最大值大于 right 中最小值，则交换这两个值，直到 left 中的值全部小于 right 中的值，从而得到中位数。时间复杂度为：$O(max(m,n)\log(\frac{m+n}{2}))$，空间复杂度为：$O(m+n)$。$m, n$为两个数组的长度。
 
 
 
-## 代码
+**代码**
 
 ``` python
 class Solution:
@@ -445,13 +446,13 @@ class Solution:
 
 
 
-## 解法
+**解法**
 
 考虑字符串中的每个字符作为中心点，向两边扩展，寻找最长回文子串。时间复杂度：$O(n^2)$ ，空间复杂度：$O(1)$ 。
 
 
 
-## 代码
+**代码**
 
 ``` python
 class Solution:
@@ -541,13 +542,13 @@ T     S     G
 
 
 
-## 解法
+**解法**
 
 使用`numRows`个字符串，分别保存第`n`行的字符，将原字符串中的字符按题目要求依次分配到对应字符串，最后拼接起来。
 
 
 
-## 代码
+**代码**
 
 ``` python
 class Solution:
@@ -582,7 +583,7 @@ class Solution:
 
 
 
-## 代码
+**代码**
 
 ``` cpp
 /**
@@ -685,7 +686,7 @@ var reverseList = function(head) {
 
 
 
-## 代码
+**代码**
 
 ``` C++
 class MyStack {
@@ -766,6 +767,121 @@ class MyStack:
 
 
 
+# [322. 零钱兑换](https://leetcode-cn.com/problems/coin-change/)
+
+给定不同面额的硬币 coins 和一个总金额 amount。编写一个函数来计算可以凑成总金额所需的最少的硬币个数。如果没有任何一种硬币组合能组成总金额，返回 `-1`。
+
+**示例 1:**
+
+```
+输入: coins = [1, 2, 5], amount = 11
+输出: 3 
+解释: 11 = 5 + 5 + 1
+```
+
+**示例 2:**
+
+```
+输入: coins = [2], amount = 3
+输出: -1
+```
+
+**说明**:
+你可以认为每种硬币的数量是无限的。
+
+
+**解法**
+
++ 方法一：递归得到所有的可行方案，返回最优解。（时间超时，无法AC）时间复杂度：$O(\text{amount}^n)$ $n$ 为硬币种类，空间复杂度：$O(n)$ 。
+
++ 方法二：自上而下动态规划。时间复杂度：$O(\text{amount}*n)$ $n$ 为硬币种类，空间复杂度：$O(\text{amount})$ 。
+
+  假设我们知道$F(S)$ ，即组成金额 $S$ 最少的硬币数，最后一枚硬币的面值是 $c$。
+
+  由于问题的最优子结构，转移方程应为：$F(S) = F(S - C) + 1$ ，所以我们需要枚举每个硬币面额值 $c_0, c_1, c_2 \ldots c_{n -1}$ 并选择其中的最小值。下列递推关系成立：$F(S) = \min_{i=0 ... n-1}{ F(S - c_i) } + 1 \ \text{subject to} \ \ S-c_i \geq 0$
+
++ 方法三：自下而上动态规划。时间复杂度：$O(\text{amount}*n)$ $n$ 为硬币种类，空间复杂度：$O(\text{amount})$ 。
+
+  定义 $F(i)$ 为组成金额 $i$ 所需最少的硬币数量，假设在计算 $F(i)$ 之前，我们已经计算出 $F(0)-F(i-1)$ 的答案。 则 $F(i)$ 对应的转移方程应为：$F(i)=\min_{j=0 \ldots n-1}{F(i -c_j)} + 1$  。
+
+
+> python functools.lru_cache的作用主要是用来做缓存，能把相对耗时的函数结果进行保存，避免传入相同的参数重复计算。同时，缓存并不会无限增长，不用的缓存会被释放。 
+
+
+**代码**
+
+``` python
+# 方法一
+class Solution:
+    def coinChange(self, coins: List[int], amount: int) -> int:
+        coins.sort()
+        res =  self.coinChange2(coins, amount)
+
+        if res:
+            return sum(res)
+        else:
+            return -1
+    
+    def coinChange2(self, coins, amount):
+        t = []
+        if len(coins) > 1:
+            maxnum = amount // coins[-1]
+            for i in range(0, maxnum + 1):
+                find = self.coinChange2(coins[:-1], amount - i * coins[-1])
+                if find:
+                    find.append(i)
+                    t.append(find)
+            if t:
+                r = t[0]
+                for tt in t:
+                    if sum(tt) < sum(r):
+                        r = tt
+                return r
+            else:
+                return None
+        else:
+            if amount % coins[0] == 0:
+                return [amount // coins[0]]
+            else:
+                return None
+            
+# 方法二
+import functools
+class Solution:
+    def coinChange(self, coins: List[int], amount: int) -> int:
+        if amount < 0 or len(coins) == 0:
+            return -1
+            
+        @functools.lru_cache(amount)
+        def coinChange2(left):
+            if left < 0:
+                return -1
+            if left == 0:
+                return 0
+            ways = int(1e9)
+            for coin in coins:
+                way = coinChange2(left - coin)
+                if way >= 0 and way < ways:
+                    ways = way + 1
+            return ways if ways < int(1e9) else -1
+
+        return coinChange2(amount)
+    
+# 方法三
+class Solution:
+    def coinChange(self, coins: List[int], amount: int) -> int:
+        ways = [int(1e9)] * (amount + 1)
+        ways[0] = 0
+
+        for coin in coins:
+            for index in range(coin, amount + 1):
+                ways[index] = min(ways[index], ways[index - coin] + 1)
+        
+        return ways[amount] if ways[amount] != int(1e9) else -1
+```
+
+
+
 # [994. 腐烂的橘子](https://leetcode-cn.com/problems/rotting-oranges/)
 
 在给定的网格中，每个单元格可以有以下三个值之一：
@@ -786,13 +902,13 @@ class MyStack:
 
 
 
-## 解法
+**解法**
 
 广度优先遍历。时间复杂度：$O(mn)$，空间复杂度：$O(mn)$
 
 
 
-## 代码
+**代码**
 
 ``` cpp
 class Solution {
@@ -929,12 +1045,12 @@ class Solution(object):
 
 提示：
 
-+ `1 <= candies <= 10^9​`
++ `1 <= candies <= 10^9`
 + `1 <= num_people <= 1000`
 
 
 
-## 解法
+**解法**
 
 + 方法一：暴力法。模拟发糖，发完为止。时间复杂度：$\mathcal{O}(max(\sqrt{G}, N))$，空间复杂度：$\mathcal{O}(1)$。 $G$为糖果数量，$N$ 为人数。 
 + 方法二：利用等差数列计算可完整发完的轮数，再模拟最后一轮。时间复杂度：$\mathcal{O}(N)$，空间复杂度：$\mathcal{O}(1)$。 
@@ -942,7 +1058,7 @@ class Solution(object):
 
 
 
-## 代码
+**代码**
 
 ``` python
 # 方法二
@@ -1000,7 +1116,7 @@ B = [2,5,6],       n = 3
 
 
 
-## 解法
+**解法**
 
 + 将$B$复制到$A$尾部，再使用`sort()`函数。时间复杂度：$O((m+n)log(m+n))$，空间复杂度： $O(log(m+n)) $
 + 使用辅助空间$t$，将$A$、$B$按大小顺序放入$t$中，再复制回$A$。时间复杂度：$O(m+n)$，空间复杂度：$O(m+n)$
@@ -1008,7 +1124,7 @@ B = [2,5,6],       n = 3
 
 
 
-## 代码
+**代码**
 
 ``` cpp
 // 方法一
@@ -1087,13 +1203,13 @@ class Solution:
 
 
 
-## 解法
+**解法**
 
 双指针。时间复杂度：$O(target)$，空间复杂度：$O(1)$。
 
 
 
-## 代码
+**代码**
 
 ``` python
 class Solution:
@@ -1160,13 +1276,13 @@ class Solution:
 
 
 
-## 解法
+**解法**
 
 使用一个双端队列保存当前数组的递减最大值序列。
 
 
 
-## 代码
+**代码**
 
 ``` python
 import queue
