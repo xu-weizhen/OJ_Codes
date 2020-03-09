@@ -2,13 +2,15 @@
 
 
 
-# 1.两数之和
+# [1. 两数之和](https://leetcode-cn.com/problems/two-sum/)
 
-给定一个整数数组`nums`和一个目标值`target`，请你在该数组中找出和为目标值的那**两个**整数，并返回他们的数组下标。
+难度 简单
+
+给定一个整数数组 `nums` 和一个目标值 `target`，请你在该数组中找出和为目标值的那 **两个** 整数，并返回他们的数组下标。
 
 你可以假设每种输入只会对应一个答案。但是，你不能重复利用这个数组中同样的元素。
 
-示例:
+**示例:**
 
 ```
 给定 nums = [2, 7, 11, 15], target = 9
@@ -68,15 +70,17 @@ public:
 
 
 
-# 2.两数相加
+# [2. 两数相加](https://leetcode-cn.com/problems/add-two-numbers/)
 
-给出两个**非空**的链表用来表示两个非负的整数。其中，它们各自的位数是按照**逆序**的方式存储的，并且它们的每个节点只能存储**一位**数字。
+难度 中等
+
+给出两个 **非空** 的链表用来表示两个非负的整数。其中，它们各自的位数是按照 **逆序** 的方式存储的，并且它们的每个节点只能存储 **一位** 数字。
 
 如果，我们将这两个数相加起来，则会返回一个新的链表来表示它们的和。
 
 您可以假设除了数字 0 之外，这两个数都不会以 0 开头。
 
-示例：
+**示例：**
 
 ```
 输入：(2 -> 4 -> 3) + (5 -> 6 -> 4)
@@ -198,25 +202,30 @@ class Solution:
 
 
 
-# 3.无重复字符的最长子串
+# [3. 无重复字符的最长子串](https://leetcode-cn.com/problems/longest-substring-without-repeating-characters/)
 
-给定一个字符串，请你找出其中不含有重复字符的 最长子串 的长度。
+难度 中等
 
-示例 1:
+给定一个字符串，请你找出其中不含有重复字符的 **最长子串** 的长度。
+
+**示例 1:**
+
 ```
 输入: "abcabcbb"
 输出: 3 
 解释: 因为无重复字符的最长子串是 "abc"，所以其长度为 3。
 ```
 
-示例 2:
+**示例 2:**
+
 ```
 输入: "bbbbb"
 输出: 1
 解释: 因为无重复字符的最长子串是 "b"，所以其长度为 1。
 ```
 
-示例 3:
+**示例 3:**
+
 ```
 输入: "pwwkew"
 输出: 3
@@ -346,6 +355,7 @@ class Solution:
 
 # [4. 寻找两个有序数组的中位数](https://leetcode-cn.com/problems/median-of-two-sorted-arrays/)
 
+难度 困难
 
 给定两个大小为 m 和 n 的有序数组 `nums1` 和 `nums2`。
 
@@ -427,6 +437,8 @@ class Solution:
 
 # [5. 最长回文子串](https://leetcode-cn.com/problems/longest-palindromic-substring/)
 
+难度 中等
+
 给定一个字符串 `s`，找到 `s` 中最长的回文子串。你可以假设 `s` 的最大长度为 1000。
 
 **示例 1：**
@@ -502,6 +514,8 @@ class Solution:
 
 # [6. Z 字形变换](https://leetcode-cn.com/problems/zigzag-conversion/)
 
+难度 中等
+
 将一个给定字符串根据给定的行数，以从上往下、从左到右进行 Z 字形排列。
 
 比如输入字符串为 `"LEETCODEISHIRING"` 行数为 3 时，排列如下：
@@ -570,7 +584,161 @@ class Solution:
 
 
 
+# [7. 整数反转](https://leetcode-cn.com/problems/reverse-integer/)
+
+难度 简单
+
+给出一个 32 位的有符号整数，你需要将这个整数中每位上的数字进行反转。
+
+**示例 1:**
+
+```
+输入: 123
+输出: 321
+```
+
+ **示例 2:**
+
+```
+输入: -123
+输出: -321
+```
+
+**示例 3:**
+
+```
+输入: 120
+输出: 21
+```
+
+**注意:**
+
+假设我们的环境只能存储得下 32 位的有符号整数，则其数值范围为 $[−2^{31}, 2^{31} − 1]$。请根据这个假设，如果反转后整数溢出那么就返回 0。
+
+
+
+**解法**
+
++ 方法一：使用范围更大的数据类型保存运算结果，判断结果是否在有效范围内。
+
+  * 时间复杂度：$O(\log(x))$ ，$x$ 中大约有 $\log_{10}(x)$ 位数字。空间复杂度：$O(1)$。
+
++ 方法二：计算过程中判断该步计算后是否溢出。（官方解法）
+
+  * 如果 $\text{rev} > \frac{INTMAX}{10}$ 那么 $temp = \text{rev} \cdot 10 + \text{pop}$ 一定会溢出。
+  * 如果 $\text{rev} == \frac{INTMAX}{10}$ 那么只要 $\text{pop} > 7$ ， $temp = \text{rev} \cdot 10 + \text{pop}$ 就会溢出。
+
+  * 时间复杂度：$O(\log(x))$ ，$x$ 中大约有 $\log_{10}(x)$ 位数字。空间复杂度：$O(1)$。
+
+  
+
+**代码**
+
+``` cpp
+// 方法一
+#include "limits.h"
+class Solution {
+public:
+    int reverse(int x) {
+
+        bool neg = false;
+        if(x < 0)
+            neg = true;
+            
+        long long res = 0;
+        while(x)
+        {
+            res = res * 10 + x % 10;
+            x = x / 10;
+        }
+
+        if(res < INT_MIN || res > INT_MAX)
+            return 0;
+        else
+            return int(res);
+    }
+};
+```
+
+``` python
+# 方法一
+class Solution:
+    def reverse(self, x: int) -> int:
+        neg = False
+        if x < 0:
+            neg = True
+            x = -x
+        
+        res = 0
+        while x:
+            r = x % 10
+            x = x // 10
+            res = res * 10 + r
+        
+        if neg:
+            res = -res
+        
+        if res >= -pow(2, 31) and res < (pow(2, 31) - 1):
+            return res 
+        else:
+            return 0
+```
+
+
+
+# [121. 买卖股票的最佳时机](https://leetcode-cn.com/problems/best-time-to-buy-and-sell-stock/)
+
+难度 简单
+
+给定一个数组，它的第 *i* 个元素是一支给定股票第 *i* 天的价格。
+
+如果你最多只允许完成一笔交易（即买入和卖出一支股票），设计一个算法来计算你所能获取的最大利润。
+
+注意你不能在买入股票前卖出股票。
+
+**示例 1:**
+
+```
+输入: [7,1,5,3,6,4]
+输出: 5
+解释: 在第 2 天（股票价格 = 1）的时候买入，在第 5 天（股票价格 = 6）的时候卖出，最大利润 = 6-1 = 5 。
+     注意利润不能是 7-1 = 6, 因为卖出价格需要大于买入价格。
+```
+
+**示例 2:**
+
+```
+输入: [7,6,4,3,1]
+输出: 0
+解释: 在这种情况下, 没有交易完成, 所以最大利润为 0。
+```
+
+
+
+**解法**
+
+保存到当前为止价格的最小值和可获得的最大利润，用当前价格减去历史最小值，比较当前利润是否大于历史最大利润。时间复杂度：$O(n)$ ，空间复杂度：$O(1)$ 。
+
+
+
+**代码**
+
+```python
+class Solution:
+    def maxProfit(self, prices: List[int]) -> int:
+        min_price = int(1e9)
+        profit = 0
+        for price in prices:
+            profit = max(price - min_price, profit)
+            min_price = min(price, min_price)
+        return profit
+```
+
+
+
 # [206. 反转链表](https://leetcode-cn.com/problems/reverse-linked-list/)
+
+难度 简单
 
 反转一个单链表。
 
@@ -668,8 +836,9 @@ var reverseList = function(head) {
 ```
 
 
-
 #  [225. 用队列实现栈](https://leetcode-cn.com/problems/implement-stack-using-queues/)
+
+难度 简单
 
 使用队列实现栈的下列操作：
 
@@ -767,7 +936,109 @@ class MyStack:
 
 
 
+# [239. 滑动窗口最大值](https://leetcode-cn.com/problems/sliding-window-maximum/)
+
+难度 困难
+
+给定一个数组 *nums*，有一个大小为 *k* 的滑动窗口从数组的最左侧移动到数组的最右侧。你只可以看到在滑动窗口内的 *k* 个数字。滑动窗口每次只向右移动一位。
+
+返回滑动窗口中的最大值。
+
+ 
+
+**示例:**
+
+```
+输入: nums = [1,3,-1,-3,5,3,6,7], 和 k = 3
+输出: [3,3,5,5,6,7] 
+解释: 
+
+  滑动窗口的位置                最大值
+---------------               -----
+[1  3  -1] -3  5  3  6  7       3
+ 1 [3  -1  -3] 5  3  6  7       3
+ 1  3 [-1  -3  5] 3  6  7       5
+ 1  3  -1 [-3  5  3] 6  7       5
+ 1  3  -1  -3 [5  3  6] 7       6
+ 1  3  -1  -3  5 [3  6  7]      7
+```
+
+ 
+
+**提示：**
+
+你可以假设 *k* 总是有效的，在输入数组不为空的情况下，1 ≤ k ≤ 输入数组的大小。
+
+
+
+**解法**
+
+使用一个双端队列保存当前窗口的递减最大值序列。
+
+- 时间复杂度：$O(N)$ ，空间复杂度： $O(k)$ 
+
+
+
+**代码**
+
+``` cpp
+#include <deque>
+class Solution {
+public:
+    vector<int> maxSlidingWindow(vector<int>& nums, int k) {
+        deque<int> q;
+        vector<int> res;
+
+        for(int index = 0; index < nums.size(); index++)
+        {
+            if(index - k >= 0)
+            {
+                res.push_back(q[0]);
+                if(nums[index - k] == q[0])
+                    q.pop_front();
+            }
+            
+            while(!q.empty() && q.back() < nums[index])
+                q.pop_back();
+            q.push_back(nums[index]);
+        }
+
+        if(!q.empty())
+            res.push_back(q[0]);
+
+        return res;
+
+    }
+};
+```
+
+``` python
+import queue
+class Solution:
+    def maxSlidingWindow(self, nums: List[int], k: int) -> List[int]:
+        q = queue.deque()
+        res = []
+
+        for index in range(0, len(nums)):
+            if index - k >= 0:
+                res.append(q[0])
+                if nums[index - k] == q[0]:
+                    q.popleft()
+            
+            while q and q[-1] < nums[index]:
+                q.pop()
+            q.append(nums[index])
+        
+        if q:
+            res.append(q[0])
+        return res
+```
+
+
+
 # [322. 零钱兑换](https://leetcode-cn.com/problems/coin-change/)
+
+难度 中等
 
 给定不同面额的硬币 coins 和一个总金额 amount。编写一个函数来计算可以凑成总金额所需的最少的硬币个数。如果没有任何一种硬币组合能组成总金额，返回 `-1`。
 
@@ -883,6 +1154,8 @@ class Solution:
 
 
 # [994. 腐烂的橘子](https://leetcode-cn.com/problems/rotting-oranges/)
+
+难度 简单
 
 在给定的网格中，每个单元格可以有以下三个值之一：
 
@@ -1009,6 +1282,8 @@ class Solution(object):
 
 # [1103. 分糖果 II](https://leetcode-cn.com/problems/distribute-candies-to-people/)
 
+难度 简单
+
 排排坐，分糖果。
 
 我们买了一些糖果 candies，打算把它们分给排好队的 n = num_people 个小朋友。
@@ -1100,6 +1375,8 @@ class Solution:
 
 # [面试题 10.01. 合并排序的数组](https://leetcode-cn.com/problems/sorted-merge-lcci/)
 
+难度 简单
+
 给定两个排序后的数组 A 和 B，其中 A 的末端有足够的缓冲空间容纳 B。 编写一个方法，将 B 合并入 A 并排序。
 
 初始化 A 和 B 的元素数量分别为 *m* 和 *n*。
@@ -1175,6 +1452,8 @@ class Solution:
 
 # [面试题57 - II. 和为s的连续正数序列](https://leetcode-cn.com/problems/he-wei-sde-lian-xu-zheng-shu-xu-lie-lcof/)
 
+难度 简单
+
 输入一个正整数 `target` ，输出所有和为 `target` 的连续正整数序列（至少含有两个数）。
 
 序列内的数字由小到大排列，不同序列按照首个数字从小到大排列。
@@ -1243,7 +1522,17 @@ class Solution:
 
 
 
+# [面试题59 - I. 滑动窗口的最大值](https://leetcode-cn.com/problems/hua-dong-chuang-kou-de-zui-da-zhi-lcof/)
+
+难度 简单
+
+本题与 239 题相同
+
+
+
 # [面试题59 - II. 队列的最大值](https://leetcode-cn.com/problems/dui-lie-de-zui-da-zhi-lcof/)
+
+难度 中等
 
 请定义一个队列并实现函数 `max_value` 得到队列里的最大值，要求函数`max_value`、`push_back` 和 `pop_front` 的**均摊**时间复杂度都是O(1)。
 
