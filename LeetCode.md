@@ -686,6 +686,145 @@ class Solution:
 
 
 
+# [8. 字符串转换整数 (atoi)](https://leetcode-cn.com/problems/string-to-integer-atoi/)
+
+难度 中等
+
+请你来实现一个 `atoi` 函数，使其能将字符串转换成整数。
+
+首先，该函数会根据需要丢弃无用的开头空格字符，直到寻找到第一个非空格的字符为止。
+
+当我们寻找到的第一个非空字符为正或者负号时，则将该符号与之后面尽可能多的连续数字组合起来，作为该整数的正负号；假如第一个非空字符是数字，则直接将其与之后连续的数字字符组合起来，形成整数。
+
+该字符串除了有效的整数部分之后也可能会存在多余的字符，这些字符可以被忽略，它们对于函数不应该造成影响。
+
+注意：假如该字符串中的第一个非空格字符不是一个有效整数字符、字符串为空或字符串仅包含空白字符时，则你的函数不需要进行转换。
+
+在任何情况下，若函数不能进行有效的转换时，请返回 0。
+
+**说明：**
+
+假设我们的环境只能存储 32 位大小的有符号整数，那么其数值范围为 $[−2^{31}, 2^{31} − 1]$。如果数值超过这个范围，请返回  INT_MAX $(2^{31} − 1)$ 或 INT_MIN $(−2^{31})$ 。
+
+**示例 1:**
+
+```
+输入: "42"
+输出: 42
+```
+
+**示例 2:**
+
+```
+输入: "   -42"
+输出: -42
+解释: 第一个非空白字符为 '-', 它是一个负号。
+     我们尽可能将负号与后面所有连续出现的数字组合起来，最后得到 -42 。
+```
+
+**示例 3:**
+
+```
+输入: "4193 with words"
+输出: 4193
+解释: 转换截止于数字 '3' ，因为它的下一个字符不为数字。
+```
+
+**示例 4:**
+
+```
+输入: "words and 987"
+输出: 0
+解释: 第一个非空字符是 'w', 但它不是数字或正、负号。
+     因此无法执行有效的转换。
+```
+
+**示例 5:**
+
+```
+输入: "-91283472332"
+输出: -2147483648
+解释: 数字 "-91283472332" 超过 32 位有符号整数范围。 
+     因此返回 INT_MIN (−2^31) 。
+```
+
+
+
+**解法**
+
++ 方法一：逐字符处理
++ 方法二：正则式匹配
+
+
+
+**代码**
+
+```python
+# 方法一
+class Solution:
+    def myAtoi(self, str: str) -> int:
+        s = str.strip()      # 去空格
+        
+        if len(s) <= 0:
+            return 0
+
+        number = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
+        symbol = ['-', '+']
+
+        if s[0] not in number and s[0] not in symbol:
+            return 0
+        
+        neg = False
+        index = 0
+
+        if s[0] in symbol:
+            if s[0] == '-':
+                neg = True
+            index += 1
+        
+        result = 0
+        while index < len(s):
+            if s[index] in number:
+                result = result * 10 + number.index(s[index])
+            else:
+                break
+            index += 1
+
+        if neg:
+            result = -result
+
+        INT_MAX = pow(2, 31) - 1
+        INT_MIN = -pow(2, 31)
+
+        if result >= INT_MIN and result <= INT_MAX:
+            return result
+        elif result < INT_MIN:
+            return INT_MIN
+        else:
+            return INT_MAX
+
+# 方法二
+class Solution:
+    def myAtoi(self, s: str) -> int:
+        return max(min(int(*re.findall('^[\+\-]?\d+', s.lstrip())), 2**31 - 1), -2**31)
+```
+
+
+
+> 调用函数时，函数参数中的 \* 用于解包，将列表转化为一个个的值，并以这些值作为函数的参数
+>
+> 例：
+>
+> ``` python
+> def fun(num1, num2):
+>     return num1 + num2
+> 
+> li = [1, 2]
+> res = fun(*li)	# 3
+> ```
+
+
+
 # [121. 买卖股票的最佳时机](https://leetcode-cn.com/problems/best-time-to-buy-and-sell-stock/)
 
 难度 简单
@@ -1153,6 +1292,65 @@ class Solution:
 
 
 
+# [543. 二叉树的直径](https://leetcode-cn.com/problems/diameter-of-binary-tree/)
+
+难度 简单
+
+给定一棵二叉树，你需要计算它的直径长度。一棵二叉树的直径长度是任意两个结点路径长度中的最大值。这条路径可能穿过根结点。
+
+**示例 :**
+给定二叉树
+
+```
+          1
+         / \
+        2   3
+       / \     
+      4   5    
+```
+
+返回 **3**, 它的长度是路径 [4,2,1,3] 或者 [5,2,1,3]。
+
+**注意：**两结点之间的路径长度是以它们之间边的数目表示。
+
+
+
+**解法**
+
+遍历当前节点左右子树，获得左右子树的最大深度，与当前最大直径作比较，然后递归对该节点左右子树执行该操作。
+
+
+
+**代码**
+
+``` python
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, x):
+#         self.val = x
+#         self.left = None
+#         self.right = None
+
+class Solution:
+    def diameterOfBinaryTree(self, root: TreeNode) -> int:
+        self.result = 0
+
+        def depth(root):
+            if not root:
+                return 0
+            
+            left = depth(root.left)
+            right = depth(root.right)
+            self.result = max(self.result, left + right)
+            # print('root:{}  left:{}  right:{}'.format(root.val, left, right))
+            return max(left, right) + 1
+
+        depth(root)
+        return self.result
+```
+
+
+
 # [994. 腐烂的橘子](https://leetcode-cn.com/problems/rotting-oranges/)
 
 难度 简单
@@ -1373,7 +1571,7 @@ class Solution:
 
 
 
-# [面试题 10.01. 合并排序的数组](https://leetcode-cn.com/problems/sorted-merge-lcci/)
+# [面试题10.01. 合并排序的数组](https://leetcode-cn.com/problems/sorted-merge-lcci/)
 
 难度 简单
 
