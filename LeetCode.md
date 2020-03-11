@@ -825,6 +825,84 @@ class Solution:
 
 
 
+# [9. 回文数](https://leetcode-cn.com/problems/palindrome-number/)
+
+难度 简单 
+
+判断一个整数是否是回文数。回文数是指正序（从左向右）和倒序（从右向左）读都是一样的整数。
+
+**示例 1:**
+
+```
+输入: 121
+输出: true
+```
+
+**示例 2:**
+
+```
+输入: -121
+输出: false
+解释: 从左向右读, 为 -121 。 从右向左读, 为 121- 。因此它不是一个回文数。
+```
+
+**示例 3:**
+
+```
+输入: 10
+输出: false
+解释: 从右向左读, 为 01 。因此它不是一个回文数。
+```
+
+
+
+**解法**
+
++ 方法一：转换为字符串进行判断。时间复杂度：$O(n)$  $n$ 为数值位数，空间复杂度：$O(1)$ 。
++ 方法二：翻转后半部分数值，与前半部分进行比较。时间复杂度：$O(\log_{10}{n})$ ，空间复杂度：$O(1)$ 。
+
+
+
+**代码**
+
+``` python
+# 方法一
+class Solution:
+    def isPalindrome(self, x: int) -> bool:
+        if x < 0:
+            return False
+        
+        s = str(x)
+        index1 = 0
+        index2 = len(s) - 1
+
+        result = True
+        while index1 < index2:
+            if s[index1] != s[index2]:
+                result = False
+                break
+            index1 += 1
+            index2 -= 1
+        
+        return result
+
+    
+# 方法二
+class Solution:
+    def isPalindrome(self, x: int) -> bool:
+        if x < 0 or (x % 10 == 0 and x != 0):
+            return False
+        
+        r = 0
+        while r < x:
+            r = r * 10 + x % 10
+            x = x // 10
+        
+        return r == x or r // 10 == x
+```
+
+
+
 # [121. 买卖股票的最佳时机](https://leetcode-cn.com/problems/best-time-to-buy-and-sell-stock/)
 
 难度 简单
@@ -1474,6 +1552,87 @@ class Solution(object):
         return d
 
 # https://leetcode-cn.com/problems/rotting-oranges/solution/fu-lan-de-ju-zi-by-leetcode-solution/
+```
+
+
+
+# [1013. 将数组分成和相等的三个部分](https://leetcode-cn.com/problems/partition-array-into-three-parts-with-equal-sum/)
+
+难度 简单
+
+给你一个整数数组 `A`，只有可以将其划分为三个和相等的非空部分时才返回 `true`，否则返回 `false`。
+
+形式上，如果可以找出索引 `i+1 < j` 且满足 `(A[0] + A[1] + ... + A[i] == A[i+1] + A[i+2] + ... + A[j-1] == A[j] + A[j-1] + ... + A[A.length - 1])` 就可以将数组三等分。
+
+ 
+
+**示例 1：**
+
+```
+输出：[0,2,1,-6,6,-7,9,1,2,0,1]
+输出：true
+解释：0 + 2 + 1 = -6 + 6 - 7 + 9 + 1 = 2 + 0 + 1
+```
+
+**示例 2：**
+
+```
+输入：[0,2,1,-6,6,7,9,-1,2,0,1]
+输出：false
+```
+
+**示例 3：**
+
+```
+输入：[3,3,6,5,-2,2,5,1,-9,4]
+输出：true
+解释：3 + 3 = 6 = 5 - 2 + 2 + 5 + 1 - 9 + 4
+```
+
+ 
+
+**提示：**
+
+1. `3 <= A.length <= 50000`
+2. `-10^4 <= A[i] <= 10^4`
+
+
+
+**解法**
+
+分成三部分后，每部分的和为数组和的三分之一。使用指针从头到尾进行累加，确定分割点位置。
+
+时间复杂度：$O(n)$，空间复杂度：$O(1)$
+
+
+
+**代码**
+
+```python
+class Solution:
+    def canThreePartsEqualSum(self, A: List[int]) -> bool:
+        s = sum(A)
+
+        if s % 3 != 0:
+            return False
+        
+        index = 1
+        t_sum = A[0]       # 当前部分的和
+        while index < len(A) and t_sum != s // 3:
+            t_sum += A[index]
+            index += 1
+        
+        if t_sum == s // 3:
+            t_sum = A[index]
+            index += 1
+            while index < len(A) and t_sum != s // 3:
+                t_sum += A[index]
+                index += 1
+            
+            if index < len(A) and sum(A[index:]) == s // 3:
+                return True 
+        
+        return False
 ```
 
 
