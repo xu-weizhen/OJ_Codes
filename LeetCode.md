@@ -1757,6 +1757,89 @@ class Solution:
 
 
 
+# [1071. 字符串的最大公因子](https://leetcode-cn.com/problems/greatest-common-divisor-of-strings/)
+
+难度 简单 
+
+对于字符串 `S` 和 `T`，只有在 `S = T + ... + T`（`T` 与自身连接 1 次或多次）时，我们才认定 “`T` 能除尽 `S`”。
+
+返回最长字符串 `X`，要求满足 `X` 能除尽 `str1` 且 `X` 能除尽 `str2`。
+
+ 
+
+**示例 1：**
+
+```
+输入：str1 = "ABCABC", str2 = "ABC"
+输出："ABC"
+```
+
+**示例 2：**
+
+```
+输入：str1 = "ABABAB", str2 = "ABAB"
+输出："AB"
+```
+
+**示例 3：**
+
+```
+输入：str1 = "LEET", str2 = "CODE"
+输出：""
+```
+
+ 
+
+**提示：**
+
+1. `1 <= str1.length <= 1000`
+2. `1 <= str2.length <= 1000`
+3. `str1[i]` 和 `str2[i]` 为大写英文字母
+
+
+
+**解法**
+
+辗转相减。时间复杂度：$O(\max(m, n))$ $m, n$为字符串长度，空间复杂度：$O(1)$
+
+
+
+**代码**
+
+``` python
+class Solution:
+    def gcdOfStrings(self, str1: str, str2: str) -> str:
+
+        if len(str1) > len(str2):
+            str_l = str1
+            str_s = str2
+        else:
+            str_l = str2
+            str_s = str1
+
+        match = True
+
+        while len(str_s) > 0:
+            if str_l == str_s:
+                break
+
+            if str_l[:len(str_s)] != str_s:
+                match = False
+                break
+
+            str_l = str_l[len(str_s):]
+
+            if len(str_l) < len(str_s):
+                str_l, str_s = str_s, str_l
+
+        if match:
+            return str_s
+        else:
+            return ""
+```
+
+
+
 # [1103. 分糖果 II](https://leetcode-cn.com/problems/distribute-candies-to-people/)
 
 难度 简单
