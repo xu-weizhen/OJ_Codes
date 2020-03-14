@@ -1023,6 +1023,61 @@ class Solution:
 
 
 
+# [11. 盛最多水的容器](https://leetcode-cn.com/problems/container-with-most-water/)
+
+难度 中等
+
+给你 *n* 个非负整数 *a*1，*a*2，...，*a*n，每个数代表坐标中的一个点 (*i*, *ai*) 。在坐标内画 *n* 条垂直线，垂直线 *i* 的两个端点分别为 (*i*, *ai*) 和 (*i*, 0)。找出其中的两条线，使得它们与 *x* 轴共同构成的容器可以容纳最多的水。
+
+**说明：**你不能倾斜容器，且 *n* 的值至少为 2。
+
+ 
+
+![img](https://aliyun-lc-upload.oss-cn-hangzhou.aliyuncs.com/aliyun-lc-upload/uploads/2018/07/25/question_11.jpg)
+
+图中垂直线代表输入数组 [1,8,6,2,5,4,8,3,7]。在此情况下，容器能够容纳水（表示为蓝色部分）的最大值为 49。
+
+ 
+
+**示例：**
+
+```
+输入：[1,8,6,2,5,4,8,3,7]
+输出：49
+```
+
+
+
+**解法**
+
+使用两个指针指向容器两端，初始为 $a_0$ 和 $a_n$ ，移动指针，减小底部长度，同时计算面积。返回计算过程中面积的最大值。时间复杂度：$O(n)$ ，空间复杂度：$O(1)$ 。
+
+
+
+**代码**
+
+``` python
+class Solution:
+    def maxArea(self, height: List[int]) -> int:
+        l = 0
+        r = len(height) - 1
+        bottom = r - l
+        area = bottom * min(height[l], height[r])
+
+        while l < r:
+            if height[l] < height[r]:
+                l += 1
+            else:
+                r -= 1
+            
+            bottom -= 1
+            area = max(area, bottom * min(height[l], height[r]))
+        
+        return area
+```
+
+
+
 # [121. 买卖股票的最佳时机](https://leetcode-cn.com/problems/best-time-to-buy-and-sell-stock/)
 
 难度 简单
@@ -1069,6 +1124,57 @@ class Solution:
             profit = max(price - min_price, profit)
             min_price = min(price, min_price)
         return profit
+```
+
+
+
+# [169. 多数元素](https://leetcode-cn.com/problems/majority-element/)
+
+难度 简单
+
+给定一个大小为 *n* 的数组，找到其中的多数元素。多数元素是指在数组中出现次数**大于** `⌊ n/2 ⌋` 的元素。
+
+你可以假设数组是非空的，并且给定的数组总是存在多数元素。
+
+**示例 1:**
+
+```
+输入: [3,2,3]
+输出: 3
+```
+
+**示例 2:**
+
+```
+输入: [2,2,1,1,1,2,2]
+输出: 2
+```
+
+
+
+**解法**
+
+记录下一个数字（初始为数组的第一个元素）和它出现的次数（初始为1），遍历数组，如果遇到的数字和当前记录的数字相同，则次数加一，如果不同，则次数减一。如果次数为0，则修改数字为当前元素的值。因为目标值出现的次数超过数组长度的一半，所以最后剩下的一定为目标值。时间复杂度：$O(n)$ ，空间复杂度：$O(1)$ 。
+
+
+
+**代码**
+
+```python
+class Solution:
+    def majorityElement(self, nums: List[int]) -> int:
+        result = nums[0]
+        count = 1
+        for i in range(1, len(nums)):
+            if result != nums[i]:
+                if count > 1:
+                    count -= 1
+                else:
+                    result = nums[i]
+                    count = 1
+            else:
+                count += 1
+        return result 
 ```
 
 
@@ -1369,6 +1475,87 @@ class Solution:
         if q:
             res.append(q[0])
         return res
+```
+
+
+
+# [300. 最长上升子序列](https://leetcode-cn.com/problems/longest-increasing-subsequence/)
+
+难度 中等
+
+给定一个无序的整数数组，找到其中最长上升子序列的长度。
+
+**示例:**
+
+```
+输入: [10,9,2,5,3,7,101,18]
+输出: 4 
+解释: 最长的上升子序列是 [2,3,7,101]，它的长度是 4。
+```
+
+**说明:**
+
+- 可能会有多种最长上升子序列的组合，你只需要输出对应的长度即可。
+- 你算法的时间复杂度应该为 O(*n^2*) 。
+
+
+
+**解法**
+
++ 方法一：动态规划。时间复杂度：$O(n^2)$ ，空间复杂度：$O(n)$ 。
+
++ 方法二：贪心 + 二分查找。
+
+  设当前已求出的最长上升子序列的长度为 $\textit{len}$（初始时为 1），从前往后遍历数组 $\textit{nums}$，在遍历到 $\textit{nums}[i]$ 时：
+
+  如果 $\textit{nums}[i] > d[\textit{len}]$ ，则直接加入到 $d$ 数组末尾，并更新 $\textit{len} = \textit{len} + 1$  ；
+
+  否则，在 $d$ 数组中二分查找，找到第一个比 $\textit{nums}[i]$ 小的数 $d[k]$ ，并更新 $d[k + 1] = \textit{nums}[i]$ 。
+
+  时间复杂度：$O(n\log n)$ 。空间复杂度：$O(n)$ 。
+
+
+
+**代码**
+
+```python
+# 方法一
+class Solution:
+    def lengthOfLIS(self, nums: List[int]) -> int:
+        if not nums:
+            return 0
+
+        dp = []
+        for i in range(len(nums)):
+            dp.append(1)
+            for j in range(0, i):
+                if nums[j] < nums[i]:
+                    dp[i] = max(dp[j] + 1, dp[i])
+              
+        return max(dp)
+
+# 方法二
+class Solution:
+    def lengthOfLIS(self, nums: List[int]) -> int:
+        d = []
+
+        for num in nums:
+            if not d or num > d[-1]:
+                d.append(num)
+            else:
+                l = 0
+                r = len(d) - 1
+                loc = r
+                while l <= r:
+                    mid = (l + r) // 2
+                    if d[mid] >= num:
+                        loc = mid
+                        r = mid - 1  
+                    else:
+                        l = mid + 1
+                d[loc] = num
+
+        return len(d)
 ```
 
 
