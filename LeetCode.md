@@ -1736,6 +1736,89 @@ class Solution:
 
 
 
+# [695. 岛屿的最大面积](https://leetcode-cn.com/problems/max-area-of-island/)
+
+难度 中等
+
+给定一个包含了一些 0 和 1的非空二维数组 `grid` , 一个 **岛屿** 是由四个方向 (水平或垂直) 的 `1` (代表土地) 构成的组合。你可以假设二维矩阵的四个边缘都被水包围着。
+
+找到给定的二维数组中最大的岛屿面积。(如果没有岛屿，则返回面积为0。)
+
+**示例 1:**
+
+```
+[[0,0,1,0,0,0,0,1,0,0,0,0,0],
+ [0,0,0,0,0,0,0,1,1,1,0,0,0],
+ [0,1,1,0,1,0,0,0,0,0,0,0,0],
+ [0,1,0,0,1,1,0,0,1,0,1,0,0],
+ [0,1,0,0,1,1,0,0,1,1,1,0,0],
+ [0,0,0,0,0,0,0,0,0,0,1,0,0],
+ [0,0,0,0,0,0,0,1,1,1,0,0,0],
+ [0,0,0,0,0,0,0,1,1,0,0,0,0]]
+```
+
+对于上面这个给定矩阵应返回 `6`。注意答案不应该是11，因为岛屿只能包含水平或垂直的四个方向的‘1’。
+
+**示例 2:**
+
+```
+[[0,0,0,0,0,0,0,0]]
+```
+
+对于上面这个给定的矩阵, 返回 `0`。
+
+**注意:** 给定的矩阵`grid` 的长度和宽度都不超过 50。
+
+
+
+**解法**
+
+广度优先搜索。使用一个数组保存已经访问过的地点，遍历所有地点，对未访问的陆地递归计算其面积，返回最大的面积。时间复杂度：$O(mn)$，空间复杂度：$O(mn)$
+
+
+
+**代码**
+
+```python
+import copy
+class Solution:
+    def maxAreaOfIsland(self, grid: List[List[int]]) -> int:
+        if not grid:
+            return 0
+
+        self.row = len(grid)
+        self.col = len(grid[0])
+
+        self.record = []
+        t = [True] * self.col
+        for k in range(self.row):
+            self.record.append(copy.copy(t))
+
+        result = 0
+        for i in range(self.row):
+            for j in range(self.col):
+                if grid[i][j] and self.record[i][j]:
+                    result = max(result, self.landArea(i, j, grid))
+        return result
+
+    def landArea(self, i, j, grid):
+        self.record[i][j] = False
+        result = 1
+
+        if i - 1 >= 0 and grid[i - 1][j] and self.record[i - 1][j]:
+            result += self.landArea(i - 1, j, grid)
+        if i + 1 < self.row and grid[i + 1][j] and self.record[i + 1][j]:
+            result += self.landArea(i + 1, j, grid)
+        if j - 1 >= 0  and grid[i][j - 1] and self.record[i][j - 1]:
+            result += self.landArea(i, j - 1, grid)
+        if j + 1 < self.col and grid[i][j + 1] and self.record[i][j + 1]:
+            result += self.landArea(i, j + 1, grid)
+        
+        return result
+```
+
+
+
 # [994. 腐烂的橘子](https://leetcode-cn.com/problems/rotting-oranges/)
 
 难度 简单
@@ -2117,6 +2200,66 @@ class Solution:
             
         return result
 ```
+
+
+
+# [面试题 01.06. 字符串压缩](https://leetcode-cn.com/problems/compress-string-lcci/)
+
+难度 简单
+
+字符串压缩。利用字符重复出现的次数，编写一种方法，实现基本的字符串压缩功能。比如，字符串`aabcccccaaa`会变为`a2b1c5a3`。若“压缩”后的字符串没有变短，则返回原先的字符串。你可以假设字符串中只包含大小写英文字母（a至z）。
+
+**示例1:**
+
+```
+ 输入："aabcccccaaa"
+ 输出："a2b1c5a3"
+```
+
+**示例2:**
+
+```
+ 输入："abbccd"
+ 输出："abbccd"
+ 解释："abbccd"压缩后为"a1b2c2d1"，比原字符串长度更长。
+```
+
+**提示：**
+
+1. 字符串长度在[0, 50000]范围内。
+
+
+
+**解法**
+
+遍历旧字符串，构建新字符串。时间复杂度：$O(n)$，空间复杂度：$O(1)$ 。
+
+
+
+**代码**
+
+```python
+class Solution:
+    def compressString(self, S: str) -> str:
+        if S == '':
+            return S
+
+        result = ''
+        ch = ''
+        count = ''
+        for c in S:
+            if c == ch:
+                count += 1
+            else:
+                result += (ch + str(count))
+                ch = c
+                count = 1 
+
+        result += (ch + str(count))
+        return S if len(result) >= len(S) else result
+```
+
+
 
 
 
