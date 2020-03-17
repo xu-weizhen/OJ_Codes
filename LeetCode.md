@@ -1078,6 +1078,227 @@ class Solution:
 
 
 
+# [12. 整数转罗马数字](https://leetcode-cn.com/problems/integer-to-roman/)
+
+难度 中等
+
+罗马数字包含以下七种字符： `I`， `V`， `X`， `L`，`C`，`D` 和 `M`。
+
+```
+字符          数值
+I             1
+V             5
+X             10
+L             50
+C             100
+D             500
+M             1000
+```
+
+例如， 罗马数字 2 写做 `II` ，即为两个并列的 1。12 写做 `XII` ，即为 `X` + `II` 。 27 写做 `XXVII`, 即为 `XX` + `V` + `II` 。
+
+通常情况下，罗马数字中小的数字在大的数字的右边。但也存在特例，例如 4 不写做 `IIII`，而是 `IV`。数字 1 在数字 5 的左边，所表示的数等于大数 5 减小数 1 得到的数值 4 。同样地，数字 9 表示为 `IX`。这个特殊的规则只适用于以下六种情况：
+
+- `I` 可以放在 `V` (5) 和 `X` (10) 的左边，来表示 4 和 9。
+- `X` 可以放在 `L` (50) 和 `C` (100) 的左边，来表示 40 和 90。 
+- `C` 可以放在 `D` (500) 和 `M` (1000) 的左边，来表示 400 和 900。
+
+给定一个整数，将其转为罗马数字。输入确保在 1 到 3999 的范围内。
+
+**示例 1:**
+
+```
+输入: 3
+输出: "III"
+```
+
+**示例 2:**
+
+```
+输入: 4
+输出: "IV"
+```
+
+**示例 3:**
+
+```
+输入: 9
+输出: "IX"
+```
+
+**示例 4:**
+
+```
+输入: 58
+输出: "LVIII"
+解释: L = 50, V = 5, III = 3.
+```
+
+**示例 5:**
+
+```
+输入: 1994
+输出: "MCMXCIV"
+解释: M = 1000, CM = 900, XC = 90, IV = 4.
+```
+
+
+
+**解法**
+
++ 方法一：按照转换关系逐位转换。时间复杂度：$O(n)$ ，空间复杂度：$O(1)$ ， $n$ 待转换数字位数。
++ 方法二：贪心算法。每次减去一个已知罗马数字表示方法的值。时间复杂度：$O(1)$ ，空间复杂度：$O(1)$ 。
+
+
+
+**代码**
+
+```python
+# 方法一
+class Solution:
+    def intToRoman(self, num: int) -> str:
+        self.result =''
+
+        def part(num, char1, char2, char3):
+            if num <= 3:
+                self.result += char1 * num
+            elif num == 4:
+                self.result += char1 + char2
+            elif num < 9:
+                self.result += char2 + char1 * (num - 5)
+            elif num == 9:
+                self.result += char1 + char3
+
+        if num // 1000 > 0:
+            self.result += 'M' * (num // 1000)
+            num %= 1000
+
+        if num // 100 > 0:
+            part(num // 100, 'C', 'D', 'M')
+            num %= 100
+            
+        if num // 10 > 0:
+            part(num // 10, 'X', 'L', 'C')
+            num %= 10
+
+        part(num, 'I', 'V', 'X')
+
+        return self.result
+            
+
+# 方法二
+class Solution:
+    def intToRoman(self, num: int) -> str:
+        nums = [1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1]
+        romans = ["M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I"]
+
+        index = 0
+        res = ''
+        while index < len(nums):
+            while num >= nums[index]:
+                res += romans[index]
+                num -= nums[index]
+            index += 1
+        return res
+```
+
+
+
+# [1160. 拼写单词](https://leetcode-cn.com/problems/find-words-that-can-be-formed-by-characters/)
+
+难度 简单
+
+给你一份『词汇表』（字符串数组） `words` 和一张『字母表』（字符串） `chars`。
+
+假如你可以用 `chars` 中的『字母』（字符）拼写出 `words` 中的某个『单词』（字符串），那么我们就认为你掌握了这个单词。
+
+注意：每次拼写时，`chars` 中的每个字母都只能用一次。
+
+返回词汇表 `words` 中你掌握的所有单词的 **长度之和**。
+
+ 
+
+**示例 1：**
+
+```
+输入：words = ["cat","bt","hat","tree"], chars = "atach"
+输出：6
+解释： 
+可以形成字符串 "cat" 和 "hat"，所以答案是 3 + 3 = 6。
+```
+
+**示例 2：**
+
+```
+输入：words = ["hello","world","leetcode"], chars = "welldonehoneyr"
+输出：10
+解释：
+可以形成字符串 "hello" 和 "world"，所以答案是 5 + 5 = 10。
+```
+
+ 
+
+**提示：**
+
+1. `1 <= words.length <= 1000`
+2. `1 <= words[i].length, chars.length <= 100`
+3. 所有字符串中都仅包含小写英文字母
+
+
+
+**解法**
+
++ 方法一：将字母保存至列表。遍历每个单词，遍历该单词的每个字母，若字母在拷贝的字母表中，则移除该字母一次；若不在，则无法拼写。时间复杂度：$O(nm)$ ，空间复杂度：$O(m)$ ， $n$ 为单词表中所有单词总长度， $m$ 为字母表长度。
++ 方法二：将字母及其个数保存至字典。遍历每个单词，将其字母及其个数保存至字典。比较两个字典中单词及其个数，判断是否可以拼写。时间复杂度：$O(n+m)$ ，空间复杂度：$O(m)$ ， $n$ 为单词表中所有单词总长度， $m$ 为字母表长度。
+
+
+
+**代码**
+
+```python
+# 方法一
+import copy
+class Solution:
+    def countCharacters(self, words: List[str], chars: str) -> int:
+        char = []
+        for c in chars:
+            char.append(c)
+        
+        result = 0
+        for word in words:
+            if len(word) > len(char):
+                continue
+            
+            ch = copy.copy(char)
+            spell = True
+            for w in word:
+                if w in ch:
+                    ch.remove(w)
+                else:
+                    spell = False
+                    break
+            if spell:
+                result += len(word)
+        
+        return result
+
+# 方法二
+class Solution:
+    def countCharacters(self, words: List[str], chars: str) -> int:
+        chars_cnt = collections.Counter(chars)
+        ans = 0
+        for word in words:
+            word_cnt = collections.Counter(word)
+            for c in word_cnt:
+                if chars_cnt[c] < word_cnt[c]:
+                    break
+            else:
+                ans += len(word)
+        return ans
+```
+
+
+
 # [121. 买卖股票的最佳时机](https://leetcode-cn.com/problems/best-time-to-buy-and-sell-stock/)
 
 难度 简单
