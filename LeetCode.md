@@ -1204,98 +1204,159 @@ class Solution:
 
 
 
-# [1160. 拼写单词](https://leetcode-cn.com/problems/find-words-that-can-be-formed-by-characters/)
+# [13. 罗马数字转整数](https://leetcode-cn.com/problems/roman-to-integer/)
 
 难度 简单
 
-给你一份『词汇表』（字符串数组） `words` 和一张『字母表』（字符串） `chars`。
-
-假如你可以用 `chars` 中的『字母』（字符）拼写出 `words` 中的某个『单词』（字符串），那么我们就认为你掌握了这个单词。
-
-注意：每次拼写时，`chars` 中的每个字母都只能用一次。
-
-返回词汇表 `words` 中你掌握的所有单词的 **长度之和**。
-
- 
-
-**示例 1：**
+罗马数字包含以下七种字符: `I`， `V`， `X`， `L`，`C`，`D` 和 `M`。
 
 ```
-输入：words = ["cat","bt","hat","tree"], chars = "atach"
-输出：6
-解释： 
-可以形成字符串 "cat" 和 "hat"，所以答案是 3 + 3 = 6。
+字符          数值
+I             1
+V             5
+X             10
+L             50
+C             100
+D             500
+M             1000
 ```
 
-**示例 2：**
+例如， 罗马数字 2 写做 `II` ，即为两个并列的 1。12 写做 `XII` ，即为 `X` + `II` 。 27 写做 `XXVII`, 即为 `XX` + `V` + `II` 。
+
+通常情况下，罗马数字中小的数字在大的数字的右边。但也存在特例，例如 4 不写做 `IIII`，而是 `IV`。数字 1 在数字 5 的左边，所表示的数等于大数 5 减小数 1 得到的数值 4 。同样地，数字 9 表示为 `IX`。这个特殊的规则只适用于以下六种情况：
+
+- `I` 可以放在 `V` (5) 和 `X` (10) 的左边，来表示 4 和 9。
+- `X` 可以放在 `L` (50) 和 `C` (100) 的左边，来表示 40 和 90。 
+- `C` 可以放在 `D` (500) 和 `M` (1000) 的左边，来表示 400 和 900。
+
+给定一个罗马数字，将其转换成整数。输入确保在 1 到 3999 的范围内。
+
+**示例 1:**
 
 ```
-输入：words = ["hello","world","leetcode"], chars = "welldonehoneyr"
-输出：10
-解释：
-可以形成字符串 "hello" 和 "world"，所以答案是 5 + 5 = 10。
+输入: "III"
+输出: 3
 ```
 
- 
+**示例 2:**
 
-**提示：**
+```
+输入: "IV"
+输出: 4
+```
 
-1. `1 <= words.length <= 1000`
-2. `1 <= words[i].length, chars.length <= 100`
-3. 所有字符串中都仅包含小写英文字母
+**示例 3:**
+
+```
+输入: "IX"
+输出: 9
+```
+
+**示例 4:**
+
+```
+输入: "LVIII"
+输出: 58
+解释: L = 50, V= 5, III = 3.
+```
+
+**示例 5:**
+
+```
+输入: "MCMXCIV"
+输出: 1994
+解释: M = 1000, CM = 900, XC = 90, IV = 4.
+```
 
 
 
 **解法**
 
-+ 方法一：将字母保存至列表。遍历每个单词，遍历该单词的每个字母，若字母在拷贝的字母表中，则移除该字母一次；若不在，则无法拼写。时间复杂度：$O(nm)$ ，空间复杂度：$O(m)$ ， $n$ 为单词表中所有单词总长度， $m$ 为字母表长度。
-+ 方法二：将字母及其个数保存至字典。遍历每个单词，将其字母及其个数保存至字典。比较两个字典中单词及其个数，判断是否可以拼写。时间复杂度：$O(n+m)$ ，空间复杂度：$O(m)$ ， $n$ 为单词表中所有单词总长度， $m$ 为字母表长度。
+将罗马数字及其对应阿拉伯数字保存在字典中，通过查字典进行转换。时间复杂度：$O(n)$  $n$ 为字符串长度，空间复杂度：$O(1)$ 。
 
 
 
 **代码**
 
 ```python
-# 方法一
-import copy
 class Solution:
-    def countCharacters(self, words: List[str], chars: str) -> int:
-        char = []
-        for c in chars:
-            char.append(c)
-        
-        result = 0
-        for word in words:
-            if len(word) > len(char):
-                continue
-            
-            ch = copy.copy(char)
-            spell = True
-            for w in word:
-                if w in ch:
-                    ch.remove(w)
-                else:
-                    spell = False
-                    break
-            if spell:
-                result += len(word)
-        
-        return result
+    def romanToInt(self, s: str) -> int:
+        d = {'M': 1000, 'CM': 900, 'D':500, 'CD': 400, 'C':100, 'XC':90, 'L':50, 'XL':40, 'X':10, 'IX':9, 'V':5, 'IV':4, 'I':1}
 
-# 方法二
-class Solution:
-    def countCharacters(self, words: List[str], chars: str) -> int:
-        chars_cnt = collections.Counter(chars)
-        ans = 0
-        for word in words:
-            word_cnt = collections.Counter(word)
-            for c in word_cnt:
-                if chars_cnt[c] < word_cnt[c]:
-                    break
+        res = 0
+        index = 0
+        while index < len(s):
+            t = d.get(s[index:min(index + 2, len(s))])
+            if t:
+                res += t 
+                index += 2
             else:
-                ans += len(word)
-        return ans
+                res += d.get(s[index])
+                index += 1
+        return res
 ```
+
+
+
+# [14. 最长公共前缀](https://leetcode-cn.com/problems/longest-common-prefix/)
+
+难度 简单
+
+编写一个函数来查找字符串数组中的最长公共前缀。
+
+如果不存在公共前缀，返回空字符串 `""`。
+
+**示例 1:**
+
+```
+输入: ["flower","flow","flight"]
+输出: "fl"
+```
+
+**示例 2:**
+
+```
+输入: ["dog","racecar","car"]
+输出: ""
+解释: 输入不存在公共前缀。
+```
+
+**说明:**
+
+所有输入只包含小写字母 `a-z` 。
+
+
+
+**解法**
+
+将当前得到的最长前缀依次与各个字符串进行比较。时间复杂度：$O(S)$  $S$ 是所有字符串中字符数量的总和，空间复杂度：$O(1)$ 。
+
+
+
+**代码**
+
+```python
+class Solution:
+    def longestCommonPrefix(self, strs: List[str]) -> str:
+        if not strs:
+            return ''
+
+        res = strs[0]
+        index = 1
+        while index < len(strs):
+            i = 0
+            while i < len(res) and i < len(strs[index]):
+                if res[i] == strs[index][i]:
+                    i += 1
+                else:
+                    res = res[:i]
+                    break
+            res = res[:i]
+            index += 1
+        return res
+```
+
+
 
 
 
@@ -1898,6 +1959,74 @@ class Solution:
 
 
 
+
+# [409. 最长回文串](https://leetcode-cn.com/problems/longest-palindrome/)
+
+难度 简单
+
+给定一个包含大写字母和小写字母的字符串，找到通过这些字母构造成的最长的回文串。
+
+在构造过程中，请注意区分大小写。比如 `"Aa"` 不能当做一个回文字符串。
+
+**注意:**
+假设字符串的长度不会超过 1010。
+
+**示例 1:**
+
+```
+输入:
+"abccccdd"
+
+输出:
+7
+
+解释:
+我们可以构造的最长的回文串是"dccaccd", 它的长度是 7。
+```
+
+
+
+**解法**
+
++ 方法一：将字符串转换为列表，对列表进行排序，若列表中相邻的两位相同，则可以组成回文串的一部分。时间复杂度：$O(n \log n)$，空间复杂度：$O(n)$ 。
++ 方法二：统计字符串中每个字符出现的次数，每出现两次可以组成回文串的一部分。时间复杂度：$O(n)$，空间复杂度：$O(m)$  $m$ 为字符串中出现的字符的种类。
+
+
+
+**代码**
+
+```python
+# 方法一
+class Solution:
+    def longestPalindrome(self, s: str) -> int:
+        l = list(s)
+        l.sort()
+        index = 0
+        res = 0
+        while index < len(l):
+            if index + 1 < len(l) and l[index] == l[index + 1]:
+                res += 2
+                index += 2
+            else:
+                index += 1
+        if res < len(l):
+            res += 1
+        return res
+
+# 方法二
+class Solution:
+    def longestPalindrome(self, s):
+        ans = 0
+        count = collections.Counter(s)
+        for v in count.values():
+            ans += v // 2 * 2
+            if ans % 2 == 0 and v % 2 == 1:
+                ans += 1
+        return ans
+```
+
+
+
 # [543. 二叉树的直径](https://leetcode-cn.com/problems/diameter-of-binary-tree/)
 
 难度 简单
@@ -2036,6 +2165,64 @@ class Solution:
             result += self.landArea(i, j + 1, grid)
         
         return result
+```
+
+
+
+# [836. 矩形重叠](https://leetcode-cn.com/problems/rectangle-overlap/)
+
+难度 简单
+
+矩形以列表 `[x1, y1, x2, y2]` 的形式表示，其中 `(x1, y1)` 为左下角的坐标，`(x2, y2)` 是右上角的坐标。
+
+如果相交的面积为正，则称两矩形重叠。需要明确的是，只在角或边接触的两个矩形不构成重叠。
+
+给出两个矩形，判断它们是否重叠并返回结果。
+
+ 
+
+**示例 1：**
+
+```
+输入：rec1 = [0,0,2,2], rec2 = [1,1,3,3]
+输出：true
+```
+
+**示例 2：**
+
+```
+输入：rec1 = [0,0,1,1], rec2 = [1,0,2,1]
+输出：false
+```
+
+ 
+
+**提示：**
+
+1. 两个矩形 `rec1` 和 `rec2` 都以含有四个整数的列表的形式给出。
+2. 矩形中的所有坐标都处于 `-10^9` 和 `10^9` 之间。
+3. `x` 轴默认指向右，`y` 轴默认指向上。
+4. 你可以仅考虑矩形是正放的情况。
+
+
+
+**解法**
+
++ 方法一：考虑不存在相交可能的情况，取反。时间复杂度：$O(1)$，空间复杂度：$O(1)$
++ 方法二：投影到 $x$ , $y$ 坐标，检查是否有交集。时间复杂度：$O(1)$，空间复杂度：$O(1)$
+
+
+
+**代码**
+
+```python
+# 方法二
+class Solution:
+    def isRectangleOverlap(self, rec1: List[int], rec2: List[int]) -> bool:
+        def intersect(p_left, p_right, q_left, q_right):
+            return min(p_right, q_right) > max(p_left, q_left)
+        return (intersect(rec1[0], rec1[2], rec2[0], rec2[2]) and
+                intersect(rec1[1], rec1[3], rec2[1], rec2[3]))
 ```
 
 
@@ -2424,6 +2611,101 @@ class Solution:
 
 
 
+# [1160. 拼写单词](https://leetcode-cn.com/problems/find-words-that-can-be-formed-by-characters/)
+
+难度 简单
+
+给你一份『词汇表』（字符串数组） `words` 和一张『字母表』（字符串） `chars`。
+
+假如你可以用 `chars` 中的『字母』（字符）拼写出 `words` 中的某个『单词』（字符串），那么我们就认为你掌握了这个单词。
+
+注意：每次拼写时，`chars` 中的每个字母都只能用一次。
+
+返回词汇表 `words` 中你掌握的所有单词的 **长度之和**。
+
+ 
+
+**示例 1：**
+
+```
+输入：words = ["cat","bt","hat","tree"], chars = "atach"
+输出：6
+解释： 
+可以形成字符串 "cat" 和 "hat"，所以答案是 3 + 3 = 6。
+```
+
+**示例 2：**
+
+```
+输入：words = ["hello","world","leetcode"], chars = "welldonehoneyr"
+输出：10
+解释：
+可以形成字符串 "hello" 和 "world"，所以答案是 5 + 5 = 10。
+```
+
+ 
+
+**提示：**
+
+1. `1 <= words.length <= 1000`
+2. `1 <= words[i].length, chars.length <= 100`
+3. 所有字符串中都仅包含小写英文字母
+
+
+
+**解法**
+
++ 方法一：将字母保存至列表。遍历每个单词，遍历该单词的每个字母，若字母在拷贝的字母表中，则移除该字母一次；若不在，则无法拼写。时间复杂度：$O(nm)$ ，空间复杂度：$O(m)$ ， $n$ 为单词表中所有单词总长度， $m$ 为字母表长度。
++ 方法二：将字母及其个数保存至字典。遍历每个单词，将其字母及其个数保存至字典。比较两个字典中单词及其个数，判断是否可以拼写。时间复杂度：$O(n+m)$ ，空间复杂度：$O(m)$ ， $n$ 为单词表中所有单词总长度， $m$ 为字母表长度。
+
+
+
+**代码**
+
+```python
+# 方法一
+import copy
+class Solution:
+    def countCharacters(self, words: List[str], chars: str) -> int:
+        char = []
+        for c in chars:
+            char.append(c)
+        
+        result = 0
+        for word in words:
+            if len(word) > len(char):
+                continue
+            
+            ch = copy.copy(char)
+            spell = True
+            for w in word:
+                if w in ch:
+                    ch.remove(w)
+                else:
+                    spell = False
+                    break
+            if spell:
+                result += len(word)
+        
+        return result
+
+# 方法二
+class Solution:
+    def countCharacters(self, words: List[str], chars: str) -> int:
+        chars_cnt = collections.Counter(chars)
+        ans = 0
+        for word in words:
+            word_cnt = collections.Counter(word)
+            for c in word_cnt:
+                if chars_cnt[c] < word_cnt[c]:
+                    break
+            else:
+                ans += len(word)
+        return ans
+```
+
+
+
 # [面试题 01.06. 字符串压缩](https://leetcode-cn.com/problems/compress-string-lcci/)
 
 难度 简单
@@ -2557,6 +2839,97 @@ class Solution:
         """
         A[m:] = B
         A.sort()
+```
+
+
+
+# [面试题40. 最小的k个数](https://leetcode-cn.com/problems/zui-xiao-de-kge-shu-lcof/)
+
+难度 简单
+
+输入整数数组 `arr` ，找出其中最小的 `k` 个数。例如，输入4、5、1、6、2、7、3、8这8个数字，则最小的4个数字是1、2、3、4。
+
+ 
+
+**示例 1：**
+
+```
+输入：arr = [3,2,1], k = 2
+输出：[1,2] 或者 [2,1]
+```
+
+**示例 2：**
+
+```
+输入：arr = [0,1,2,1], k = 1
+输出：[0]
+```
+
+ 
+
+**限制：**
+
+- `0 <= k <= arr.length <= 10000`
+- `0 <= arr[i] <= 10000`
+
+
+
+**解法**
+
++ 方法一：快速排序，取最小的 $k$ 位。时间复杂度：期望 $O(n)$ 最坏 $O(n^2)$，空间复杂度：期望 $O(\log n)$ 最坏 $O(n)$ 。
++ 方法二：构建最小堆，取 $k$ 次堆顶。时间复杂度：初始建堆 $O(n)$ 重建堆每次为 $O(\log n)$ ，空间复杂度：  $O(1)$ 。
+
+
+
+**代码**
+
+```python
+# 方法二 使用heapq
+import heapq
+class Solution:
+    def getLeastNumbers(self, arr: List[int], k: int) -> List[int]:
+        return heapq.nsmallest(k, arr)
+
+# 方法二 手写堆排序
+class Solution:
+    def getLeastNumbers(self, arr: List[int], k: int) -> List[int]:
+        self.buildHeap(arr)
+        res = []
+        for i in range(k):
+            res.append(self.pop(arr))
+        return  res
+
+    def buildHeap(self, arr):
+        heap = arr
+        for root in range(len(heap)-1 , -1, -1):
+            child = root * 2 + 1
+            while child < len(heap):
+                if child + 1 < len(heap) and heap[child + 1] < heap[child]:
+                    child += 1
+                if heap[child] >= heap[root]:
+                    break
+                heap[child], heap[root] = heap[root], heap[child]
+                root = child
+                child = 2 * root + 1
+
+    def pop(self, heap):
+        res = heap[0]
+        heap[0] = heap[-1]
+        del heap[-1]
+
+        root = 0
+        child = root * 2 + 1
+        while child < len(heap):
+            if child + 1 < len(heap) and heap[child + 1] < heap[child]:
+                child += 1
+            if heap[child] > heap[root]:
+                break
+
+            heap[child], heap[root] = heap[root], heap[child]
+            root = child
+            child = 2 * root + 1
+
+        return res
 ```
 
 
