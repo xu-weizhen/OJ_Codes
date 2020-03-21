@@ -1959,6 +1959,83 @@ class Solution:
 
 
 
+# [365. 水壶问题](https://leetcode-cn.com/problems/water-and-jug-problem/)
+
+难度 中等
+
+有两个容量分别为 *x*升 和 *y*升 的水壶以及无限多的水。请判断能否通过使用这两个水壶，从而可以得到恰好 *z*升 的水？
+
+如果可以，最后请用以上水壶中的一或两个来盛放取得的 *z升* 水。
+
+你允许：
+
+- 装满任意一个水壶
+- 清空任意一个水壶
+- 从一个水壶向另外一个水壶倒水，直到装满或者倒空
+
+**示例 1:** (From the famous [*"Die Hard"* example](https://www.youtube.com/watch?v=BVtQNK_ZUJg))
+
+```
+输入: x = 3, y = 5, z = 4
+输出: True
+```
+
+**示例 2:**
+
+```
+输入: x = 2, y = 6, z = 5
+输出: False
+```
+
+
+
+**解法**
+
++ 解法一：深度优先遍历，遍历所有可能的操作。使用一个集合保存已经计算过的操作，防止无限递归。时间复杂度：$O(xy)$，空间复杂度：$O(xy)$ 。
++ 解法二： 裴蜀定理。 有解当且仅当 $z$ 是 $x, y$ 的最大公约数的倍数。 时间复杂度：$O(\log (\min (x,y)))$  计算最大公约数所使用的辗转相除法 ，空间复杂度：$O(1)$ 。
+
+
+
+**代码**
+
+```python
+# 解法一
+class Solution:
+    def canMeasureWater(self, x: int, y: int, z: int) -> bool:
+        stack = [(0,0)]
+        done = set()
+
+        while stack:
+            x_now, y_now = stack.pop()
+
+            if x_now == z or y_now == z or x_now + y_now == z:
+                return True
+            if (x_now, y_now) in done:
+                continue
+            
+            done.add((x_now, y_now))
+
+            stack.append((x, y_now))
+            stack.append((x_now, y))
+            stack.append((0, y_now))
+            stack.append((x_now, 0))
+            stack.append((min(x_now + y_now, x), y_now - min(x - x_now, y_now)))
+            stack.append((x_now - min(x_now, y - y_now), min(x_now + y_now, y)))
+
+        return False
+    
+# 方法二
+class Solution:
+    def canMeasureWater(self, x: int, y: int, z: int) -> bool:
+        if x + y < z:
+            return False
+        if x == 0 or y == 0:
+            return z == 0 or x + y == z
+        return z % math.gcd(x, y) == 0
+```
+
+
+
 
 # [409. 最长回文串](https://leetcode-cn.com/problems/longest-palindrome/)
 
