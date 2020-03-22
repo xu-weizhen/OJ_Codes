@@ -1358,6 +1358,71 @@ class Solution:
 
 
 
+# [15. 三数之和](https://leetcode-cn.com/problems/3sum/)
+
+难度 中等
+
+给你一个包含 *n* 个整数的数组 `nums`，判断 `nums` 中是否存在三个元素 *a，b，c ，*使得 *a + b + c =* 0 ？请你找出所有满足条件且不重复的三元组。
+
+**注意：**答案中不可以包含重复的三元组。
+
+ 
+
+**示例：**
+
+```
+给定数组 nums = [-1, 0, 1, 2, -1, -4]，
+
+满足要求的三元组集合为：
+[
+  [-1, 0, 1],
+  [-1, -1, 2]
+]
+```
+
+
+
+**解法**
+
+对数组进行排序，一次固定一位，使用两个指针指向该位的后一位和数组最后一位，移动两个指针，验证三数之和。如果指针移动前后数值相等，则要跳过该值。时间复杂度：$O(n^2)$ ，空间复杂度：$O(1)$ （不含排序） / $O(n)$  （python 中 `sort` 的空间复杂度）。
+
+
+
+**代码**
+
+```python
+class Solution:
+    def threeSum(self, nums: List[int]) -> List[List[int]]:
+        if len(nums) < 3:
+            return []
+
+        nums.sort()
+        res = []
+
+        for i in range(0, len(nums) - 2):
+            L = i + 1
+            R = len(nums) - 1
+
+            if i > 0 and nums[i] == nums[i - 1]:
+                continue
+
+            while L < R:
+                if nums[i] + nums[L] + nums[R] == 0:
+                    res.append([nums[i], nums[L], nums[R]])
+                    L += 1
+                    R -= 1
+                    while L < R and nums[L] == nums[L - 1]:
+                        L += 1
+                    while R > L and nums[R] == nums[R + 1]:
+                        R -= 1
+                elif nums[i] + nums[L] + nums[R] > 0:
+                    R -= 1
+                else:
+                    L += 1
+        
+        return res
+```
+
 
 
 # [121. 买卖股票的最佳时机](https://leetcode-cn.com/problems/best-time-to-buy-and-sell-stock/)
@@ -2300,6 +2365,90 @@ class Solution:
             return min(p_right, q_right) > max(p_left, q_left)
         return (intersect(rec1[0], rec1[2], rec2[0], rec2[2]) and
                 intersect(rec1[1], rec1[3], rec2[1], rec2[3]))
+```
+
+
+
+# [945. 使数组唯一的最小增量](https://leetcode-cn.com/problems/minimum-increment-to-make-array-unique/)
+
+难度 中等
+
+给定整数数组 A，每次 *move* 操作将会选择任意 `A[i]`，并将其递增 `1`。
+
+返回使 `A` 中的每个值都是唯一的最少操作次数。
+
+**示例 1:**
+
+```
+输入：[1,2,2]
+输出：1
+解释：经过一次 move 操作，数组将变为 [1, 2, 3]。
+```
+
+**示例 2:**
+
+```
+输入：[3,2,1,2,1,7]
+输出：6
+解释：经过 6 次 move 操作，数组将变为 [3, 4, 1, 2, 5, 7]。
+可以看出 5 次或 5 次以下的 move 操作是不能让数组的每个值唯一的。
+```
+
+**提示：**
+
+1. `0 <= A.length <= 40000`
+2. `0 <= A[i] < 40000`
+
+
+
+**解法**
+
++ 方法一：使用数组存储每个数字出现的次数，若一个数字出现多次，则向后查找没有出现过的数字的位置，得到需要加的值。（超时）时间复杂度：$O(n^2)$，空间复杂度：$O(n)$ 。
++ 方法二：对数组进行排序，遇到重复的数字，先将结果减去该数值。若遇到相邻的两个数字之间有空隙可以插入数字，则将之前重复的数字插到这里，结果加上该处的值。时间复杂度：$O(n \log n)$，空间复杂度：$O(n)$  （python 中 `sort` 的空间复杂度）。
+
+
+
+**代码**
+
+```python
+# 方法一
+class Solution:
+    def minIncrementForUnique(self, A: List[int]) -> int:
+        A.sort()
+        A.append(80005)
+        ans = 0
+        taken = 0
+
+        for i in range(1, len(A)):
+            if A[i - 1] == A[i]:
+                taken += 1
+                ans -= A[i]
+            else:
+                give = min(taken, A[i] - A[i - 1] - 1)
+                ans += give * A[i - 1] + give * (give + 1) // 2
+                taken -= give
+
+        return ans
+
+
+# 方法二
+class Solution:
+    def minIncrementForUnique(self, A: List[int]) -> int:
+        record = [0] * 80002
+        for i in A:
+            record[i] += 1
+
+        move = 0
+        for i in range(0, len(record)):
+            while record[i] > 1:
+                m = 1
+                while record[i + m] != 0:
+                    m += 1
+                record[i + m] += 1
+                move += m 
+                record[i] -= 1
+        
+        return move
 ```
 
 
