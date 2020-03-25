@@ -1425,6 +1425,105 @@ class Solution:
 
 
 
+# [16. 最接近的三数之和](https://leetcode-cn.com/problems/3sum-closest/)
+
+难度 中等
+
+给定一个包括 *n* 个整数的数组 `nums` 和 一个目标值 `target`。找出 `nums` 中的三个整数，使得它们的和与 `target` 最接近。返回这三个数的和。假定每组输入只存在唯一答案。
+
+```
+例如，给定数组 nums = [-1，2，1，-4], 和 target = 1.
+
+与 target 最接近的三个数的和为 2. (-1 + 2 + 1 = 2).
+```
+
+
+
+**解法**
+
+对数组进行排序，一次固定一位，使用两个指针指向该位的后一位和数组最后一位，移动两个指针，计算三数之和与目标的差值。时间复杂度：$O(n^2)$ ，空间复杂度：$O(1)$ （不含排序） / $O(n)$  （python 中 `sort` 的空间复杂度）。
+
+
+
+**代码**
+
+```python
+import sys
+class Solution:
+    def threeSumClosest(self, nums: List[int], target: int) -> int:
+        nums.sort()
+        ans = sys.maxsize
+        for i in range(0, len(nums) - 2):
+            L = i + 1
+            R = len(nums) - 1
+            while L < R:
+                distance = nums[i] + nums[L] + nums[R] - target
+                if abs(ans - target) > abs(distance):
+                    ans = nums[i] + nums[L] + nums[R]
+
+                if distance > 0:
+                    R -= 1
+                else:
+                    L += 1
+
+        return ans
+```
+
+
+
+# [17. 电话号码的字母组合](https://leetcode-cn.com/problems/letter-combinations-of-a-phone-number/)
+
+难度 中等
+
+给定一个仅包含数字 `2-9` 的字符串，返回所有它能表示的字母组合。
+
+给出数字到字母的映射如下（与电话按键相同）。注意 1 不对应任何字母。
+
+![img](https://assets.leetcode-cn.com/aliyun-lc-upload/original_images/17_telephone_keypad.png)
+
+**示例:**
+
+```
+输入："23"
+输出：["ad", "ae", "af", "bd", "be", "bf", "cd", "ce", "cf"].
+```
+
+**说明:**
+尽管上面的答案是按字典序排列的，但是你可以任意选择答案输出的顺序。
+
+
+
+**解法**
+
+递归。时间复杂度： $O(3^N \times 4^M)$ 其中 $N$ 是输入数字中对应 3 个字母的数目， $M$ 是输入数字中对应 4 个字母的数目， 空间复杂度：$O(3^N \times 4^M)$ 。
+
+
+
+**代码**
+
+```python
+class Solution:
+    def letterCombinations(self, digits: str) -> List[str]:
+        if not digits:
+            return []
+
+        self.result = []
+        self.dic = {'2': 'abc', '3':'def', '4':'ghi', '5':'jkl', '6':'mno', '7':'pqrs', '8':'tuv', '9':'wxyz'}
+        self.makeString('', digits)
+        return self.result
+
+
+    def makeString(self, string, digits):
+        if digits == '':
+            self.result.append(string)
+            return 0
+        
+        for ch in self.dic[digits[0]]:
+            self.makeString(string + ch, digits[1:])
+```
+
+
+
 # [121. 买卖股票的最佳时机](https://leetcode-cn.com/problems/best-time-to-buy-and-sell-stock/)
 
 难度 简单
@@ -2369,6 +2468,159 @@ class Solution:
 
 
 
+# [876. 链表的中间结点](https://leetcode-cn.com/problems/middle-of-the-linked-list/)
+
+难度 简单
+
+给定一个带有头结点 `head` 的非空单链表，返回链表的中间结点。
+
+如果有两个中间结点，则返回第二个中间结点。
+
+ 
+
+**示例 1：**
+
+```
+输入：[1,2,3,4,5]
+输出：此列表中的结点 3 (序列化形式：[3,4,5])
+返回的结点值为 3 。 (测评系统对该结点序列化表述是 [3,4,5])。
+注意，我们返回了一个 ListNode 类型的对象 ans，这样：
+ans.val = 3, ans.next.val = 4, ans.next.next.val = 5, 以及 ans.next.next.next = NULL.
+```
+
+**示例 2：**
+
+```
+输入：[1,2,3,4,5,6]
+输出：此列表中的结点 4 (序列化形式：[4,5,6])
+由于该列表有两个中间结点，值分别为 3 和 4，我们返回第二个结点。
+```
+
+ 
+
+**提示：**
+
+- 给定链表的结点数介于 `1` 和 `100` 之间。
+
+
+
+**解法**
+
+使用快慢两个指针，快指针一次移动两个节点，慢指针一次移动一个节点。快指针到达链表尾时，慢指针达到链表中间。时间复杂度：$O(n)$，空间复杂度：$O(1)$ 。
+
+
+
+**代码**
+
+```python
+# Definition for singly-linked list.
+# class ListNode:
+#     def __init__(self, x):
+#         self.val = x
+#         self.next = None
+
+class Solution:
+    def middleNode(self, head: ListNode) -> ListNode:
+        slow = head
+        fast = head
+        while fast.next:
+            slow = slow.next
+            fast = fast.next
+            if fast.next:
+                fast = fast.next
+        
+        return slow
+```
+
+
+
+# [892. 三维形体的表面积](https://leetcode-cn.com/problems/surface-area-of-3d-shapes/)
+
+难度 简单
+
+在 `N * N` 的网格上，我们放置一些 `1 * 1 * 1 ` 的立方体。
+
+每个值 `v = grid[i][j]` 表示 `v` 个正方体叠放在对应单元格 `(i, j)` 上。
+
+请你返回最终形体的表面积。
+
+ 
+
+**示例 1：**
+
+```
+输入：[[2]]
+输出：10
+```
+
+**示例 2：**
+
+```
+输入：[[1,2],[3,4]]
+输出：34
+```
+
+**示例 3：**
+
+```
+输入：[[1,0],[0,2]]
+输出：16
+```
+
+**示例 4：**
+
+```
+输入：[[1,1,1],[1,0,1],[1,1,1]]
+输出：32
+```
+
+**示例 5：**
+
+```
+输入：[[2,2,2],[2,1,2],[2,2,2]]
+输出：46
+```
+
+ 
+
+**提示：**
+
+- `1 <= N <= 50`
+- `0 <= grid[i][j] <= 50`
+
+
+
+**解法**
+
+依次遍历每一个立方体，计算其暴露在外的面积。时间复杂度： $O(n^2)$ ，空间复杂度： $O(1)$ 。
+
+
+
+**代码**
+
+```python
+class Solution:
+    def surfaceArea(self, grid: List[List[int]]) -> int:
+        res = 0
+        N = len(grid)
+
+        for i in range(N):
+            for j in range(N):
+                if grid[i][j] == 0:
+                    continue
+                
+                res += max(grid[i][j] - grid[i - 1][j], 0) if i - 1 >= 0 else grid[i][j]
+                res += max(grid[i][j] - grid[i + 1][j], 0) if i + 1 < N else grid[i][j]
+                res += max(grid[i][j] - grid[i][j - 1], 0) if j - 1 >= 0 else grid[i][j]
+                res += max(grid[i][j] - grid[i][j + 1], 0) if j + 1 < N else grid[i][j]
+                
+                res += 2
+        
+        return res
+```
+
+
+
 # [945. 使数组唯一的最小增量](https://leetcode-cn.com/problems/minimum-increment-to-make-array-unique/)
 
 难度 中等
@@ -3065,6 +3317,67 @@ class Solution:
         """
         A[m:] = B
         A.sort()
+```
+
+
+
+# [面试题 17.16. 按摩师](https://leetcode-cn.com/problems/the-masseuse-lcci/)
+
+难度 简单
+
+一个有名的按摩师会收到源源不断的预约请求，每个预约都可以选择接或不接。在每次预约服务之间要有休息时间，因此她不能接受相邻的预约。给定一个预约请求序列，替按摩师找到最优的预约集合（总预约时间最长），返回总的分钟数。
+
+**注意：**本题相对原题稍作改动
+
+ 
+
+**示例 1：**
+
+```
+输入： [1,2,3,1]
+输出： 4
+解释： 选择 1 号预约和 3 号预约，总时长 = 1 + 3 = 4。
+```
+
+**示例 2：**
+
+```
+输入： [2,7,9,3,1]
+输出： 12
+解释： 选择 1 号预约、 3 号预约和 5 号预约，总时长 = 2 + 9 + 1 = 12。
+```
+
+**示例 3：**
+
+```
+输入： [2,1,4,5,3,1,1,3]
+输出： 12
+解释： 选择 1 号预约、 3 号预约、 5 号预约和 8 号预约，总时长 = 2 + 4 + 3 + 3 = 12。
+```
+
+
+
+**解法**
+
+动态规划。若已经知道到当前时刻接和不接上一单的预约时长。若接此单，则只有上一单不接时才可接；若不接此单，则预约时长最长为接上一单和不接上一单中时长较长者。时间复杂度： $O(n)$ ，空间复杂度：  $O(1)$ 。
+
+
+
+**代码**
+
+```python
+class Solution:
+    def massage(self, nums: List[int]) -> int:
+        if not nums:
+            return 0
+
+        dp = [0, nums[0]]
+        for index in range(1, len(nums)):
+            not_take = (max(dp[1], dp[0]))
+            take = dp[0] + nums[index]
+            dp = [not_take, take]
+        
+        return max(dp)
 ```
 
 
