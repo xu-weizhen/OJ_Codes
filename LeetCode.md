@@ -1524,6 +1524,79 @@ class Solution:
 
 
 
+# [18. 四数之和](https://leetcode-cn.com/problems/4sum/)
+
+难度 中等
+
+给定一个包含 *n* 个整数的数组 `nums` 和一个目标值 `target`，判断 `nums` 中是否存在四个元素 *a，**b，c* 和 *d* ，使得 *a* + *b* + *c* + *d* 的值与 `target` 相等？找出所有满足条件且不重复的四元组。
+
+**注意：**
+
+答案中不可以包含重复的四元组。
+
+**示例：**
+
+```
+给定数组 nums = [1, 0, -1, 0, -2, 2]，和 target = 0。
+
+满足要求的四元组集合为：
+[
+  [-1,  0, 0, 1],
+  [-2, -1, 1, 2],
+  [-2,  0, 0, 2]
+]
+```
+
+
+
+**解法**
+
+对数组进行排序，在15题的基础上，每次固定两位，使用两个指针指向该位的后一位和数组最后一位，移动两个指针，验证三数之和。如果指针移动前后数值相等，则要跳过该值。时间复杂度：$O(n^3)$ ，空间复杂度：$O(1)$ （不含排序） / $O(n)$  （python 中 `sort` 的空间复杂度）。
+
+
+
+**代码**
+
+```python
+class Solution:
+    def fourSum(self, nums: List[int], target: int) -> List[List[int]]:
+        nums.sort()
+
+        res = []
+        i = 0
+        while i < len(nums) - 3:
+            j = i + 1
+
+            while j < len(nums) - 2:
+                L = j + 1
+                R = len(nums) - 1
+
+                while L < R:
+                    if nums[i] + nums[j] + nums[L] + nums[R] == target:
+                        res.append([nums[i], nums[j], nums[L], nums[R]])
+                    
+                    if nums[i] + nums[j] + nums[L] + nums[R] > target:
+                        R -= 1
+                        while L < R and nums[R + 1] == nums[R]:
+                            R -= 1
+                    else:
+                        L += 1
+                        while L < R and nums[L - 1] == nums[L]:
+                            L += 1
+
+                j += 1
+                while j < len(nums) - 2 and nums[j] == nums[j - 1]:
+                    j += 1
+            
+            i += 1
+            while i < len(nums) - 3 and nums[i] == nums[i-1]:
+                i += 1
+
+        return res
+```
+
+
+
 # [121. 买卖股票的最佳时机](https://leetcode-cn.com/problems/best-time-to-buy-and-sell-stock/)
 
 难度 简单
@@ -2621,6 +2694,114 @@ class Solution:
 
 
 
+# [914. 卡牌分组](https://leetcode-cn.com/problems/x-of-a-kind-in-a-deck-of-cards/)
+
+难度 简单
+
+给定一副牌，每张牌上都写着一个整数。
+
+此时，你需要选定一个数字 `X`，使我们可以将整副牌按下述规则分成 1 组或更多组：
+
+- 每组都有 `X` 张牌。
+- 组内所有的牌上都写着相同的整数。
+
+仅当你可选的 `X >= 2` 时返回 `true`。
+
+ 
+
+**示例 1：**
+
+```
+输入：[1,2,3,4,4,3,2,1]
+输出：true
+解释：可行的分组是 [1,1]，[2,2]，[3,3]，[4,4]
+```
+
+**示例 2：**
+
+```
+输入：[1,1,1,2,2,2,3,3]
+输出：false
+解释：没有满足要求的分组。
+```
+
+**示例 3：**
+
+```
+输入：[1]
+输出：false
+解释：没有满足要求的分组。
+```
+
+**示例 4：**
+
+```
+输入：[1,1]
+输出：true
+解释：可行的分组是 [1,1]
+```
+
+**示例 5：**
+
+```
+输入：[1,1,2,2,2,2]
+输出：true
+解释：可行的分组是 [1,1]，[2,2]，[2,2]
+```
+
+
+**提示：**
+
+1. `1 <= deck.length <= 10000`
+2. `0 <= deck[i] < 10000`
+
+
+
+**解法**
+
+计算每个数组出现次数的最大公约数，与2作比较。时间复杂度：$O(N \log C)$ 其中 $N$ 是卡牌的个数， $C$ 是数组中数的范围，求两个数最大公约数的复杂度是 $O(\log C)$，空间复杂度：$O(N)$ 。
+
+
+
+**代码**
+
+``` python
+# 代码一
+import math
+class Solution:
+    def hasGroupsSizeX(self, deck: List[int]) -> bool:
+        if not deck:
+            return False
+
+        d = {}
+        for i in deck:
+            if i in d:
+                d[i] += 1
+            else:
+                d[i] = 1
+        
+        count = list(d.values())
+        
+        res = count[0]
+        for i in range(1, len(count)):
+            res = math.gcd(res, count[i])
+            if res == 1:
+                break
+        
+        return res >= 2
+
+
+# 代码二
+class Solution:
+    def hasGroupsSizeX(self, deck: List[int]) -> bool:
+        vals = collections.Counter(deck).values()
+
+        from fractions import gcd
+        return reduce(gcd, vals) >= 2
+```
+
+
+
 # [945. 使数组唯一的最小增量](https://leetcode-cn.com/problems/minimum-increment-to-make-array-unique/)
 
 难度 中等
@@ -2828,6 +3009,109 @@ class Solution(object):
         return d
 
 # https://leetcode-cn.com/problems/rotting-oranges/solution/fu-lan-de-ju-zi-by-leetcode-solution/
+```
+
+
+
+# [999. 车的可用捕获量](https://leetcode-cn.com/problems/available-captures-for-rook/)
+
+难度 简单
+
+在一个 8 x 8 的棋盘上，有一个白色车（rook）。也可能有空方块，白色的象（bishop）和黑色的卒（pawn）。它们分别以字符 “R”，“.”，“B” 和 “p” 给出。大写字符表示白棋，小写字符表示黑棋。
+
+车按国际象棋中的规则移动：它选择四个基本方向中的一个（北，东，西和南），然后朝那个方向移动，直到它选择停止、到达棋盘的边缘或移动到同一方格来捕获该方格上颜色相反的卒。另外，车不能与其他友方（白色）象进入同一个方格。
+
+返回车能够在一次移动中捕获到的卒的数量。
+
+
+**示例 1：**
+
+![img](https://assets.leetcode-cn.com/aliyun-lc-upload/uploads/2019/02/23/1253_example_1_improved.PNG)
+
+```
+输入：[[".",".",".",".",".",".",".","."],[".",".",".","p",".",".",".","."],[".",".",".","R",".",".",".","p"],[".",".",".",".",".",".",".","."],[".",".",".",".",".",".",".","."],[".",".",".","p",".",".",".","."],[".",".",".",".",".",".",".","."],[".",".",".",".",".",".",".","."]]
+输出：3
+解释：
+在本例中，车能够捕获所有的卒。
+```
+
+**示例 2：**
+
+![img](https://assets.leetcode-cn.com/aliyun-lc-upload/uploads/2019/02/23/1253_example_2_improved.PNG)
+
+```
+输入：[[".",".",".",".",".",".",".","."],[".","p","p","p","p","p",".","."],[".","p","p","B","p","p",".","."],[".","p","B","R","B","p",".","."],[".","p","p","B","p","p",".","."],[".","p","p","p","p","p",".","."],[".",".",".",".",".",".",".","."],[".",".",".",".",".",".",".","."]]
+输出：0
+解释：
+象阻止了车捕获任何卒。
+```
+
+**示例 3：**
+
+![img](https://assets.leetcode-cn.com/aliyun-lc-upload/uploads/2019/02/23/1253_example_3_improved.PNG)
+
+```
+输入：[[".",".",".",".",".",".",".","."],[".",".",".","p",".",".",".","."],[".",".",".","p",".",".",".","."],["p","p",".","R",".","p","B","."],[".",".",".",".",".",".",".","."],[".",".",".","B",".",".",".","."],[".",".",".","p",".",".",".","."],[".",".",".",".",".",".",".","."]]
+输出：3
+解释： 
+车可以捕获位置 b5，d6 和 f5 的卒。
+```
+
+ 
+
+**提示：**
+
+1. `board.length == board[i].length == 8`
+2. `board[i][j]` 可以是 `'R'`，`'.'`，`'B'` 或 `'p'`
+3. 只有一个格子上存在 `board[i][j] == 'R'`
+
+
+
+**解法**
+
+遍历数组，找到车的位置，然后模拟车上下左右进行移动。时间复杂度：$O(n^2)$，空间复杂度：$O(1)$ 。
+
+
+
+**代码**
+
+```python
+class Solution:
+    def numRookCaptures(self, board: List[List[str]]) -> int:
+        loc = None      # 车的位置
+        for i in range(8):
+            for j in range(8):
+                if board[i][j] == 'R':
+                    loc = (i, j)
+                    break
+            if loc:
+                break
+
+        if not loc:
+            return 0
+
+        dx = [-1, 1, 0, 0]
+        dy = [0, 0, -1, 1]
+        res = 0
+        for i in range(0, 4):
+            move = 1
+            while True:
+                x = loc[0] + dx[i] * move
+                y = loc[1] + dy[i] * move
+
+                if x < 0 or x > 7 or y < 0 or y > 7:
+                    break
+
+                if board[x][y] == 'p':
+                    res += 1
+                    break
+
+                if board[x][y] == 'B':
+                    break
+
+                move += 1
+        
+        return res
 ```
 
 
