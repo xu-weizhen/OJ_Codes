@@ -1597,6 +1597,262 @@ class Solution:
 
 
 
+# [19. 删除链表的倒数第N个节点](https://leetcode-cn.com/problems/remove-nth-node-from-end-of-list/)
+
+难度 中等
+
+给定一个链表，删除链表的倒数第 *n* 个节点，并且返回链表的头结点。
+
+**示例：**
+
+```
+给定一个链表: 1->2->3->4->5, 和 n = 2.
+
+当删除了倒数第二个节点后，链表变为 1->2->3->5.
+```
+
+**说明：**
+
+给定的 *n* 保证是有效的。
+
+**进阶：**
+
+你能尝试使用一趟扫描实现吗？
+
+
+
+**解法**
+
+使用两个指针，第二个指针指向第一个指针后 $n+1$ 位，两个指针同时后移，当第二个指针为空时，第一个指针指向被删除节点的前一个节点，即可将目标节点删除。时间复杂度：$O(N)$ ，空间复杂度：$O(1)$ 。
+
+
+
+**代码**
+
+```python
+# Definition for singly-linked list.
+# class ListNode:
+#     def __init__(self, x):
+#         self.val = x
+#         self.next = None
+
+class Solution:
+    def removeNthFromEnd(self, head: ListNode, n: int) -> ListNode:
+        i1 = head
+        i2 = head
+
+        for i in range(0, n):
+            i2 = i2.next
+        
+        # 删除的是头节点
+        if not i2:
+            return head.next
+        
+        # 删除的不是头节点
+        i2 = i2.next
+        while i2:
+            i2 = i2.next
+            i1 = i1.next
+        
+        i1.next = i1.next.next
+        return head
+```
+
+
+
+# [20. 有效的括号](https://leetcode-cn.com/problems/valid-parentheses/)
+
+难度 简单
+
+给定一个只包括 `'('`，`')'`，`'{'`，`'}'`，`'['`，`']'` 的字符串，判断字符串是否有效。
+
+有效字符串需满足：
+
+1. 左括号必须用相同类型的右括号闭合。
+2. 左括号必须以正确的顺序闭合。
+
+注意空字符串可被认为是有效字符串。
+
+**示例 1:**
+
+```
+输入: "()"
+输出: true
+```
+
+**示例 2:**
+
+```
+输入: "()[]{}"
+输出: true
+```
+
+**示例 3:**
+
+```
+输入: "(]"
+输出: false
+```
+
+**示例 4:**
+
+```
+输入: "([)]"
+输出: false
+```
+
+**示例 5:**
+
+```
+输入: "{[]}"
+输出: true
+```
+
+
+
+**解法**
+
+使用栈进行括号的匹配。时间复杂度： $O(N)$ ，空间复杂度： $O(N)$ 。
+
+
+
+**代码**
+
+```python
+class Solution:
+    def isValid(self, s: str) -> bool:
+        st = []
+        for ch in s:
+            if ch in ['(', '[', '{']:
+                st.append(ch)
+            elif not st:
+                return False
+            elif ch == ')':
+                if st[-1] == '(':
+                    del st[-1]
+                else:
+                    return False
+            elif ch == ']':
+                if st[-1] == '[':
+                    del st[-1]
+                else:
+                    return False
+            elif ch == '}':
+                if st[-1] == '{':
+                    del st[-1]
+                else:
+                    return False
+        if not st:
+            return True
+        else:
+            return False
+```
+
+```cpp
+#include <stack>
+
+class Solution {
+public:
+    bool isValid(string s) {
+        stack<char> st;
+
+        for(int i=0; i<s.length(); i++)
+        {
+            if(s[i] == '(' || s[i] == '[' || s[i] == '{')
+                st.push(s[i]);
+            else
+            {
+                if(st.empty())
+                    return false;
+                else if(s[i] == ')')
+                {
+                    if(st.top() == '(')
+                        st.pop();
+                    else
+                        return false;
+                }
+                else if (s[i] == ']')
+                {
+                    if(st.top() == '[')
+                        st.pop();
+                    else
+                        return false;
+                }
+                else if (s[i] == '}')
+                {
+                    if(st.top() == '{')
+                        st.pop();
+                    else
+                        return false;
+                }
+            }
+        }
+
+        if(st.empty())
+            return true;
+        else
+            return false;
+    }
+};
+```
+
+
+
+# [21. 合并两个有序链表](https://leetcode-cn.com/problems/merge-two-sorted-lists/)
+
+难度 简单
+
+将两个升序链表合并为一个新的升序链表并返回。新链表是通过拼接给定的两个链表的所有节点组成的。 
+
+**示例：**
+
+```
+输入：1->2->4, 1->3->4
+输出：1->1->2->3->4->4
+```
+
+
+
+**解法**
+
+顺序遍历两个列表，将值较小的节点添加到新链表中。时间复杂度：$O(M+N)$ ，空间复杂度：$O(1)$ 。
+
+
+
+**代码**
+
+```python
+# Definition for singly-linked list.
+# class ListNode:
+#     def __init__(self, x):
+#         self.val = x
+#         self.next = None
+
+class Solution:
+    def mergeTwoLists(self, l1: ListNode, l2: ListNode) -> ListNode:
+        head = ListNode()
+        tail = head
+
+        while l1 and l2:
+            if l1.val < l2.val:
+                tail.next, l1 = l1, l1.next 
+            else:
+                tail.next, l2 = l2, l2.next 
+            tail = tail.next
+        
+        while l1:
+            tail.next, l1 = l1, l1.next 
+            tail = tail.next
+        
+        while l2:
+            tail.next, l2 = l2, l2.next 
+            tail = tail.next
+        
+        return head.next
+```
+
+
+
 # [121. 买卖股票的最佳时机](https://leetcode-cn.com/problems/best-time-to-buy-and-sell-stock/)
 
 难度 简单
@@ -2479,6 +2735,63 @@ class Solution:
             result += self.landArea(i, j + 1, grid)
         
         return result
+```
+
+
+
+# [820. 单词的压缩编码](https://leetcode-cn.com/problems/short-encoding-of-words/)
+
+难度 中等
+
+给定一个单词列表，我们将这个列表编码成一个索引字符串 `S` 与一个索引列表 `A`。
+
+例如，如果这个列表是 `["time", "me", "bell"]`，我们就可以将其表示为 `S = "time#bell#"` 和 `indexes = [0, 2, 5]`。
+
+对于每一个索引，我们可以通过从字符串 `S` 中索引的位置开始读取字符串，直到 "#" 结束，来恢复我们之前的单词列表。
+
+那么成功对给定单词列表进行编码的最小字符串长度是多少呢？
+
+ 
+
+**示例：**
+
+```
+输入: words = ["time", "me", "bell"]
+输出: 10
+说明: S = "time#bell#" ， indexes = [0, 2, 5] 。
+```
+
+ 
+
+**提示：**
+
+1. `1 <= words.length <= 2000`
+2. `1 <= words[i].length <= 7`
+3. 每个单词都是小写字母 。
+
+
+
+**解法**
+
+将所有单词加入一个列表中，移除每个单词可以产生的后缀。所有单词长度之和，即为结果。
+
+时间复杂度： $O(\sum w_i^2)$ 其中 $w_i$ 是 `words[i]​` 的长度。每个单词有 $w_i$ 个后缀，对于每个后缀，查询其是否在集合中时需要进行 $O(w_i)$ 的哈希值计算；空间复杂度： $O(\sum w_i)$ 。
+
+
+
+**代码**
+
+``` python
+class Solution:
+    def minimumLengthEncoding(self, words: List[str]) -> int:
+        s = set(words)
+
+        for word in words:
+            for i in range(1, len(word)):
+                s.discard(word[i:])
+        
+        res = sum(len(word) + 1 for word in s)
+        return res
 ```
 
 
