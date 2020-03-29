@@ -3781,6 +3781,198 @@ class Solution:
 
 
 
+# [1162. 地图分析](https://leetcode-cn.com/problems/as-far-from-land-as-possible/)
+
+难度 中等
+
+你现在手里有一份大小为 N x N 的『地图』（网格） `grid`，上面的每个『区域』（单元格）都用 `0` 和 `1` 标记好了。其中 `0` 代表海洋，`1` 代表陆地，你知道距离陆地区域最远的海洋区域是是哪一个吗？请返回该海洋区域到离它最近的陆地区域的距离。
+
+我们这里说的距离是『曼哈顿距离』（ Manhattan Distance）：`(x0, y0)` 和 `(x1, y1)` 这两个区域之间的距离是 `|x0 - x1| + |y0 - y1|` 。
+
+如果我们的地图上只有陆地或者海洋，请返回 `-1`。
+
+ 
+
+**示例 1：**
+
+**![img](https://assets.leetcode-cn.com/aliyun-lc-upload/uploads/2019/08/17/1336_ex1.jpeg)**
+
+```
+输入：[[1,0,1],[0,0,0],[1,0,1]]
+输出：2
+解释： 
+海洋区域 (1, 1) 和所有陆地区域之间的距离都达到最大，最大距离为 2。
+```
+
+**示例 2：**
+
+**![img](https://assets.leetcode-cn.com/aliyun-lc-upload/uploads/2019/08/17/1336_ex2.jpeg)**
+
+```
+输入：[[1,0,0],[0,0,0],[0,0,0]]
+输出：4
+解释： 
+海洋区域 (2, 2) 和所有陆地区域之间的距离都达到最大，最大距离为 4。
+```
+
+ 
+
+**提示：**
+
+1. `1 <= grid.length == grid[0].length <= 100`
+2. `grid[i][j]` 不是 `0` 就是 `1`
+
+
+
+**解法**
+
++ 方法一：广度优先遍历。（超时）时间复杂度：$O(N^4)$，空间复杂度：$O(N^2)$ 。
++ 方法二：多源广度优先遍历。将陆地作为源点集，进行广度优先遍历。时间复杂度：$O(N^2)$，空间复杂度：$O(N^2)$ 。
++ 方法三：动态规划。  对于每个海洋区域，离它最近的陆地区域到它的路径要么从上方或者左方来，要么从右方或者下方来。 做两次动态规划，第一次从左上到右下，第二次从右下到左上。时间复杂度：$O(N^2)$，空间复杂度：$O(N^2)$ 。
+
+
+
+**代码**
+
+```python
+# 方法一
+class Solution:
+    def maxDistance(self, grid: List[List[int]]) -> int:
+        self.size = len(grid)
+        self.grid = grid
+
+        res = -1
+        dis = 0
+        for i in range(0, self.size):
+            for j in range(0, self.size):
+                if grid[i][j] == 0:
+                    dis = self.BFS(i, j)
+                    res = max(res, dis)
+                    if dis == -1:
+                        break
+            if dis == -1:
+                break
+        
+        return res
+        
+
+    def BFS(self, x, y):
+        li = [[x, y, 0]]
+        visited = [[False] * self.size for i in range(self.size)]
+        
+        dis_x = [-1, 1, 0, 0]
+        dis_y = [0, 0, -1, 1]
+        index = 0
+        land = False
+
+        while index < len(li):
+            x = li[index][0]
+            y = li[index][1]
+            d = li[index][2]
+
+            index += 1
+            
+            for i in range(0, 4):
+                if x + dis_x[i] >= 0 and x + dis_x[i] < self.size:
+                    if y + dis_y[i] >= 0 and y + dis_y[i] < self.size:
+                        if self.grid[x + dis_x[i]][y + dis_y[i]] == 0:
+                            if not visited[x + dis_x[i]][y + dis_y[i]]:
+                                li.append([x + dis_x[i], y + dis_y[i], d + 1])
+                                visited[x + dis_x[i]][y + dis_y[i]] = True
+                        else:
+                            land = True
+                            break
+
+            if land:
+                break
+
+        if land:
+            return d + 1
+        else:
+            return -1
+
+                
+# 方法二
+class Solution:
+    def maxDistance(self, grid: List[List[int]]) -> int:
+        n = len(grid)
+
+        INF = 10000
+        dx = [-1, 0, 1, 0]
+        dy = [0, 1, 0, -1]
+        d = [[INF] * n for i in range(n)]
+
+        import queue
+        q = queue.Queue()
+
+        # 将陆地作为源点
+        for i in range(0, n):
+            for j in range(0, n):
+                if grid[i][j] == 1:
+                    d[i][j] = 0
+                    q.put([i, j])
+        
+        while not q.empty():
+            x, y = q.get()
+            for i in range(0, 4):
+                xx = x + dx[i]
+                yy = y + dy[i]
+                if xx >= 0 and xx < n and yy >= 0 and yy < n:
+                    if d[xx][yy] > d[x][y] + 1:
+                        d[xx][yy] =  d[x][y] + 1
+                        q.put([xx, yy])
+        
+        ans = -1
+        for i in range(0, n):
+            for j in range(0, n):
+                if grid[i][j] == 0:
+                    ans = max(ans, d[i][j])
+
+        return -1 if ans == INF else ans
+    
+    
+# 方法三
+class Solution:
+    def maxDistance(self, grid: List[List[int]]) -> int:
+        n = len(grid)
+
+        INF = 10000
+        d = [[INF] * n for i in range(n)]
+
+        for i in range(0, n):
+            for j in range(0, n):
+                d[i][j] = 0 if grid[i][j] == 1 else INF
+
+        for i in range(0, n):
+            for j in range(0, n):
+                if grid[i][j] == 0:
+                    if i - 1 >= 0:
+                        d[i][j] = min(d[i - 1][j] + 1, d[i][j])
+                    if j - 1 >= 0:
+                        d[i][j] = min(d[i][j - 1] + 1, d[i][j])
+        
+        for i in range(n-1 , -1, -1):
+            for j in range(n-1 , -1, -1):
+                if grid[i][j] == 0:
+                    if i + 1 < n:
+                        d[i][j] = min(d[i + 1][j] + 1, d[i][j])
+                    if j + 1 < n:
+                        d[i][j] = min(d[i][j + 1] + 1, d[i][j])
+        
+        ans = -1
+
+        for i in range(0, n):
+            for j in range(0, n):
+                if grid[i][j] == 0:
+                    ans = max(ans, d[i][j])
+
+        return ans if ans != INF else -1
+```
+
+
+
+
+
 # [面试题 01.06. 字符串压缩](https://leetcode-cn.com/problems/compress-string-lcci/)
 
 难度 简单
