@@ -3007,6 +3007,111 @@ class Solution:
 
 
 
+# [912. 排序数组](https://leetcode-cn.com/problems/sort-an-array/)
+
+难度 中等
+
+给你一个整数数组 `nums`，请你将该数组升序排列。
+
+
+
+**示例 1：**
+
+```
+输入：nums = [5,2,3,1]
+输出：[1,2,3,5]
+```
+
+**示例 2：**
+
+```
+输入：nums = [5,1,1,2,0,0]
+输出：[0,0,1,1,2,5]
+```
+
+ 
+
+**提示：**
+
+1. `1 <= nums.length <= 50000`
+2. `-50000 <= nums[i] <= 50000`
+
+
+
+**解法**
+
++ 方法一：使用库函数。
+
++ 方法二：快速排序。时间复杂度：平均 $O(N \log N)$ ，最坏 $O(N^2)$ ，空间复杂度：$O(1)$ 。
+
+  
+
+**代码**
+
+```python
+# 方法一
+class Solution:
+    def sortArray(self, nums: List[int]) -> List[int]:
+        nums.sort()
+        return nums
+
+# 方法二
+class Solution:
+    def sortArray(self, nums: List[int]) -> List[int]:
+        self.quickSort(nums, 0, len(nums) - 1)
+        return nums
+
+    def quickSortPart(self, nums, l, r): 
+        pivot = r
+        r -= 1
+        if l == r:
+            if nums[l] > nums[pivot]:
+                nums[l], nums[pivot] = nums[pivot], nums[l]
+
+        while l < r:
+            while l < r and nums[l] <= nums[pivot]:
+                l += 1
+            
+            if l == r:
+                if nums[l] > nums[pivot]:
+                    nums[l], nums[pivot] = nums[pivot], nums[l]
+                else:
+                    l += 1
+                    nums[l], nums[pivot] = nums[pivot], nums[l]
+                break
+                    
+            while l < r and nums[r] > nums[pivot]:
+                r -= 1
+            
+            if l == r:
+                nums[l], nums[pivot] = nums[pivot], nums[l]
+                break
+
+            nums[l], nums[r] = nums[r], nums[l]
+        return l
+
+
+    def quickSort(self, nums, l, r):
+        if l >= r:
+            return
+        mid = self.quickSortPart(nums, l, r)
+        self.quickSort(nums, l, mid - 1)
+        self.quickSort(nums, mid + 1, r)
+```
+
+```cpp
+// 方法一
+class Solution {
+public:
+    vector<int> sortArray(vector<int>& nums) {
+        sort(nums.begin(), nums.end());
+        return nums;
+    }
+};
+```
+
+
+
 # [914. 卡牌分组](https://leetcode-cn.com/problems/x-of-a-kind-in-a-deck-of-cards/)
 
 难度 简单
@@ -4412,4 +4517,70 @@ class MaxQueue:
             self.maxvalue.popleft()
         return ans
 ```
+
+
+
+# [面试题62. 圆圈中最后剩下的数字](https://leetcode-cn.com/problems/yuan-quan-zhong-zui-hou-sheng-xia-de-shu-zi-lcof/)
+
+难度 简单
+
+0,1,,n-1这n个数字排成一个圆圈，从数字0开始，每次从这个圆圈里删除第m个数字。求出这个圆圈里剩下的最后一个数字。
+
+例如，0、1、2、3、4这5个数字组成一个圆圈，从数字0开始每次删除第3个数字，则删除的前4个数字依次是2、0、4、1，因此最后剩下的数字是3。
+
+ 
+
+**示例 1：**
+
+```
+输入: n = 5, m = 3
+输出: 3
+```
+
+**示例 2：**
+
+```
+输入: n = 10, m = 17
+输出: 2
+```
+
+ 
+
+**限制：**
+
+- `1 <= n <= 10^5`
+- `1 <= m <= 10^6`
+
+
+
+**解法**
+
+约瑟夫环问题
+
+当人数为1时，安全位置为 $0$ 。
+
+当人数为2时，安全位置为 $(0 + m) \mod 2$ 。
+
+当人数为3时，安全位置为 $((0 + m) \mod 2 + m) \mod 3$ 。
+
+...
+
+ 时间复杂度：$O(N)$，空间复杂度：$O(1)$。
+
+
+
+**代码**
+
+```python
+class Solution:
+    def lastRemaining(self, n: int, m: int) -> int:
+        ans = 0;
+        for i in range(2, n + 1):
+            ans = (ans + m) % i
+        return ans
+```
+
+
+
+
 
