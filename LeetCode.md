@@ -1853,6 +1853,112 @@ class Solution:
 
 
 
+# [42. 接雨水](https://leetcode-cn.com/problems/trapping-rain-water/)
+
+难度 困难
+
+给定 *n* 个非负整数表示每个宽度为 1 的柱子的高度图，计算按此排列的柱子，下雨之后能接多少雨水。
+
+![img](https://assets.leetcode-cn.com/aliyun-lc-upload/uploads/2018/10/22/rainwatertrap.png)
+
+上面是由数组 [0,1,0,2,1,0,1,3,2,1,2,1] 表示的高度图，在这种情况下，可以接 6 个单位的雨水（蓝色部分表示雨水）。 **感谢 Marcos** 贡献此图。
+
+**示例:**
+
+```
+输入: [0,1,0,2,1,0,1,3,2,1,2,1]
+输出: 6
+```
+
+
+
+**解法**
+
++ 方法一：设当前水面高度为 $i$ ，对于高度少于 $i$ 的地方，如果其左右均有高于等于 $i$ 的壁，则可以积水。（超时）时间复杂度： $O(iN^2)$  $i$ 为壁最高高度，空间复杂度： $O(1)$ 。
++ 方法二：暴力法。对每个横坐标，查找其左右最高壁的高度，其中较低者与当前高度只差为该处可积的水量。时间复杂度： $O(N^2)$ ，空间复杂度： $O(1)$ 。
++ 方法上：双指针。若左边壁小于右边壁，对于左边指针指向的壁，若小于目前左边壁的最大值，则该处可积的水量为该处高度与左边壁最大值之差；若大于目前左边壁最大值，则更新左边壁最大值。时间复杂度： $O(N)$ ，空间复杂度： $O(1)$ 。
+
+
+
+**代码**
+
+```python
+# 方法一
+class Solution:
+    def trap(self, height: List[int]) -> int:
+        ans  = 0
+
+        if not height:
+            return ans
+            
+        for i in range(1, max(height) + 1):
+            j = 0
+            while j < len(height):
+                if height[j] < i:
+                    left = j - 1
+                    while left >= 0 and height[left] < i:
+                        left -= 1
+                    # 存在左壁
+                    if left >= 0:
+                        right = j + 1
+                        while right < len(height) and height[right] < i:
+                            right += 1
+                        
+                        # 存在右壁
+                        if right < len(height):
+                            # print('height:{} left:{} right:{}'.format(i, left, right))
+                            ans += (right - left - 1)
+                            j = right + 1
+                            continue
+                j += 1
+        return ans
+
+# 方法二
+class Solution:
+    def trap(self, height: List[int]) -> int:
+        ans  = 0
+
+        if not height:
+            return ans
+
+        for i in range(1, len(height) - 1):
+            left = max(height[:i])
+            right = max(height[i + 1:])
+            if left > height[i] and right > height[i]:
+                ans += min(left, right) - height[i]
+            
+        return ans
+
+# 方法三
+class Solution:
+    def trap(self, height: List[int]) -> int:
+        ans  = 0
+        left = 0
+        right = len(height) - 1
+        left_max = 0
+        right_max = 0
+
+        while left < right:
+            if height[left] < height[right]:
+                if height[left] > left_max:
+                    left_max = height[left]
+                else:
+                    ans += left_max - height[left]
+                
+                left += 1
+            else:
+                if height[right] > right_max:
+                    right_max = height[right]
+                else:
+                    ans  += right_max - height[right]
+                
+                right -= 1
+
+        return ans
+```
+
+
+
 # [121. 买卖股票的最佳时机](https://leetcode-cn.com/problems/best-time-to-buy-and-sell-stock/)
 
 难度 简单
