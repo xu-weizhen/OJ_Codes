@@ -1853,6 +1853,54 @@ class Solution:
 
 
 
+# [22. 括号生成](https://leetcode-cn.com/problems/generate-parentheses/)
+
+难度 中等
+
+给出 *n* 代表生成括号的对数，请你写出一个函数，使其能够生成所有可能的并且**有效的**括号组合。
+
+例如，给出 *n* = 3，生成结果为：
+
+```
+[
+  "((()))",
+  "(()())",
+  "(())()",
+  "()(())",
+  "()()()"
+]
+```
+
+
+
+**解法**
+
+递归。判断当前字符串中左右括号数量，若还能添加左括号，则添加左括号后递归；若右括号少于左括号，则添加右括号后递归。 时间复杂度：$O(\dfrac{4^n}{\sqrt{n}})$， 空间复杂度：$O(\dfrac{4^n}{\sqrt{n}})$ 。
+
+
+
+**代码**
+
+```python
+class Solution:
+    def generateParenthesis(self, n: int) -> List[str]:
+        ans = []
+
+        def add(s, left, right):
+            if len(s) == 2 * n:
+                ans.append(s)
+                return
+            if left < n:
+                add(s + '(', left + 1, right)
+            if right < left:
+                add(s + ')', left, right + 1)
+        
+        add('', 0, 0)
+        return ans
+```
+
+
+
 # [42. 接雨水](https://leetcode-cn.com/problems/trapping-rain-water/)
 
 难度 困难
@@ -4662,7 +4710,7 @@ class Solution:
 
 # [面试题 01.07. 旋转矩阵](https://leetcode-cn.com/problems/rotate-matrix-lcci/)
 
-难度中等48收藏分享切换为英文关注反馈
+难度 中等
 
 给你一幅由 `N × N` 矩阵表示的图像，其中每个像素的大小为 4 字节。请你设计一种算法，将图像旋转 90 度。
 
