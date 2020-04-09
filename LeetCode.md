@@ -1901,6 +1901,85 @@ class Solution:
 
 
 
+# [23. 合并K个排序链表](https://leetcode-cn.com/problems/merge-k-sorted-lists/)
+
+难度 困难
+
+合并 *k* 个排序链表，返回合并后的排序链表。请分析和描述算法的复杂度。
+
+**示例:**
+
+```
+输入:
+[
+  1->4->5,
+  1->3->4,
+  2->6
+]
+输出: 1->1->2->3->4->4->5->6
+```
+
+
+
+**解法**
+
+相邻的两个列表两两合并。时间复杂度： $O(N \log k)$ ，空间复杂度： $O(1)$ 。
+
+
+
+**代码**
+
+```python
+# Definition for singly-linked list.
+# class ListNode:
+#     def __init__(self, x):
+#         self.val = x
+#         self.next = None
+
+class Solution:
+    def mergeKLists(self, lists: List[ListNode]) -> ListNode:
+        if len(lists) <= 0:
+            return None
+        elif len(lists) == 1:
+            return lists[0]
+        else:
+            while len(lists) > 1:
+                res = self.merge2(lists[0], lists[1])
+                del lists[0]
+                del lists[0]
+                lists.append(res)
+            return lists[0]
+
+
+    def merge2(self, list1, list2):
+        res = ListNode(0)
+        tail = res
+
+        while list1 and list2:
+            if list1.val < list2.val:
+                tail.next = list1
+                list1 = list1.next
+            else:
+                tail.next = list2
+                list2 = list2.next
+            tail = tail.next
+        
+        while list1:
+            tail.next = list1
+            list1 = list1.next
+            tail = tail.next
+        
+        while list2:
+            tail.next = list2
+            list2 = list2.next
+            tail = tail.next
+
+        tail.next = None
+        return res.next
+```
+
+
+
 # [42. 接雨水](https://leetcode-cn.com/problems/trapping-rain-water/)
 
 难度 困难
