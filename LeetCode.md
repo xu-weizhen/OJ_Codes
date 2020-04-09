@@ -4787,7 +4787,7 @@ class Solution:
 
 
 
-# [面试题10.01. 合并排序的数组](https://leetcode-cn.com/problems/sorted-merge-lcci/)
+# [面试题 10.01. 合并排序的数组](https://leetcode-cn.com/problems/sorted-merge-lcci/)
 
 难度 简单
 
@@ -4860,6 +4860,85 @@ class Solution:
         """
         A[m:] = B
         A.sort()
+```
+
+
+
+# [面试题13. 机器人的运动范围](https://leetcode-cn.com/problems/ji-qi-ren-de-yun-dong-fan-wei-lcof/)
+
+难度 中等
+
+地上有一个m行n列的方格，从坐标 `[0,0]` 到坐标 `[m-1,n-1]` 。一个机器人从坐标 `[0, 0] `的格子开始移动，它每次可以向左、右、上、下移动一格（不能移动到方格外），也不能进入行坐标和列坐标的数位之和大于k的格子。例如，当k为18时，机器人能够进入方格 [35, 37] ，因为3+5+3+7=18。但它不能进入方格 [35, 38]，因为3+5+3+8=19。请问该机器人能够到达多少个格子？
+
+ 
+
+**示例 1：**
+
+```
+输入：m = 2, n = 3, k = 1
+输出：3
+```
+
+**示例 1：**
+
+```
+输入：m = 3, n = 1, k = 0
+输出：1
+```
+
+**提示：**
+
+- `1 <= n,m <= 100`
+- `0 <= k <= 20`
+
+
+
+**解法**
+
+广度优先搜索。时间复杂度： $O(MN)$ ，空间复杂度：  $O(MN)$ 。
+
+
+
+**代码**
+
+```python
+class Solution:
+    def movingCount(self, m: int, n: int, k: int) -> int:
+        self.grid = [[0 for i in range(n)] for i in range(m)]
+        self.dx = [-1, 1, 0, 0]
+        self.dy = [0, 0, -1, 1]
+        self.m = m
+        self.n = n
+        self.k = k
+
+        self.grid[0][0] = 1
+        self.move(0, 0)
+
+        count = 0
+        for i in range(self.m):
+            for j in range(self.n):
+                if self.grid[i][j]:
+                    count += 1
+        
+        return count
+
+    def count(self, x, y):
+        count = 0
+        while x > 0:
+            count += x % 10
+            x //= 10
+        while y > 0:
+            count += y % 10
+            y //= 10
+        return count
+
+    def move(self, x, y):
+        for i in range(4):
+            if 0 <= x + self.dx[i] < self.m and 0 <=  y + self.dy[i] < self.n \
+                    and self.grid[x + self.dx[i]][y + self.dy[i]] == 0 \
+                    and self.count(x + self.dx[i], y + self.dy[i]) <= self.k:
+                self.grid[x + self.dx[i]][y + self.dy[i]] = 1
+                self.move(x + self.dx[i], y + self.dy[i])
 ```
 
 
