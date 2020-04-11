@@ -2241,6 +2241,103 @@ class Solution:
 
 
 
+# [151. 翻转字符串里的单词](https://leetcode-cn.com/problems/reverse-words-in-a-string/)
+
+难度 中等
+
+给定一个字符串，逐个翻转字符串中的每个单词。
+
+ 
+
+**示例 1：**
+
+```
+输入: "the sky is blue"
+输出: "blue is sky the"
+```
+
+**示例 2：**
+
+```
+输入: "  hello world!  "
+输出: "world! hello"
+解释: 输入字符串可以在前面或者后面包含多余的空格，但是反转后的字符不能包括。
+```
+
+**示例 3：**
+
+```
+输入: "a good   example"
+输出: "example good a"
+解释: 如果两个单词间有多余的空格，将反转后单词间的空格减少到只含一个。
+```
+
+ 
+
+**说明：**
+
+- 无空格字符构成一个单词。
+- 输入字符串可以在前面或者后面包含多余的空格，但是反转后的字符不能包括。
+- 如果两个单词间有多余的空格，将反转后单词间的空格减少到只含一个。
+
+ 
+
+**进阶：**
+
+请选用 C 语言的用户尝试使用 *O*(1) 额外空间复杂度的原地解法。
+
+
+
+**解法**
+
++ 方法一：使用 `python` 进行切片和翻转，然后进行拼接。时间复杂度：$O(N)$ ，空间复杂度：$O(N)$ 。
++ 方法二：将字符串整体翻转，然后再对每个字符进行翻转。时间复杂度：$O(n)$ ，空间复杂度：$O(1)$ 。
+
+
+
+**代码**
+
+```python
+# 方法一
+class Solution:
+    def reverseWords(self, s: str) -> str:
+        return " ".join(reversed(s.split()))
+```
+
+```cpp
+// 方法二
+class Solution {
+public:
+    string reverseWords(string s) {
+        // 反转整个字符串
+        reverse(s.begin(), s.end());
+
+        int n = s.size();
+        int idx = 0;
+        for (int start = 0; start < n; ++start) {
+            if (s[start] != ' ') {
+                // 填一个空白字符然后将idx移动到下一个单词的开头位置
+                if (idx != 0) s[idx++] = ' ';
+
+                // 循环遍历至单词的末尾
+                int end = start;
+                while (end < n && s[end] != ' ') s[idx++] = s[end++];
+
+                // 反转整个单词
+                reverse(s.begin() + idx - (end - start), s.begin() + idx);
+
+                // 更新start，去找下一个单词
+                start = end;
+            }
+        }
+        s.erase(s.begin() + idx, s.end());
+        return s;
+    }
+};
+```
+
+
+
 # [169. 多数元素](https://leetcode-cn.com/problems/majority-element/)
 
 难度 简单
@@ -3480,6 +3577,114 @@ class Solution:
                 fast = fast.next
         
         return slow
+```
+
+
+
+# [887. 鸡蛋掉落](https://leetcode-cn.com/problems/super-egg-drop/)
+
+难度 困难
+
+你将获得 `K` 个鸡蛋，并可以使用一栋从 `1` 到 `N` 共有 `N` 层楼的建筑。
+
+每个蛋的功能都是一样的，如果一个蛋碎了，你就不能再把它掉下去。
+
+你知道存在楼层 `F` ，满足 `0 <= F <= N` 任何从高于 `F` 的楼层落下的鸡蛋都会碎，从 `F` 楼层或比它低的楼层落下的鸡蛋都不会破。
+
+每次*移动*，你可以取一个鸡蛋（如果你有完整的鸡蛋）并把它从任一楼层 `X` 扔下（满足 `1 <= X <= N`）。
+
+你的目标是**确切地**知道 `F` 的值是多少。
+
+无论 `F` 的初始值如何，你确定 `F` 的值的最小移动次数是多少？
+
+ 
+
+
+
+**示例 1：**
+
+```
+输入：K = 1, N = 2
+输出：2
+解释：
+鸡蛋从 1 楼掉落。如果它碎了，我们肯定知道 F = 0 。
+否则，鸡蛋从 2 楼掉落。如果它碎了，我们肯定知道 F = 1 。
+如果它没碎，那么我们肯定知道 F = 2 。
+因此，在最坏的情况下我们需要移动 2 次以确定 F 是多少。
+```
+
+**示例 2：**
+
+```
+输入：K = 2, N = 6
+输出：3
+```
+
+**示例 3：**
+
+```
+输入：K = 3, N = 14
+输出：4
+```
+
+ 
+
+**提示：**
+
+1. `1 <= K <= 100`
+2. `1 <= N <= 10000`
+
+
+
+**解法**
+
+动态规划 + 二分搜索
+$$
+dp(K,N) = 1 + \min_{1 \le X \le N}(\max{(dp(K−1,X−1),dp(K,N−X))})
+$$
+在上述的状态转移方程中，第一项 $\mathcal{T_1}(X) = dp(K-1, X-1)$  是一个随 $X$ 的增加而单调递增的函数，第二项 $\mathcal{T_2}(X) = dp(K, N-X)$ 是一个随着 $X$ 的增加而单调递减的函数。使用二分搜索找出这两个函数的交点，在交点处就保 证这两个函数的最大值最小。 
+
+时间复杂度：$O(K * N \log N)$ 。需要计算  个状态，每个状态计算时需要 $O(\log N)$ 的时间进行二分搜索。空间复杂度：$O(K * N)$ 。需要 $O(K * N)$ 的空间存储每个状态的解。
+
+
+
+**代码**
+
+```python
+class Solution:
+    def superEggDrop(self, K: int, N: int) -> int:
+        test = {}
+
+        def dp(k, n):
+            if (k, n) not in test:
+                # 楼层为0
+                if n == 0:
+                    ans = 0
+                # 鸡蛋为1
+                elif k == 1:
+                    ans = n
+                else:
+                    # 二分法查找
+                    low, high = 1, n
+                    while low + 1 < high:
+                        x = (low + high) // 2
+                        t1 = dp(k-1, x-1)   # 碎了
+                        t2 = dp(k, n-x)     # 没碎
+
+                        if t1 < t2:
+                            low = x
+                        elif t1 > t2:
+                            high = x
+                        else:
+                            low = high = x
+
+                    ans = 1 + min(max(dp(k-1, x-1), dp(k, n-x))
+                                  for x in (low, high))
+
+                test[k, n] = ans
+            return test[k, n]
+
+        return dp(K, N)
 ```
 
 
