@@ -3265,6 +3265,76 @@ class Solution:
 
 
 
+# [445. 两数相加 II](https://leetcode-cn.com/problems/add-two-numbers-ii/)
+
+难度 中等
+
+给你两个 **非空** 链表来代表两个非负整数。数字最高位位于链表开始位置。它们的每个节点只存储一位数字。将这两数相加会返回一个新的链表。
+
+你可以假设除了数字 0 之外，这两个数字都不会以零开头。
+
+ 
+
+**进阶：**
+
+如果输入链表不能修改该如何处理？换句话说，你不能对列表中的节点进行翻转。
+
+ 
+
+**示例：**
+
+```
+输入：(7 -> 2 -> 4 -> 3) + (5 -> 6 -> 4)
+输出：7 -> 8 -> 0 -> 7
+```
+
+
+
+**解法**
+
+将两个链表表示的值存入变量，相加得到结构，并构建新链表。时间复杂度：$O(MN)$，空间复杂度：$O(\max(M,N))$ 。 $M, N$ 分别为两个链表的长度。
+
+
+
+**代码**
+
+```python
+# Definition for singly-linked list.
+# class ListNode:
+#     def __init__(self, x):
+#         self.val = x
+#         self.next = None
+
+class Solution:
+    def addTwoNumbers(self, l1: ListNode, l2: ListNode) -> ListNode:
+        add1 = 0
+        add2 = 0
+
+        point = l1
+        while point:
+            add1 = add1 * 10 + point.val
+            point = point.next
+
+        point = l2
+        while point:
+            add2 = add2 * 10 + point.val
+            point = point.next
+
+        res = add1 + add2
+        head = ListNode(0)
+        while True:
+            node = ListNode(res % 10)
+            res //= 10
+            node.next = head.next
+            head.next = node
+            if res == 0:
+                break
+        
+        return head.next
+```
+
+
+
 # [460. LFU缓存](https://leetcode-cn.com/problems/lfu-cache/)
 
 难度 困难 
