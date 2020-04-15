@@ -3453,6 +3453,98 @@ class LFUCache:
 
 
 
+# [542. 01 矩阵](https://leetcode-cn.com/problems/01-matrix/)
+
+难度 中等
+
+给定一个由 0 和 1 组成的矩阵，找出每个元素到最近的 0 的距离。
+
+两个相邻元素间的距离为 1 。
+
+**示例 1:**
+输入:
+
+```
+0 0 0
+0 1 0
+0 0 0
+```
+
+输出:
+
+```
+0 0 0
+0 1 0
+0 0 0
+```
+
+**示例 2:**
+输入:
+
+```
+0 0 0
+0 1 0
+1 1 1
+```
+
+输出:
+
+```
+0 0 0
+0 1 0
+1 2 1
+```
+
+**注意:**
+
+1. 给定矩阵的元素个数不超过 10000。
+2. 给定矩阵中至少有一个元素是 0。
+3. 矩阵中的元素只在四个方向上相邻: 上、下、左、右。
+
+
+
+**解法**
+
+动态规划。先看左和上，再看右和下。时间复杂度：$O(N^2)$，空间复杂度：$O(1)$ ， $N$ 为矩阵宽度。
+
+
+
+**代码**
+
+```python
+class Solution:
+    def updateMatrix(self, matrix: List[List[int]]) -> List[List[int]]:
+        m = len(matrix)
+        n = len(matrix[0])
+
+        dp = [[10000] * n for _ in range(m)]
+
+        for i in range(m):
+            for j in range(n):
+                if matrix[i][j] == 0:
+                    dp[i][j] = 0
+
+        # 左和上
+        for i in range(m):
+            for j in range(n):
+                if i - 1 >= 0:
+                    dp[i][j] = min(dp[i][j], dp[i - 1][j] + 1)
+                if j - 1 >= 0: 
+                    dp[i][j] = min(dp[i][j], dp[i][j - 1] + 1)
+
+        # 右和上
+        for i in range(m - 1, -1, -1):
+            for j in range(n - 1, -1, -1):
+                if i + 1 < m:
+                    dp[i][j] = min(dp[i][j], dp[i + 1][j] + 1)
+                if j + 1 < n: 
+                    dp[i][j] = min(dp[i][j], dp[i][j + 1] + 1)
+
+        return dp
+```
+
+
+
 # [543. 二叉树的直径](https://leetcode-cn.com/problems/diameter-of-binary-tree/)
 
 难度 简单
@@ -3549,7 +3641,7 @@ class Solution:
 
 **解法**
 
-广度优先搜索。使用一个数组保存已经访问过的地点，遍历所有地点，对未访问的陆地递归计算其面积，返回最大的面积。时间复杂度：$O(mn)$，空间复杂度：$O(mn)$
+广度优先搜索。使用一个数组保存已经访问过的地点，遍历所有地点，对未访问的陆地递归计算其面积，返回最大的面积。时间复杂度：$O(mn)$，空间复杂度：$O(mn)$ 。
 
 
 
