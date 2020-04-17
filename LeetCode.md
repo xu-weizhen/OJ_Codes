@@ -2085,6 +2085,59 @@ class Solution:
 ```
 
 
+
+# [55. 跳跃游戏](https://leetcode-cn.com/problems/jump-game/)
+
+难度 中等
+
+给定一个非负整数数组，你最初位于数组的第一个位置。
+
+数组中的每个元素代表你在该位置可以跳跃的最大长度。
+
+判断你是否能够到达最后一个位置。
+
+**示例 1:**
+
+```
+输入: [2,3,1,1,4]
+输出: true
+解释: 我们可以先跳 1 步，从位置 0 到达 位置 1, 然后再从位置 1 跳 3 步到达最后一个位置。
+```
+
+**示例 2:**
+
+```
+输入: [3,2,1,0,4]
+输出: false
+解释: 无论怎样，你总会到达索引为 3 的位置。但该位置的最大跳跃长度是 0 ， 所以你永远不可能到达最后一个位置。
+```
+
+
+
+**解法**
+
+维护一个变量指向目前可以到达的最远位置，遍历数组，更新该变量。时间复杂度：$O(N)$ ，空间复杂度：$O(1)$ 。
+
+
+
+**代码**
+
+```python
+class Solution:
+    def canJump(self, nums: List[int]) -> bool:
+        far = 0                         # 最远可到的距离
+        for i in range(len(nums)):
+            if i + nums[i] > far:
+                far = i + nums[i]
+            if far >= len(nums) - 1:
+                return True
+            if far == i:                # 卡在某处
+                break
+
+        return False
+```
+
+
 # [56. 合并区间](https://leetcode-cn.com/problems/merge-intervals/)
 
 难度 中等 
