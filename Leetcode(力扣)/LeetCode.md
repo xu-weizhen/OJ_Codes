@@ -2492,6 +2492,84 @@ class Solution:
 
 
 
+# [200. 岛屿数量](https://leetcode-cn.com/problems/number-of-islands/)
+
+难度 中等
+
+给你一个由 `'1'`（陆地）和 `'0'`（水）组成的的二维网格，请你计算网格中岛屿的数量。
+
+岛屿总是被水包围，并且每座岛屿只能由水平方向和/或竖直方向上相邻的陆地连接形成。
+
+此外，你可以假设该网格的四条边均被水包围。
+
+**示例 1:**
+
+```
+输入:
+11110
+11010
+11000
+00000
+输出: 1
+```
+
+**示例 2:**
+
+```
+输入:
+11000
+11000
+00100
+00011
+输出: 3
+解释: 每座岛屿只能由水平和/或竖直方向上相邻的陆地连接而成。
+```
+
+
+
+**解法**
+
+每个点进行深度优先搜索。时间复杂度：$O(MN)$ ，空间复杂度：$O(MN)$ 。 $M,N$ 是地图长度和宽度。
+
+
+
+**代码**
+
+```python
+class Solution:
+    def numIslands(self, grid: List[List[str]]) -> int:
+        m = len(grid)
+        if m == 0:
+            return 0
+
+        n = len(grid[0])
+
+        find = [[True for i in range(n)] for j in range(m)]
+        ans = 0
+
+        dx = [-1, 1, 0, 0]
+        dy = [0, 0, -1, 1]
+
+        def DFS(i, j):
+            find[i][j] = False
+            for k in range(4):
+                x = i + dx[k]
+                y = j + dy[k]
+                if x >= 0 and x < m and y >= 0 and y < n and find[x][y] and grid[x][y] == '1':
+                    BFS(x, y)
+
+
+        for i in range(m):
+            for j in range(n):
+                if grid[i][j] == '1' and find[i][j]:
+                    DFS(i, j)
+                    ans += 1
+        
+        return ans
+```
+
+
+
 # [206. 反转链表](https://leetcode-cn.com/problems/reverse-linked-list/)
 
 难度 简单
