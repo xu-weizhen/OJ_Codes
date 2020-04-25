@@ -2086,6 +2086,62 @@ class Solution:
 
 
 
+# [46. 全排列](https://leetcode-cn.com/problems/permutations/)
+
+难度 中等
+
+给定一个 **没有重复** 数字的序列，返回其所有可能的全排列。
+
+**示例:**
+
+```
+输入: [1,2,3]
+输出:
+[
+  [1,2,3],
+  [1,3,2],
+  [2,1,3],
+  [2,3,1],
+  [3,1,2],
+  [3,2,1]
+]
+```
+
+
+
+**思路**
+
+将原数组划分为两部分，左边为已经填入答案数组的，右边为还没填入答案数组的，递归将右边的数分别填入。时间复杂度：$O(N*N!)$ ，空间复杂度：$O(N)$ 。
+
+
+
+**代码**
+
+```python
+class Solution:
+    def permute(self, nums: List[int]) -> List[List[int]]:
+        n = len(nums)
+        res = []
+
+        def trackback(now):
+            # 已全部填入
+            if now == n:
+                res.append(nums[:])
+            
+            for i in range(now, n):
+                # 维护数组
+                nums[now], nums[i] = nums[i], nums[now]
+                # 填下一位
+                trackback(now + 1)
+                # 撤销操作
+                nums[now], nums[i] = nums[i], nums[now]
+
+        trackback(0)
+        return res
+```
+
+
+
 # [55. 跳跃游戏](https://leetcode-cn.com/problems/jump-game/)
 
 难度 中等
