@@ -1980,6 +1980,76 @@ class Solution:
 
 
 
+# [33. 搜索旋转排序数组](https://leetcode-cn.com/problems/search-in-rotated-sorted-array/)
+
+难度 中等
+
+假设按照升序排序的数组在预先未知的某个点上进行了旋转。
+
+( 例如，数组 `[0,1,2,4,5,6,7]` 可能变为 `[4,5,6,7,0,1,2]` )。
+
+搜索一个给定的目标值，如果数组中存在这个目标值，则返回它的索引，否则返回 `-1` 。
+
+你可以假设数组中不存在重复的元素。
+
+你的算法时间复杂度必须是 *O*(log *n*) 级别。
+
+**示例 1:**
+
+```
+输入: nums = [4,5,6,7,0,1,2], target = 0
+输出: 4
+```
+
+**示例 2:**
+
+```
+输入: nums = [4,5,6,7,0,1,2], target = 3
+输出: -1
+```
+
+
+
+**思路**
+
+二分查找。对有序的部分二分查找判断目标值是否在这一部分里，如果不在则在另一部分查找。时间复杂度： $O(\log N)$ ，空间复杂度：$O(1)$ 。
+
+
+
+**代码**
+
+```python
+class Solution:
+    def search(self, nums: List[int], target: int) -> int:
+        l = 0
+        r = len(nums) - 1
+
+        if not nums:
+            return -1
+
+        while l <= r:
+            mid = (l + r) // 2
+            if target == nums[mid]:
+                return mid
+            
+            # 左边有序
+            if nums[0] <= nums[mid]:
+                if nums[0] <= target < nums[mid]:
+                    r = mid - 1
+                else:
+                    l = mid + 1
+            # 右边有序
+            else:
+                if nums[mid] < target <= nums[len(nums) - 1]:
+                    l = mid + 1
+                else:
+                    r = mid - 1
+
+        return -1
+```
+
+
+
 # [42. 接雨水](https://leetcode-cn.com/problems/trapping-rain-water/)
 
 难度 困难
