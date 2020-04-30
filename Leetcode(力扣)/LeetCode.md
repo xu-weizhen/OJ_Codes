@@ -2758,6 +2758,61 @@ class Solution:
 
 
 
+# [202. 快乐数](https://leetcode-cn.com/problems/happy-number/)
+
+难度 简单
+
+编写一个算法来判断一个数 `n` 是不是快乐数。
+
+「快乐数」定义为：对于一个正整数，每一次将该数替换为它每个位置上的数字的平方和，然后重复这个过程直到这个数变为 1，也可能是 **无限循环** 但始终变不到 1。如果 **可以变为** 1，那么这个数就是快乐数。
+
+如果 `n` 是快乐数就返回 `True` ；不是，则返回 `False` 。
+
+ 
+
+**示例：**
+
+```
+输入：19
+输出：true
+解释：
+12 + 92 = 82
+82 + 22 = 68
+62 + 82 = 100
+12 + 02 + 02 = 1
+```
+
+
+
+**解法**
+
+使用哈希表保存已经遇到过的数字，对数组按要求进行操作，如果出现哈希表中出现过的数字，则陷入循环，不是快乐数。时间复杂度： $O(\log N)$ ，空间复杂度： $O(\log N)$ 。
+
+
+
+**代码**
+
+```python
+class Solution:
+    def isHappy(self, n: int) -> bool:
+        d ={}	# 也可用set()
+
+        while n not in d and n != 1:
+            d[n] = 1
+            s = 0
+            while n > 0:
+                s += (n % 10) ** 2
+                n = n // 10
+            n = s
+        
+        if n == 1:
+            return True
+        else:
+            return False
+```
+
+
+
 # [206. 反转链表](https://leetcode-cn.com/problems/reverse-linked-list/)
 
 难度 简单
@@ -5209,6 +5264,132 @@ class Solution:
 
 
 
+#  [1095. 山脉数组中查找目标值](https://leetcode-cn.com/problems/find-in-mountain-array/)
+
+难度 困难
+
+（这是一个 **交互式问题** ）
+
+给你一个 **山脉数组** `mountainArr`，请你返回能够使得 `mountainArr.get(index)` **等于** `target` **最小** 的下标 `index` 值。
+
+如果不存在这样的下标 `index`，就请返回 `-1`。
+
+ 
+
+何为山脉数组？如果数组 `A` 是一个山脉数组的话，那它满足如下条件：
+
+**首先**，`A.length >= 3`
+
+**其次**，在 `0 < i < A.length - 1` 条件下，存在 `i` 使得：
+
+- `A[0] < A[1] < ... A[i-1] < A[i]`
+- `A[i] > A[i+1] > ... > A[A.length - 1]`
+
+ 
+
+你将 **不能直接访问该山脉数组**，必须通过 `MountainArray` 接口来获取数据：
+
+- `MountainArray.get(k)` - 会返回数组中索引为`k` 的元素（下标从 0 开始）
+- `MountainArray.length()` - 会返回该数组的长度
+
+ 
+
+**注意：**
+
+对 `MountainArray.get` 发起超过 `100` 次调用的提交将被视为错误答案。此外，任何试图规避判题系统的解决方案都将会导致比赛资格被取消。
+
+为了帮助大家更好地理解交互式问题，我们准备了一个样例 “**答案**”：https://leetcode-cn.com/playground/RKhe3ave，请注意这 **不是一个正确答案**。
+
+
+
+ 
+
+**示例 1：**
+
+```
+输入：array = [1,2,3,4,5,3,1], target = 3
+输出：2
+解释：3 在数组中出现了两次，下标分别为 2 和 5，我们返回最小的下标 2。
+```
+
+**示例 2：**
+
+```
+输入：array = [0,1,2,4,2,1], target = 3
+输出：-1
+解释：3 在数组中没有出现，返回 -1。
+```
+
+ 
+
+**提示：**
+
+- `3 <= mountain_arr.length() <= 10000`
+- `0 <= target <= 10^9`
+- `0 <= mountain_arr.get(index) <= 10^9`
+
+
+
+**解法**
+
+二分法找到山顶，再在山两边进行二分查找。时间复杂度： $O(\log N)$ ，空间复杂度： $O(1)$ 。
+
+
+
+**代码**
+
+```python
+# """
+# This is MountainArray's API interface.
+# You should not implement it, or speculate about its implementation
+# """
+#class MountainArray:
+#    def get(self, index: int) -> int:
+#    def length(self) -> int:
+
+class Solution:
+    def findInMountainArray(self, target: int, mountain_arr: 'MountainArray') -> int:
+        n =  mountain_arr.length()
+
+        left = 0
+        right = n - 1
+        while left < right:
+            mid = (left + right) // 2
+            if mountain_arr.get(mid) < mountain_arr.get(mid + 1):
+                left = mid + 1
+            else:
+                right = mid
+        mid += 1
+
+        left = 0
+        right = mid
+        while left <= right:
+            m = (left + right) // 2
+            val = mountain_arr.get(m)
+            if val == target:
+                return m
+            elif val < target:
+                left = m + 1
+            else:
+                right = m - 1
+        
+        left = mid
+        right = n - 1
+        while left <= right:
+            m = (left + right) // 2
+            val = mountain_arr.get(m)
+            if val == target:
+                return m
+            elif val > target:
+                left = m + 1
+            else:
+                right = m - 1
+        
+        return -1
+```
+
+
+
 # [1103. 分糖果 II](https://leetcode-cn.com/problems/distribute-candies-to-people/)
 
 难度 简单
@@ -6369,7 +6550,7 @@ class Solution:
 
 
 
-# [面试题51. 数组中的逆序对](https://leetcode-cn.com/problems/shu-zu-zhong-de-ni-xu-dui-lcof/)
+# [面试题 51. 数组中的逆序对](https://leetcode-cn.com/problems/shu-zu-zhong-de-ni-xu-dui-lcof/)
 
 难度 困难
 
@@ -6435,6 +6616,63 @@ class Solution:
         n = len(nums)
         tmp = [0] * n
         return self.mergeSort(nums, tmp, 0, n - 1)
+```
+
+
+
+# [面试题 56 - I. 数组中数字出现的次数](https://leetcode-cn.com/problems/shu-zu-zhong-shu-zi-chu-xian-de-ci-shu-lcof/)
+
+难度 中等
+
+一个整型数组 `nums` 里除两个数字之外，其他数字都出现了两次。请写程序找出这两个只出现一次的数字。要求时间复杂度是O(n)，空间复杂度是O(1)。
+
+ 
+
+**示例 1：**
+
+```
+输入：nums = [4,1,4,6]
+输出：[1,6] 或 [6,1]
+```
+
+**示例 2：**
+
+```
+输入：nums = [1,2,10,4,1,4,3,3]
+输出：[2,10] 或 [10,2]
+```
+
+ 
+
+**限制：**
+
+- `2 <= nums <= 10000`
+
+ 
+
+**解法**
+
+先对所有数字进行一次异或，得到两个出现一次的数字的异或值。在异或结果中找到任意为1的位。根据这一位对所有的数字进行分组。在每个组内进行异或操作，得到两个数字。时间复杂度：$O(N)$，空间复杂度：$O(1)$。
+
+
+
+**代码**
+
+```python
+# 官方题解
+class Solution:
+    def singleNumbers(self, nums: List[int]) -> List[int]:
+        ret = functools.reduce(lambda x, y: x ^ y, nums)
+        div = 1
+        while div & ret == 0:
+            div <<= 1
+        a, b = 0, 0
+        for n in nums:
+            if n & div:
+                a ^= n
+            else:
+                b ^= n
+        return [a, b]
 ```
 
 
