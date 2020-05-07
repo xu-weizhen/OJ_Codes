@@ -4303,6 +4303,111 @@ class Solution:
 
 
 
+# [572. 另一个树的子树](https://leetcode-cn.com/problems/subtree-of-another-tree/)
+
+难度 简单
+
+给定两个非空二叉树 **s** 和 **t**，检验 **s** 中是否包含和 **t** 具有相同结构和节点值的子树。**s** 的一个子树包括 **s** 的一个节点和这个节点的所有子孙。**s** 也可以看做它自身的一棵子树。
+
+**示例 1:**
+给定的树 s:
+
+```
+     3
+    / \
+   4   5
+  / \
+ 1   2
+```
+
+给定的树 t：
+
+```
+   4 
+  / \
+ 1   2
+```
+
+返回 **true**，因为 t 与 s 的一个子树拥有相同的结构和节点值。
+
+**示例 2:**
+给定的树 s：
+
+```
+     3
+    / \
+   4   5
+  / \
+ 1   2
+    /
+   0
+```
+
+给定的树 t：
+
+```
+   4
+  / \
+ 1   2
+```
+
+返回 **false**。
+
+
+
+**解法**
+
+暴力法。对比 `s` 每个节点的值是否与 `t` 根节点的值一样，若一样则从该节点开始进行比较。时间复杂度： $O(MN)$ ，空间复杂度： $O(1)$ 。 $MN$ 分别为 `s` 和 `t` 的节点数。
+
+
+
+**代码**
+
+```python
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
+class Solution:
+    def isSubtree(self, s: TreeNode, t: TreeNode) -> bool:
+
+        def same(sNode, tNode):
+            if sNode == None and tNode == None:
+                return True
+
+            if sNode.val != tNode.val or \
+            		sNode.left != None and tNode.left == None or \
+                	sNode.left == None and tNode.left != None or  \
+                	sNode.right != None and tNode.right == None or \
+                	sNode.right == None and tNode.right != None :
+                return False
+            
+            if same(sNode.left, tNode.left):
+                return same(sNode.right, tNode.right)
+            else:
+                return False
+        
+        def find(s, t):
+            if s.val == t.val:
+                if same(s, t):
+                    return True
+
+            if s.left != None:
+                if find(s.left, t):
+                    return True
+            
+            if s.right != None:
+                return find(s.right, t)
+            
+            return False
+        
+        return find(s, t)
+```
+
+
+
 # [695. 岛屿的最大面积](https://leetcode-cn.com/problems/max-area-of-island/)
 
 难度 中等
