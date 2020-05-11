@@ -2271,6 +2271,70 @@ class Solution:
 
 
 
+# [50. Pow(x, n)](https://leetcode-cn.com/problems/powx-n/)
+
+难度 中等
+
+实现 [pow(*x*, *n*)](https://www.cplusplus.com/reference/valarray/pow/) ，即计算 x 的 n 次幂函数。
+
+**示例 1:**
+
+```
+输入: 2.00000, 10
+输出: 1024.00000
+```
+
+**示例 2:**
+
+```
+输入: 2.10000, 3
+输出: 9.26100
+```
+
+**示例 3:**
+
+```
+输入: 2.00000, -2
+输出: 0.25000
+解释: 2-2 = 1/22 = 1/4 = 0.25
+```
+
+**说明:**
+
+- -100.0 < *x* < 100.0
+- *n* 是 32 位有符号整数，其数值范围是 [−231, 231 − 1] 。
+
+
+
+**解法**
+
++ 方法一：直接计算
++ 方法二：快速幂。$x→x^2→x^{24}→x^{8}→x^{16}→x^{32}→x^{64}$ ， $x→x^2→x^{4}→x^{9}→x^{19}→x^{38}→x^{77}$ 。时间复杂度： $O(\log N)$ ，空间复杂度： $O(\log N)$。
+
+
+
+**代码**
+
+```python
+# 方法一
+class Solution:
+    def myPow(self, x: float, n: int) -> float:
+        return x ** n
+    
+# 方法二
+class Solution:
+    def myPow(self, x: float, n: int) -> float:
+        def quickMul(N):
+            if N == 0:
+                return 1.0
+            y = quickMul(N // 2)
+            return y * y if N % 2 == 0 else y * y * x
+        
+        return quickMul(n) if n >= 0 else 1.0 / quickMul(-n)
+```
+
+
+
 # [53. 最大子序和](https://leetcode-cn.com/problems/maximum-subarray/)
 
 难度 简单
@@ -3360,7 +3424,7 @@ class MyStack:
 
 **解法**
 
-为原始树构造父节点。时间复杂度：$O(N^2)$ ， 空间复杂度： $O(N)$ 。
+为原始树构造父节点，保存在哈希表中，查表得到节点的所有父节点。时间复杂度：$O(N)$ ， 空间复杂度： $O(N)$ 。
 
 
 
@@ -3376,37 +3440,36 @@ class MyStack:
 
 class Solution:
     def lowestCommonAncestor(self, root: 'TreeNode', p: 'TreeNode', q: 'TreeNode') -> 'TreeNode':
-        
+        tree = {}
+
         def BuildFather(root):
             if root.left != None:
-                root.left.father = root
+                tree[root.left.val] = root
                 BuildFather(root.left)
             
             if root.right != None:
-                root.right.father = root
+                tree[root.right.val] = root
                 BuildFather(root.right)
             
 
         BuildFather(root)
 
-        pFather = []
-        qFather = []
+        vis = {}
 
-        while p != root:
-            pFather.append(p)
-            p = p.father
-        
-        while q != root:
-            qFather.append(q)
-            q = q.father
-        
-        ans = None
-        for pf in pFather:
-            if pf in qFather:
-                ans = pf
+        while True:
+            vis[p.val] = True
+            if p.val in tree:
+                p = tree[p.val]
+            else:
                 break
+
+        while True:
+            if q.val in vis:
+                ans = q 
+                break
+            q = tree[q.val]
         
-        return ans if ans != None else root
+        return ans
 ```
 
 
