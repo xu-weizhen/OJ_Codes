@@ -4781,6 +4781,54 @@ class Solution:
 
 
 
+# [560. 和为K的子数组](https://leetcode-cn.com/problems/subarray-sum-equals-k/)
+
+难度 中等
+
+给定一个整数数组和一个整数 **k，**你需要找到该数组中和为 **k** 的连续的子数组的个数。
+
+**示例 1 :**
+
+```
+输入:nums = [1,1,1], k = 2
+输出: 2 , [1,1] 与 [1,1] 为两种不同的情况。
+```
+
+**说明 :**
+
+1. 数组的长度为 [1, 20,000]。
+2. 数组中元素的范围是 [-1000, 1000] ，且整数 **k** 的范围是 [-1e7, 1e7]。
+
+
+
+**解法**
+
+前缀和+哈希表。时间复杂度：$O(N)$，空间复杂度：$O(N)$  。
+
+
+
+**代码**
+
+```python
+class Solution:
+    def subarraySum(self, nums: List[int], k: int) -> int:
+        
+        m = {0:1}
+        count = 0
+        pre = 0
+
+        for num in nums:
+            pre += num
+            if pre - k in m:
+                count += m[pre - k]
+
+            m[pre] = m[pre] + 1 if pre in m else 1
+        
+        return count
+```
+
+
+
 # [572. 另一个树的子树](https://leetcode-cn.com/problems/subtree-of-another-tree/)
 
 难度 简单
