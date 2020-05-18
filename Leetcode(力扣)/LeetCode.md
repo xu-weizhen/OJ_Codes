@@ -3086,6 +3086,88 @@ public:
 
 
 
+# [152. 乘积最大子数组](https://leetcode-cn.com/problems/maximum-product-subarray/)
+
+难度 中等
+
+给你一个整数数组 `nums` ，请你找出数组中乘积最大的连续子数组（该子数组中至少包含一个数字），并返回该子数组所对应的乘积。
+
+ 
+
+**示例 1:**
+
+```
+输入: [2,3,-2,4]
+输出: 6
+解释: 子数组 [2,3] 有最大乘积 6。
+```
+
+**示例 2:**
+
+```
+输入: [-2,0,-1]
+输出: 0
+解释: 结果不能为 2, 因为 [-2,-1] 不是子数组。
+```
+
+
+
+**思路**
+
+动态规划。当前数为正数时，希望之前的乘积尽可能大；当前数为负数时，希望之前的乘积尽可能小。由此得到转移方程：
+$$
+f_{max}(i) = \max_{i=1}^{n}\{f_{max}(i-1)*a_i, f_{min}(i-1)*a_i, a_i\} \\
+f_{min}(i) = \min_{i=1}^{n}\{f_{max}(i-1)*a_i, f_{min}(i-1)*a_i, a_i\}
+$$
+时间复杂度： $O(N)$ ，空间复杂度： $O(1)$ 。
+
+
+
+**代码**
+
+```cpp
+// 官方题解
+class Solution {
+public:
+    int maxProduct(vector<int>& nums) {
+        int maxF = nums[0], minF = nums[0], ans = nums[0];
+        for (int i = 1; i < nums.size(); ++i) {
+            int mx = maxF, mn = minF;
+            maxF = max(mx * nums[i], max(nums[i], mn * nums[i]));
+            minF = min(mn * nums[i], min(nums[i], mx * nums[i]));
+            ans = max(maxF, ans);
+        }
+        return ans;
+    }
+};
+```
+
+```python
+class Solution:
+    def maxProduct(self, nums: List[int]) -> int:
+        if nums == []:
+            return 0
+
+        maxF = nums[0]
+        minF = nums[0]
+        ans = nums[0]
+
+        for i in range(1, len(nums)):
+            mmax = maxF
+            mmin = minF
+
+            maxF = max(mmax * nums[i], nums[i], mmin * nums[i])
+            minF = min(mmin * nums[i], nums[i], mmax * nums[i])
+
+            ans = max(maxF, ans)
+        
+        return ans
+```
+
+
+
+
+
 # [155. 最小栈](https://leetcode-cn.com/problems/min-stack/)
 
 难度 简单
