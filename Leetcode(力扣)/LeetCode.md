@@ -2731,6 +2731,79 @@ class Solution:
 
 
 
+# [76. 最小覆盖子串](https://leetcode-cn.com/problems/minimum-window-substring/)
+
+难度 困难
+
+给你一个字符串 S、一个字符串 T，请在字符串 S 里面找出：包含 T 所有字符的最小子串。
+
+**示例：**
+
+```
+输入: S = "ADOBECODEBANC", T = "ABC"
+输出: "BANC"
+```
+
+**说明：**
+
+- 如果 S 中不存这样的子串，则返回空字符串 `""`。
+- 如果 S 中存在这样的子串，我们保证它是唯一的答案。
+
+
+
+**解法**
+
+滑动窗口。时间复杂度：$O(C⋅∣s∣+∣t∣)$  ，空间复杂度：$O(C)$ ，$C$为字符集大小。
+
+
+
+**代码**
+
+```cpp
+class Solution {
+public:
+    unordered_map <char, int> ori, cnt;
+
+    bool check() {
+        for (const auto &p: ori) {
+            if (cnt[p.first] < p.second) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    string minWindow(string s, string t) {
+        for (const auto &c: t) {
+            ++ori[c];
+        }
+
+        int l = 0, r = -1;
+        int len = INT_MAX, ansL = -1, ansR = -1;
+
+        while (r < int(s.size())) {
+            if (ori.find(s[++r]) != ori.end()) {
+                ++cnt[s[r]];
+            }
+            while (check() && l <= r) {
+                if (r - l + 1 < len) {
+                    len = r - l + 1;
+                    ansL = l;
+                }
+                if (ori.find(s[l]) != ori.end()) {
+                    --cnt[s[l]];
+                }
+                ++l;
+            }
+        }
+
+        return ansL == -1 ? string() : s.substr(ansL, len);
+    }
+};
+```
+
+
+
 # [98. 验证二叉搜索树](https://leetcode-cn.com/problems/validate-binary-search-tree/)
 
 难度 中等
@@ -2893,6 +2966,85 @@ class Solution:
 
 
 
+# [105. 从前序与中序遍历序列构造二叉树](https://leetcode-cn.com/problems/construct-binary-tree-from-preorder-and-inorder-traversal/)
+
+难度 中等
+
+根据一棵树的前序遍历与中序遍历构造二叉树。
+
+**注意:**
+你可以假设树中没有重复的元素。
+
+例如，给出
+
+```
+前序遍历 preorder = [3,9,20,15,7]
+中序遍历 inorder = [9,3,15,20,7]
+```
+
+返回如下的二叉树：
+
+```
+    3
+   / \
+  9  20
+    /  \
+   15   7
+```
+
+
+
+**解法**
+
+递归。时间复杂度： $O(N)$ ，空间复杂度： $O(N)$ 。
+
+
+
+**代码**
+
+```python
+# 官方题解
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, x):
+#         self.val = x
+#         self.left = None
+#         self.right = None
+
+
+class Solution:
+    def buildTree(self, preorder: List[int], inorder: List[int]) -> TreeNode:
+
+        def myBuildTree(preorder_left: int, preorder_right: int, inorder_left: int, inorder_right: int):
+            if preorder_left > preorder_right:
+                return None
+
+            preorder_root = preorder_left
+
+            # 在中序遍历中定位根节点
+            inorder_root = index[preorder[preorder_root]]
+
+            root = TreeNode(preorder[preorder_root])
+
+            # 得到左子树中的节点数目
+            size_left_subtree = inorder_root - inorder_left
+
+            # 递归地构造左子树
+            root.left = myBuildTree(preorder_left + 1, preorder_left + size_left_subtree, inorder_left, inorder_root - 1)
+
+            # 递归地构造右子树
+            root.right = myBuildTree(preorder_left + size_left_subtree + 1, preorder_right, inorder_root + 1, inorder_right)
+            
+            return root
+        
+        n = len(preorder)
+        # 构造哈希映射，帮助我们快速定位根节点
+        index = {element: i for i, element in enumerate(inorder)}
+        return myBuildTree(0, n - 1, 0, n - 1)
+```
+
+
+
 # [121. 买卖股票的最佳时机](https://leetcode-cn.com/problems/best-time-to-buy-and-sell-stock/)
 
 难度 简单
@@ -2985,6 +3137,125 @@ class Solution:
             ans ^= num
         
         return ans
+```
+
+
+
+# [146. LRU缓存机制](https://leetcode-cn.com/problems/lru-cache/)
+
+难度 中等 
+
+运用你所掌握的数据结构，设计和实现一个 [LRU (最近最少使用) 缓存机制](https://baike.baidu.com/item/LRU)。它应该支持以下操作： 获取数据 `get` 和 写入数据 `put` 。
+
+获取数据 `get(key)` - 如果密钥 (key) 存在于缓存中，则获取密钥的值（总是正数），否则返回 -1。
+写入数据 `put(key, value)` - 如果密钥已经存在，则变更其数据值；如果密钥不存在，则插入该组「密钥/数据值」。当缓存容量达到上限时，它应该在写入新数据之前删除最久未使用的数据值，从而为新的数据值留出空间。
+
+ 
+
+**进阶:**
+
+你是否可以在 **O(1)** 时间复杂度内完成这两种操作？
+
+ 
+
+**示例:**
+
+```
+LRUCache cache = new LRUCache( 2 /* 缓存容量 */ );
+
+cache.put(1, 1);
+cache.put(2, 2);
+cache.get(1);       // 返回  1
+cache.put(3, 3);    // 该操作会使得密钥 2 作废
+cache.get(2);       // 返回 -1 (未找到)
+cache.put(4, 4);    // 该操作会使得密钥 1 作废
+cache.get(1);       // 返回 -1 (未找到)
+cache.get(3);       // 返回  3
+cache.get(4);       // 返回  4
+```
+
+
+
+**解法**
+
+哈希表+双向队列。时间复杂度： $O(1)$ ，空间复杂度： $O(capacity)$ 。
+
+
+
+**代码**
+
+```python
+class Node:
+    def __init__(self, key = 0, value = 0):
+        self.pre = None
+        self.nex = None
+        self.key = key
+        self.val = value
+
+
+class LRUCache:
+
+    def __init__(self, capacity: int):
+        self.m = {}
+
+        self.head = Node()
+        self.tail = Node()
+        self.head.nex = self.tail
+        self.tail.pre = self.head
+
+        self.capacity = capacity
+        self.used = 0
+
+
+    def get(self, key: int) -> int:
+        if key not in self.m:
+            return -1
+        
+        self.moveToHead(self.m[key])
+        return self.m[key].val
+
+
+    def put(self, key: int, value: int) -> None:
+        if key in self.m:
+            self.m[key].val = value
+            self.moveToHead(self.m[key])
+        else:
+            if self.used == self.capacity:
+                del self.m[self.tail.pre.key]
+                self.delTail()
+                self.used -= 1
+
+            node = Node(key, value)
+            self.m[key] = node
+            self.addToHead(node)
+            self.used += 1
+
+        # print(self.m)
+        # t = self.head
+        # while t != None:
+        #     print(t.key, end=' ')
+        #     t = t.nex
+    
+    def moveToHead(self, node):
+        node.pre.nex = node.nex
+        node.nex.pre = node.pre
+        self.addToHead(node)
+    
+    def addToHead(self, node):
+        node.nex = self.head.nex
+        node.pre = self.head
+        node.pre.nex = node
+        node.nex.pre = node
+    
+    def delTail(self):
+        self.tail.pre.pre.nex = self.tail
+        self.tail.pre = self.tail.pre.pre
+
+
+# Your LRUCache object will be instantiated and called as such:
+# obj = LRUCache(capacity)
+# param_1 = obj.get(key)
+# obj.put(key,value)
 ```
 
 
@@ -4030,6 +4301,63 @@ class Solution:
         if q:
             res.append(q[0])
         return res
+```
+
+
+
+# [287. 寻找重复数](https://leetcode-cn.com/problems/find-the-duplicate-number/)
+
+难度 中等
+
+给定一个包含 *n* + 1 个整数的数组 *nums*，其数字都在 1 到 *n* 之间（包括 1 和 *n*），可知至少存在一个重复的整数。假设只有一个重复的整数，找出这个重复的数。
+
+**示例 1:**
+
+```
+输入: [1,3,4,2,2]
+输出: 2
+```
+
+**示例 2:**
+
+```
+输入: [3,1,3,4,2]
+输出: 3
+```
+
+**说明：**
+
+1. **不能**更改原数组（假设数组是只读的）。
+2. 只能使用额外的 *O*(1) 的空间。
+3. 时间复杂度小于 *O*(*n*2) 。
+4. 数组中只有一个重复的数字，但它可能不止重复出现一次。
+
+
+
+**解法**
+
+将数值视为有向图，数值为指向，由于存在相同数字，则该图存在环。使用快慢指针进行查找。时间复杂度： $O(N)$ ，空间复杂度： $O(1)$ 。
+
+
+
+**代码**
+
+```python
+class Solution:
+    def findDuplicate(self, nums: List[int]) -> int:
+        fast = nums[nums[0]]
+        slow = nums[0]
+
+        while fast != slow:
+            fast = nums[nums[fast]]
+            slow = nums[slow]
+        
+        slow = 0
+        while fast != slow:
+            fast = nums[fast]
+            slow = nums[slow]
+        
+        return slow
 ```
 
 
