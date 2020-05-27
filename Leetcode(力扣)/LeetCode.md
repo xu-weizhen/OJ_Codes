@@ -6339,6 +6339,61 @@ class Solution:
 
 
 
+# [974. 和可被 K 整除的子数组](https://leetcode-cn.com/problems/subarray-sums-divisible-by-k/)
+
+难度 中等
+
+给定一个整数数组 `A`，返回其中元素之和可被 `K` 整除的（连续、非空）子数组的数目。
+
+ 
+
+**示例：**
+
+```
+输入：A = [4,5,0,-2,-3,1], K = 5
+输出：7
+解释：
+有 7 个子数组满足其元素之和可被 K = 5 整除：
+[4, 5, 0, -2, -3, 1], [5], [5, 0], [5, 0, -2, -3], [0], [0, -2, -3], [-2, -3]
+```
+
+ 
+
+**提示：**
+
+1. `1 <= A.length <= 30000`
+2. `-10000 <= A[i] <= 10000`
+3. `2 <= K <= 10000`
+
+
+
+**解法**
+
+前缀和+哈希表。 前缀和：令 $P[i] = A[0] + A[1] + ... + A[i]$ 。 对于哈希表中的每个键值对 $(x, c_x)$，表示前缀和模 $K$ 后的值 $x$ 出现了 $c_x$ 次。 那么这些出现的位置两两之间都可以构成可被 $K$ 整除的连续子数组。时间复杂度： $O(N)$ ，空间复杂度： $O(\min(N, K))$ 。
+
+
+
+**代码**
+
+```python
+# 官方题解
+class Solution:
+    def subarraysDivByK(self, A: List[int], K: int) -> int:
+        record = {0: 1}
+        total = 0
+        for elem in A:
+            total += elem
+            modulus = total % K
+            record[modulus] = record.get(modulus, 0) + 1
+        
+        ans = 0
+        for x, cx in record.items():
+            ans += cx * (cx - 1) // 2
+        return ans
+```
+
+
+
 # [983. 最低票价](https://leetcode-cn.com/problems/minimum-cost-for-tickets/)
 
 难度 中等
