@@ -2804,6 +2804,71 @@ public:
 
 
 
+# [84. 柱状图中最大的矩形](https://leetcode-cn.com/problems/largest-rectangle-in-histogram/)
+
+难度 困难
+
+给定 *n* 个非负整数，用来表示柱状图中各个柱子的高度。每个柱子彼此相邻，且宽度为 1 。
+
+求在该柱状图中，能够勾勒出来的矩形的最大面积。
+
+ 
+
+![img](https://assets.leetcode-cn.com/aliyun-lc-upload/uploads/2018/10/12/histogram.png)
+
+以上是柱状图的示例，其中每个柱子的宽度为 1，给定的高度为 `[2,1,5,6,2,3]`。
+
+ 
+
+![img](https://assets.leetcode-cn.com/aliyun-lc-upload/uploads/2018/10/12/histogram_area.png)
+
+图中阴影部分为所能勾勒出的最大矩形面积，其面积为 `10` 个单位。
+
+ 
+
+**示例:**
+
+```
+输入: [2,1,5,6,2,3]
+输出: 10
+```
+
+
+
+**解法**
+
+使用栈保存边界信息。 例如 `[6, 7, 5, 2, 4, 5, 9, 3]` ，对于左边界栈结果为： ` [2(3), 3(7)] ` ，从而得到各点的左边界为： `[-1, 0, -1, -1, 3, 4, 5, 3]` 。同理可得到各点的右边界。根据左右边界和高度可以计算得到面积。时间复杂度： $O(N)$ ，空间复杂度： $O(N)$ 。
+
+
+
+**代码**
+
+```python
+class Solution:
+    def largestRectangleArea(self, heights: List[int]) -> int:
+        n = len(heights)
+        left, right = [0] * n, [0] * n
+
+        mono_stack = list()
+        for i in range(n):
+            while mono_stack and heights[mono_stack[-1]] >= heights[i]:
+                mono_stack.pop()
+            left[i] = mono_stack[-1] if mono_stack else -1
+            mono_stack.append(i)
+        
+        mono_stack = list()
+        for i in range(n - 1, -1, -1):
+            while mono_stack and heights[mono_stack[-1]] >= heights[i]:
+                mono_stack.pop()
+            right[i] = mono_stack[-1] if mono_stack else n
+            mono_stack.append(i)
+        
+        ans = max((right[i] - left[i] - 1) * heights[i] for i in range(n)) if n > 0 else 0
+        return ans
+```
+
+
+
 # [98. 验证二叉搜索树](https://leetcode-cn.com/problems/validate-binary-search-tree/)
 
 难度 中等
@@ -3571,6 +3636,63 @@ class Solution:
             else:
                 count += 1
         return result 
+```
+
+
+
+# [198. 打家劫舍](https://leetcode-cn.com/problems/house-robber/)
+
+难度 简单
+
+你是一个专业的小偷，计划偷窃沿街的房屋。每间房内都藏有一定的现金，影响你偷窃的唯一制约因素就是相邻的房屋装有相互连通的防盗系统，**如果两间相邻的房屋在同一晚上被小偷闯入，系统会自动报警**。
+
+给定一个代表每个房屋存放金额的非负整数数组，计算你 **不触动警报装置的情况下** ，一夜之内能够偷窃到的最高金额。
+
+**示例 1:**
+
+```
+输入: [1,2,3,1]
+输出: 4
+解释: 偷窃 1 号房屋 (金额 = 1) ，然后偷窃 3 号房屋 (金额 = 3)。
+     偷窃到的最高金额 = 1 + 3 = 4 。
+```
+
+**示例 2:**
+
+```
+输入: [2,7,9,3,1]
+输出: 12
+解释: 偷窃 1 号房屋 (金额 = 2), 偷窃 3 号房屋 (金额 = 9)，接着偷窃 5 号房屋 (金额 = 1)。
+     偷窃到的最高金额 = 2 + 9 + 1 = 12 。
+```
+
+
+
+**解法**
+
+动态规划。时间复杂度： $O(N)$ ，空间复杂度： $O(N)$ 。
+
+
+
+**代码**
+
+```python
+class Solution:
+    def rob(self, nums: List[int]) -> int:
+
+        if len(nums) == 0:
+            return 0
+        elif len(nums) == 1:
+            return nums[0]
+
+        size = len(nums)
+        dp = [0] * size
+        dp[0] = nums[0]
+        dp[1] = max(nums[0], nums[1])
+        for i in range(2, size):
+            dp[i] = max(dp[i - 2] + nums[i], dp[i - 1])
+        
+        return dp[size - 1]
 ```
 
 
@@ -4866,6 +4988,81 @@ class Solution:
         if x == 0 or y == 0:
             return z == 0 or x + y == z
         return z % math.gcd(x, y) == 0
+```
+
+
+
+# [394. 字符串解码](https://leetcode-cn.com/problems/decode-string/)
+
+难度 中等
+
+给定一个经过编码的字符串，返回它解码后的字符串。
+
+编码规则为: `k[encoded_string]`，表示其中方括号内部的 *encoded_string* 正好重复 *k* 次。注意 *k* 保证为正整数。
+
+你可以认为输入字符串总是有效的；输入字符串中没有额外的空格，且输入的方括号总是符合格式要求的。
+
+此外，你可以认为原始数据不包含数字，所有的数字只表示重复的次数 *k* ，例如不会出现像 `3a` 或 `2[4]` 的输入。
+
+**示例:**
+
+```
+s = "3[a]2[bc]", 返回 "aaabcbc".
+s = "3[a2[c]]", 返回 "accaccacc".
+s = "2[abc]3[cd]ef", 返回 "abcabccdcdcdef".
+```
+
+
+
+**解法**
+
+扫描字符串，根据数字对重复部分进行复制和拼接。时间复杂度： $O(N)$ ，空间复杂度： $O(1)$ 。
+
+
+
+**代码**
+
+```python
+class Solution:
+    def decodeString(self, s: str) -> str:
+
+        def copyStr(count, left, right):
+            l = s[ : left] if left > 0 else ''
+            r = s[right + 1 : ] if right + 1 < len(s) else ''
+
+            return l + count * s[left + 1 : right] + r
+
+
+        brackets = 0
+        bracket = False
+        count = 0
+        i = 0
+
+        while i < len(s):
+
+            if not bracket and s[i] >= '0' and s[i] <= '9':
+                count = count * 10 + int(s[i])
+                s = s[0 : i] + s[i + 1 :]
+                continue
+
+            elif s[i] == '[':
+                if not bracket:
+                    bracket = True
+                    left = i
+                brackets += 1
+
+            elif s[i] == ']':
+                brackets -= 1
+                if brackets == 0:
+                    s = copyStr(count, left, i)
+                    count = 0
+                    bracket = False
+                    i = left
+                    continue
+
+            i += 1
+        
+        return s
 ```
 
 
