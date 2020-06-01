@@ -7468,161 +7468,6 @@ class Solution:
 
 
 
-# [1248. 统计「优美子数组」](https://leetcode-cn.com/problems/count-number-of-nice-subarrays/)
-
-难度 中等
-
-给你一个整数数组 `nums` 和一个整数 `k`。
-
-如果某个 **连续** 子数组中恰好有 `k` 个奇数数字，我们就认为这个子数组是「**优美子数组**」。
-
-请返回这个数组中「优美子数组」的数目。
-
- 
-
-**示例 1：**
-
-```
-输入：nums = [1,1,2,1,1], k = 3
-输出：2
-解释：包含 3 个奇数的子数组是 [1,1,2,1] 和 [1,2,1,1] 。
-```
-
-**示例 2：**
-
-```
-输入：nums = [2,4,6], k = 1
-输出：0
-解释：数列中不包含任何奇数，所以不存在优美子数组。
-```
-
-**示例 3：**
-
-```
-输入：nums = [2,2,2,1,2,2,1,2,2,2], k = 2
-输出：16
-```
-
- 
-
-**提示：**
-
-- `1 <= nums.length <= 50000`
-- `1 <= nums[i] <= 10^5`
-- `1 <= k <= nums.length`
-
-
-
-**解法**
-
-记录每个奇数的下标，则两个奇数之间的数均为偶数。可以得出满足 $l\in (\textit{odd}[i-1],\textit{odd}[i])$ 且 $r\in [\textit{odd}[i+k-1],\textit{odd}[i+k])$ 条件的子数组 $[l,r]$ 里的奇数个数为 $k$ 个。时间复杂度：$\mathcal{O}(N)$，空间复杂度：$\mathcal{O}(N)$。 
-
-
-
-**代码**
-
-```python
-class Solution:
-    def numberOfSubarrays(self, nums: List[int], k: int) -> int:
-        n = len(nums)
-
-        odd = [-1]
-        for i in range(len(nums)):
-            if nums[i] % 2 == 1:
-                odd.append(i)
-        odd.append(n)
-
-        ans = 0
-        for i in range(1, len(odd) - k):
-            ans += (odd[i] - odd[i - 1]) * (odd[i + k] - odd[i + k - 1])
-
-        return ans 
-```
-
-
-
-# [1371. 每个元音包含偶数次的最长子字符串](https://leetcode-cn.com/problems/find-the-longest-substring-containing-vowels-in-even-counts/)
-
-难度 中等
-
-给你一个字符串 `s` ，请你返回满足以下条件的最长子字符串的长度：每个元音字母，即 'a'，'e'，'i'，'o'，'u' ，在子字符串中都恰好出现了偶数次。
-
- 
-
-**示例 1：**
-
-```
-输入：s = "eleetminicoworoep"
-输出：13
-解释：最长子字符串是 "leetminicowor" ，它包含 e，i，o 各 2 个，以及 0 个 a，u 。
-```
-
-**示例 2：**
-
-```
-输入：s = "leetcodeisgreat"
-输出：5
-解释：最长子字符串是 "leetc" ，其中包含 2 个 e 。
-```
-
-**示例 3：**
-
-```
-输入：s = "bcbcbc"
-输出：6
-解释：这个示例中，字符串 "bcbcbc" 本身就是最长的，因为所有的元音 a，e，i，o，u 都出现了 0 次。
-```
-
- 
-
-**提示：**
-
-- `1 <= s.length <= 5 x 10^5`
-- `s` 只包含小写英文字母。
-
-
-
-**解法**
-
-前缀和+状态压缩。 0代表出现了偶数次，1代表出现了奇数次 。使用0/1序列表示在当前位置每个元音字母出现的次数。时间复杂度： $O(N)$ ，空间复杂度： $O(len(S))$ 。
-
-
-
-**代码**
-
-```cpp
-//官方题解
-class Solution {
-public:
-    int findTheLongestSubstring(string s) {
-        int ans = 0, status = 0, n = s.length();
-        vector<int> pos(1 << 5, -1);
-        pos[0] = 0;
-        for (int i = 0; i < n; ++i) {
-            if (s[i] == 'a') {
-                status ^= 1<<0;
-            } else if (s[i] == 'e') {
-                status ^= 1<<1;
-            } else if (s[i] == 'i') {
-                status ^= 1<<2;
-            } else if (s[i] == 'o') {
-                status ^= 1<<3;
-            } else if (s[i] == 'u') {
-                status ^= 1<<4;
-            }
-            if (~pos[status]) {
-                ans = max(ans, i + 1 - pos[status]);
-            } else {
-                pos[status] = i + 1;
-            }
-        }
-        return ans;
-    }
-};
-```
-
-
-
 # [1162. 地图分析](https://leetcode-cn.com/problems/as-far-from-land-as-possible/)
 
 难度 中等
@@ -7809,6 +7654,232 @@ class Solution:
                     ans = max(ans, d[i][j])
 
         return ans if ans != INF else -1
+```
+
+
+
+# [1248. 统计「优美子数组」](https://leetcode-cn.com/problems/count-number-of-nice-subarrays/)
+
+难度 中等
+
+给你一个整数数组 `nums` 和一个整数 `k`。
+
+如果某个 **连续** 子数组中恰好有 `k` 个奇数数字，我们就认为这个子数组是「**优美子数组**」。
+
+请返回这个数组中「优美子数组」的数目。
+
+ 
+
+**示例 1：**
+
+```
+输入：nums = [1,1,2,1,1], k = 3
+输出：2
+解释：包含 3 个奇数的子数组是 [1,1,2,1] 和 [1,2,1,1] 。
+```
+
+**示例 2：**
+
+```
+输入：nums = [2,4,6], k = 1
+输出：0
+解释：数列中不包含任何奇数，所以不存在优美子数组。
+```
+
+**示例 3：**
+
+```
+输入：nums = [2,2,2,1,2,2,1,2,2,2], k = 2
+输出：16
+```
+
+ 
+
+**提示：**
+
+- `1 <= nums.length <= 50000`
+- `1 <= nums[i] <= 10^5`
+- `1 <= k <= nums.length`
+
+
+
+**解法**
+
+记录每个奇数的下标，则两个奇数之间的数均为偶数。可以得出满足 $l\in (\textit{odd}[i-1],\textit{odd}[i])$ 且 $r\in [\textit{odd}[i+k-1],\textit{odd}[i+k])$ 条件的子数组 $[l,r]$ 里的奇数个数为 $k$ 个。时间复杂度：$\mathcal{O}(N)$，空间复杂度：$\mathcal{O}(N)$。 
+
+
+
+**代码**
+
+```python
+class Solution:
+    def numberOfSubarrays(self, nums: List[int], k: int) -> int:
+        n = len(nums)
+
+        odd = [-1]
+        for i in range(len(nums)):
+            if nums[i] % 2 == 1:
+                odd.append(i)
+        odd.append(n)
+
+        ans = 0
+        for i in range(1, len(odd) - k):
+            ans += (odd[i] - odd[i - 1]) * (odd[i + k] - odd[i + k - 1])
+
+        return ans 
+```
+
+
+
+# [1371. 每个元音包含偶数次的最长子字符串](https://leetcode-cn.com/problems/find-the-longest-substring-containing-vowels-in-even-counts/)
+
+难度 中等
+
+给你一个字符串 `s` ，请你返回满足以下条件的最长子字符串的长度：每个元音字母，即 'a'，'e'，'i'，'o'，'u' ，在子字符串中都恰好出现了偶数次。
+
+ 
+
+**示例 1：**
+
+```
+输入：s = "eleetminicoworoep"
+输出：13
+解释：最长子字符串是 "leetminicowor" ，它包含 e，i，o 各 2 个，以及 0 个 a，u 。
+```
+
+**示例 2：**
+
+```
+输入：s = "leetcodeisgreat"
+输出：5
+解释：最长子字符串是 "leetc" ，其中包含 2 个 e 。
+```
+
+**示例 3：**
+
+```
+输入：s = "bcbcbc"
+输出：6
+解释：这个示例中，字符串 "bcbcbc" 本身就是最长的，因为所有的元音 a，e，i，o，u 都出现了 0 次。
+```
+
+ 
+
+**提示：**
+
+- `1 <= s.length <= 5 x 10^5`
+- `s` 只包含小写英文字母。
+
+
+
+**解法**
+
+前缀和+状态压缩。 0代表出现了偶数次，1代表出现了奇数次 。使用0/1序列表示在当前位置每个元音字母出现的次数。时间复杂度： $O(N)$ ，空间复杂度： $O(len(S))$ 。
+
+
+
+**代码**
+
+```cpp
+//官方题解
+class Solution {
+public:
+    int findTheLongestSubstring(string s) {
+        int ans = 0, status = 0, n = s.length();
+        vector<int> pos(1 << 5, -1);
+        pos[0] = 0;
+        for (int i = 0; i < n; ++i) {
+            if (s[i] == 'a') {
+                status ^= 1<<0;
+            } else if (s[i] == 'e') {
+                status ^= 1<<1;
+            } else if (s[i] == 'i') {
+                status ^= 1<<2;
+            } else if (s[i] == 'o') {
+                status ^= 1<<3;
+            } else if (s[i] == 'u') {
+                status ^= 1<<4;
+            }
+            if (~pos[status]) {
+                ans = max(ans, i + 1 - pos[status]);
+            } else {
+                pos[status] = i + 1;
+            }
+        }
+        return ans;
+    }
+};
+```
+
+
+
+# [1431. 拥有最多糖果的孩子](https://leetcode-cn.com/problems/kids-with-the-greatest-number-of-candies/)
+
+难度 简单
+
+给你一个数组 `candies` 和一个整数 `extraCandies` ，其中 `candies[i]` 代表第 `i` 个孩子拥有的糖果数目。
+
+对每一个孩子，检查是否存在一种方案，将额外的 `extraCandies` 个糖果分配给孩子们之后，此孩子有 **最多** 的糖果。注意，允许有多个孩子同时拥有 **最多** 的糖果数目。
+
+ 
+
+**示例 1：**
+
+```
+输入：candies = [2,3,5,1,3], extraCandies = 3
+输出：[true,true,true,false,true] 
+解释：
+孩子 1 有 2 个糖果，如果他得到所有额外的糖果（3个），那么他总共有 5 个糖果，他将成为拥有最多糖果的孩子。
+孩子 2 有 3 个糖果，如果他得到至少 2 个额外糖果，那么他将成为拥有最多糖果的孩子。
+孩子 3 有 5 个糖果，他已经是拥有最多糖果的孩子。
+孩子 4 有 1 个糖果，即使他得到所有额外的糖果，他也只有 4 个糖果，无法成为拥有糖果最多的孩子。
+孩子 5 有 3 个糖果，如果他得到至少 2 个额外糖果，那么他将成为拥有最多糖果的孩子。
+```
+
+**示例 2：**
+
+```
+输入：candies = [4,2,1,1,2], extraCandies = 1
+输出：[true,false,false,false,false] 
+解释：只有 1 个额外糖果，所以不管额外糖果给谁，只有孩子 1 可以成为拥有糖果最多的孩子。
+```
+
+**示例 3：**
+
+```
+输入：candies = [12,1,12], extraCandies = 10
+输出：[true,false,true]
+```
+
+ 
+
+**提示：**
+
+- `2 <= candies.length <= 100`
+- `1 <= candies[i] <= 100`
+- `1 <= extraCandies <= 50`
+
+
+
+**解法**
+
+略。时间复杂度： $O(N)$ ，空间复杂度： $O(1)$ 。
+
+
+
+**代码**
+
+```python
+class Solution:
+    def kidsWithCandies(self, candies: List[int], extraCandies: int) -> List[bool]:
+        maxCandy = max(candies)
+        ans = []
+        for child in candies:
+            if maxCandy - child <= extraCandies:
+                ans.append(True)
+            else:
+                ans.append(False)
+        return ans
 ```
 
 
