@@ -75,6 +75,90 @@ class Solution:
                 self.move(x + self.dx[i], y + self.dy[i])
 ```
 
+# [面试题 29. 顺时针打印矩阵](https://leetcode-cn.com/problems/shun-shi-zhen-da-yin-ju-zhen-lcof/)
+
+
+输入一个矩阵，按照从外向里以顺时针的顺序依次打印出每一个数字。
+
+ 
+
+**示例 1：**
+
+```
+输入：matrix = [[1,2,3],[4,5,6],[7,8,9]]
+输出：[1,2,3,6,9,8,7,4,5]
+```
+
+**示例 2：**
+
+```
+输入：matrix = [[1,2,3,4],[5,6,7,8],[9,10,11,12]]
+输出：[1,2,3,4,8,12,11,10,9,5,6,7]
+```
+
+ 
+
+**限制：**
+
+- `0 <= matrix.length <= 100`
+- `0 <= matrix[i].length <= 100`
+
+注意：本题与主站 54 题相同：https://leetcode-cn.com/problems/spiral-matrix/
+
+
+
+**解法**
+
+使用指针保存当前打印矩阵的上下左右边界。时间复杂度： $O(N)$ ，空间复杂度： $O(1)$ 。
+
+
+
+**代码**
+
+```python
+class Solution:
+    def spiralOrder(self, matrix: List[List[int]]) -> List[int]:
+        if not matrix:
+            return []
+
+        left = 0
+        right = len(matrix[0]) - 1
+        top = 0
+        bottom = len(matrix) - 1
+
+        ans = []
+
+        while right >= left:
+            for i in range(left, right + 1):
+                ans.append(matrix[top][i])
+            
+            if top == bottom:
+                break
+
+            for j in range(top + 1, bottom + 1):
+                ans.append(matrix[j][right])
+
+            if left == right:
+                break
+                
+            for i in range(right - 1, left - 1, -1):
+                ans.append(matrix[bottom][i])
+            
+            if top + 1 == bottom:
+                break
+
+            for j in range(bottom - 1, top, -1):
+                ans.append(matrix[j][left])
+
+            left += 1
+            right -= 1
+            top += 1
+            bottom -= 1
+        
+        return ans
+
+```
+
 
 
 # [面试题 40. 最小的k个数](https://leetcode-cn.com/problems/zui-xiao-de-kge-shu-lcof/)
@@ -508,7 +592,7 @@ class Solution:
 
 
 
-# [面试题64. 求1+2+…+n](https://leetcode-cn.com/problems/qiu-12n-lcof/)
+# [面试题 64. 求1+2+…+n](https://leetcode-cn.com/problems/qiu-12n-lcof/)
 
 难度 中等
 
