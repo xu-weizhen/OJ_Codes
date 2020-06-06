@@ -205,6 +205,53 @@ class Solution:
 ```
 
 
+# [128. 最长连续序列](https://leetcode-cn.com/problems/longest-consecutive-sequence/)
+
+难度 困难
+
+给定一个未排序的整数数组，找出最长连续序列的长度。
+
+要求算法的时间复杂度为 *O(n)*。
+
+**示例:**
+
+```
+输入: [100, 4, 200, 1, 3, 2]
+输出: 4
+解释: 最长连续序列是 [1, 2, 3, 4]。它的长度为 4。
+```
+
+
+
+**解法**
+
+使用集合去重并成为哈希表，对于集合中的每个数，如果该数减一的值不在表中，则从该数开始查找连续序列长度。时间复杂度： $O(N)$， 空间复杂度： $O(N)$ 。
+
+
+
+**代码**
+
+```python
+class Solution:
+    def longestConsecutive(self, nums: List[int]) -> int:
+        longest = 0
+        nums = set(nums)
+
+        for num in nums:
+            if num - 1 not in nums:
+                current = 1
+                n = num
+
+                while n + 1 in nums:
+                    current += 1
+                    n += 1
+                
+                longest = max(longest, current)
+        
+        return longest
+```
+
+
 
 # [136. 只出现一次的数字](https://leetcode-cn.com/problems/single-number/)
 
