@@ -1980,6 +1980,68 @@ class Solution:
 
 
 
+# [24. 两两交换链表中的节点](https://leetcode-cn.com/problems/swap-nodes-in-pairs/)
+
+难度 中等
+
+给定一个链表，两两交换其中相邻的节点，并返回交换后的链表。
+
+**你不能只是单纯的改变节点内部的值**，而是需要实际的进行节点交换。
+
+ 
+
+**示例:**
+
+```
+给定 1->2->3->4, 你应该返回 2->1->4->3.
+```
+
+
+
+**解法**
+
+依次交换两节点。时间复杂度： $O(N)$ ，空间复杂度： $O(1)$ 。
+
+
+
+**代码**
+
+```python
+# Definition for singly-linked list.
+# class ListNode:
+#     def __init__(self, x):
+#         self.val = x
+#         self.next = None
+
+class Solution:
+    def swapPairs(self, head: ListNode) -> ListNode:
+        if not head or head.next == None:
+            return head
+
+        def swapTwo(head, first, last):
+            first.next = last.next
+            last.next = first
+            head.next = last
+            return first
+        
+        headNode = ListNode(0)
+        headNode.next = head
+        h = headNode
+        f = headNode.next
+        l = f.next
+
+        while True:
+            h = swapTwo(h, f, l)
+            f = h.next
+            if f == None or f.next == None:
+                break
+            l = f.next
+        
+        return headNode.next
+```
+
+
+
 # [25. K 个一组翻转链表](https://leetcode-cn.com/problems/reverse-nodes-in-k-group/)
 
 难度 困难
