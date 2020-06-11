@@ -457,6 +457,47 @@ class Solution:
 
 
 
+# [739. 每日温度](https://leetcode-cn.com/problems/daily-temperatures/)
+
+难度 中等
+
+根据每日 `气温` 列表，请重新生成一个列表，对应位置的输出是需要再等待多久温度才会升高超过该日的天数。如果之后都不会升高，请在该位置用 `0` 来代替。
+
+例如，给定一个列表 `temperatures = [73, 74, 75, 71, 69, 72, 76, 73]`，你的输出应该是 `[1, 1, 4, 2, 1, 1, 0, 0]`。
+
+**提示：**`气温` 列表长度的范围是 `[1, 30000]`。每个气温的值的均为华氏度，都是在 `[30, 100]` 范围内的整数。
+
+
+
+**解法**
+
+使用一个栈保存温度，遍历气温列表，当遇到新温度时，如果该温度比栈中的温度高，则更新栈中温度对应日期的答案。时间复杂度： $O(N)$ ，空间复杂度： $O(N)$ 。
+
+
+
+**代码**
+
+```python
+class Solution:
+    def dailyTemperatures(self, T: List[int]) -> List[int]:
+        if not T:
+            return []
+        
+        stack = []
+        ans = [0] * len(T)
+
+        for i in range(0, len(T)):
+            while stack and T[i] > T[stack[-1]]:
+                day = stack.pop()
+                ans[day] = i - day 
+            
+            stack.append(i)
+        
+        return ans
+```
+
+
+
 # [820. 单词的压缩编码](https://leetcode-cn.com/problems/short-encoding-of-words/)
 
 难度 中等
