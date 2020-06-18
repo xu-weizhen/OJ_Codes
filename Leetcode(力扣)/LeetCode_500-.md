@@ -1815,6 +1815,149 @@ class Solution:
 
 
 
+# [1014. 最佳观光组合](https://leetcode-cn.com/problems/best-sightseeing-pair/)
+
+给定正整数数组 `A`，`A[i]` 表示第 `i` 个观光景点的评分，并且两个景点 `i` 和 `j` 之间的距离为 `j - i`。
+
+一对景点（`i < j`）组成的观光组合的得分为（`A[i] + A[j] + i - j`）：景点的评分之和**减去**它们两者之间的距离。
+
+返回一对观光景点能取得的最高分。
+
+ 
+
+**示例：**
+
+```
+输入：[8,1,5,2,6]
+输出：11
+解释：i = 0, j = 2, A[i] + A[j] + i - j = 8 + 5 + 0 - 2 = 11
+```
+
+ 
+
+**提示：**
+
+1. `2 <= A.length <= 50000`
+2. `1 <= A[i] <= 1000`
+
+
+
+**解法**
+
+将表达式视为 `A[i] + i` 和 `A[j] -j` 两部分，这两部分的值都只与元素自己有关，遍历找出最大值即可。时间复杂度： $O(N)$ ，空间复杂度： $O(1)$ 。
+
+
+
+**代码**
+
+```python
+class Solution:
+    def maxScoreSightseeingPair(self, A: List[int]) -> int:
+        maxi = A[0] + 0
+        ans = 0
+
+        for i in range(1, len(A)):
+            ans = max(ans, maxi + A[i] - i)
+            maxi = max(maxi, A[i] + i )
+        
+        return ans
+```
+
+
+
+# [1028. 从先序遍历还原二叉树](https://leetcode-cn.com/problems/recover-a-tree-from-preorder-traversal/)
+
+难度 困难
+
+我们从二叉树的根节点 `root` 开始进行深度优先搜索。
+
+在遍历中的每个节点处，我们输出 `D` 条短划线（其中 `D` 是该节点的深度），然后输出该节点的值。（*如果节点的深度为 `D`，则其直接子节点的深度为 `D + 1`。根节点的深度为 `0`）。*
+
+如果节点只有一个子节点，那么保证该子节点为左子节点。
+
+给出遍历输出 `S`，还原树并返回其根节点 `root`。
+
+ 
+
+**示例 1：**
+
+**![img](https://assets.leetcode-cn.com/aliyun-lc-upload/uploads/2019/04/12/recover-a-tree-from-preorder-traversal.png)**
+
+```
+输入："1-2--3--4-5--6--7"
+输出：[1,2,5,3,4,6,7]
+```
+
+**示例 2：**
+
+**![img](https://assets.leetcode-cn.com/aliyun-lc-upload/uploads/2019/04/12/screen-shot-2019-04-10-at-114101-pm.png)**
+
+```
+输入："1-2--3---4-5--6---7"
+输出：[1,2,5,3,null,6,null,4,null,7]
+```
+
+**示例 3：**
+
+![img](https://assets.leetcode-cn.com/aliyun-lc-upload/uploads/2019/04/12/screen-shot-2019-04-10-at-114955-pm.png)
+
+```
+输入："1-401--349---90--88"
+输出：[1,401,null,349,88,90]
+```
+
+ 
+
+**提示：**
+
+- 原始树中的节点数介于 `1` 和 `1000` 之间。
+- 每个节点的值介于 `1` 和 `10 ^ 9` 之间。
+
+
+
+**解法**
+
+使用列表保存已完成的树的节点，对字符串进行遍历构建树。时间复杂度： $O(N)$ ，空间复杂度： $O(N)$ 
+
+
+
+**代码**
+
+```python
+# 官方题解
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, x):
+#         self.val = x
+#         self.left = None
+#         self.right = None
+
+class Solution:
+    def recoverFromPreorder(self, S: str) -> TreeNode:
+        path, pos = list(), 0
+        while pos < len(S):
+            level = 0
+            while S[pos] == '-':
+                level += 1
+                pos += 1
+            value = 0
+            while pos < len(S) and S[pos].isdigit():
+                value = value * 10 + (ord(S[pos]) - ord('0'))
+                pos += 1
+            node = TreeNode(value)
+            if level == len(path):
+                if path:
+                    path[-1].left = node
+            else:
+                path = path[:level]
+                path[-1].right = node
+            path.append(node)
+        return path[0]
+
+```
+
+
+
 # [1071. 字符串的最大公因子](https://leetcode-cn.com/problems/greatest-common-divisor-of-strings/)
 
 难度 简单 
