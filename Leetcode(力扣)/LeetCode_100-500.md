@@ -206,6 +206,157 @@ class Solution:
 
 
 
+# [124. 二叉树中的最大路径和](https://leetcode-cn.com/problems/binary-tree-maximum-path-sum/)
+
+难度 困难
+
+给定一个**非空**二叉树，返回其最大路径和。
+
+本题中，路径被定义为一条从树中任意节点出发，达到任意节点的序列。该路径**至少包含一个**节点，且不一定经过根节点。
+
+**示例 1:**
+
+```
+输入: [1,2,3]
+
+       1
+      / \
+     2   3
+
+输出: 6
+```
+
+**示例 2:**
+
+```
+输入: [-10,9,20,null,null,15,7]
+
+   -10
+   / \
+  9  20
+    /  \
+   15   7
+
+输出: 42
+```
+
+
+
+**解法**
+
+递归计算左右子节点的贡献值，并更新最大路径值。时间复杂度： $O(N)$ ，空间复杂度 $O(N)$ 。
+
+
+
+**代码**
+
+```python
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, x):
+#         self.val = x
+#         self.left = None
+#         self.right = None
+
+class Solution:
+    def __init__(self):
+        self.maxSum = float("-inf")
+
+    def maxPathSum(self, root: TreeNode) -> int:
+        def maxGain(node):
+            if not node:
+                return 0
+
+            # 递归计算左右子节点的最大贡献值
+            # 只有在最大贡献值大于 0 时，才会选取对应子节点
+            leftGain = max(maxGain(node.left), 0)
+            rightGain = max(maxGain(node.right), 0)
+            
+            # 节点的最大路径和取决于该节点的值与该节点的左右子节点的最大贡献值
+            priceNewpath = node.val + leftGain + rightGain
+            
+            # 更新答案
+            self.maxSum = max(self.maxSum, priceNewpath)
+        
+            # 返回节点的最大贡献值
+            return node.val + max(leftGain, rightGain)
+   
+        maxGain(root)
+        return self.maxSum
+```
+
+
+
+# [125. 验证回文串](https://leetcode-cn.com/problems/valid-palindrome/)
+
+难度 简单
+
+给定一个字符串，验证它是否是回文串，只考虑字母和数字字符，可以忽略字母的大小写。
+
+**说明：**本题中，我们将空字符串定义为有效的回文串。
+
+**示例 1:**
+
+```
+输入: "A man, a plan, a canal: Panama"
+输出: true
+```
+
+**示例 2:**
+
+```
+输入: "race a car"
+输出: false
+```
+
+
+
+**解法**
+
++ 方法一：双指针遍历。时间复杂度： $O(N)$ ，空间复杂度： $O(1)$ 。
++ 方法二：向转换字符串，再进行判断。时间复杂度： $O(N)$ ，空间复杂度： $O(N)$ 。
+
+
+
+**代码**
+
+```python
+# 方法一
+class Solution:
+    def isPalindrome(self, s: str) -> bool:
+        if not s:
+            return True
+        
+        left = 0
+        right = len(s) - 1
+        
+        while left < right:
+            while left < right and not s[left].isalnum():
+                left += 1
+            while left < right and not s[right].isalnum():
+                right -= 1
+            
+            # if left > right or not (s[left] == s[right] or s[left].isalpha() and s[right].isalpha() and abs(ord(s[left]) - ord(s[right])) == 32):
+            if left < right and s[left].lower() != s[right].lower():
+                break
+            
+            left += 1
+            right -= 1
+        
+        if left < right:
+            return False
+        else:
+            return True
+        
+# 方法二
+class Solution:
+    def isPalindrome(self, s: str) -> bool:
+        st = "".join(ch.lower() for ch in s if ch.isalnum())
+        return st == st[::-1]
+```
+
+
+
 # [126. 单词接龙 II](https://leetcode-cn.com/problems/word-ladder-ii/)
 
 难度 困难
