@@ -2862,6 +2862,109 @@ class Solution:
 
 
 
+# [67. 二进制求和](https://leetcode-cn.com/problems/add-binary/)
+
+难度 简单
+
+给你两个二进制字符串，返回它们的和（用二进制表示）。
+
+输入为 **非空** 字符串且只包含数字 `1` 和 `0`。
+
+ 
+
+**示例 1:**
+
+```
+输入: a = "11", b = "1"
+输出: "100"
+```
+
+**示例 2:**
+
+```
+输入: a = "1010", b = "1011"
+输出: "10101"
+```
+
+ 
+
+**提示：**
+
+- 每个字符串仅由字符 `'0'` 或 `'1'` 组成。
+- `1 <= a.length, b.length <= 10^4`
+- 字符串如果不是 `"0"` ，就都不含前导零。
+
+
+
+
+
+**解法**
+
++ 方法一：先转十进制，计算得到结果再转二进制。
++ 方法二：模拟加法过程。时间复杂度： $O(\max(M,N))$ ， 空间复杂度：  $O(\max(M,N))$ 。
+
+
+
+**代码**
+
+```python
+# 方法一
+class Solution:
+    def addBinary(self, a, b) -> str:
+        return '{0:b}'.format(int(a, 2) + int(b, 2))
+    	# return bin(int(a, 2) + int(b, 2))[2:]
+
+# 方法二
+class Solution:
+    def addBinary(self, a: str, b: str) -> str:
+        if len(b) > len(a):
+            a, b = b, a 
+
+        i = len(a) - 1
+        j = len(b) - 1
+        ans = ''
+        carry = 0
+
+        while i >= 0 and j >= 0:
+            if a[i] == '0' and b[j] == '0':
+                if carry == 0:
+                    ans = '0' + ans
+                else:
+                    ans = '1' + ans
+                    carry = 0
+            elif a[i] == '1' and b[j] == '1':
+                if carry == 0:
+                    ans = '0' + ans
+                    carry = 1
+                else:
+                    ans = '1' + ans
+            else:
+                if carry == 0:
+                    ans = '1' + ans
+                else:
+                    ans = '0' + ans
+            i -= 1
+            j -= 1
+        
+        while i >= 0:
+            if carry == 1:
+                if a[i] == '1':
+                    ans = '0' + ans
+                else:
+                    ans = '1' + ans
+                    carry = 0
+            else:
+                ans = a[i] + ans
+            i -= 1
+        
+        if carry == 1:
+            ans = '1' + ans
+
+        return ans
+```
+
+
+
 # [69. x 的平方根](https://leetcode-cn.com/problems/sqrtx/)
 
 难度 简单
