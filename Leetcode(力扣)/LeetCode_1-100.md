@@ -2277,6 +2277,119 @@ class Solution:
 
 
 
+# [28. 实现 strStr()](https://leetcode-cn.com/problems/implement-strstr/)
+
+难度 简单
+
+实现 [strStr()](https://baike.baidu.com/item/strstr/811469) 函数。
+
+给定一个 haystack 字符串和一个 needle 字符串，在 haystack 字符串中找出 needle 字符串出现的第一个位置 (从0开始)。如果不存在，则返回 **-1**。
+
+**示例 1:**
+
+```
+输入: haystack = "hello", needle = "ll"
+输出: 2
+```
+
+**示例 2:**
+
+```
+输入: haystack = "aaaaa", needle = "bba"
+输出: -1
+```
+
+**说明:**
+
+当 `needle` 是空字符串时，我们应当返回什么值呢？这是一个在面试中很好的问题。
+
+对于本题而言，当 `needle` 是空字符串时我们应当返回 0 。这与C语言的 [strstr()](https://baike.baidu.com/item/strstr/811469) 以及 Java的 [indexOf()](https://docs.oracle.com/javase/7/docs/api/java/lang/String.html#indexOf(java.lang.String)) 定义相符。
+
+
+
+**解法**：
+
++ 方法一： KMP算法。构建 `next` 数组，该数组表示在某一位时，当前后缀与前缀若相同，则当前位对应的是前缀的哪一位。如字符串 `abcabcd` 的 `next` 数组为 `[-1, 0, 0, 0, 1, 2, 0]` 。通过 `next` 数组，查找时被搜索字符串上的指针可以实现不回溯。时间复杂度： $O(M + N)$ ，空间复杂度： $O(N)$ 。$M,N$ 分别为字符串和模式串长度。
++ 方法二：Rabin-Karp算法。计算哈希值。计算字符串中长度为 $N$ 的子串的哈希值，与模式串哈希值做比较。时间复杂度： $O(M)$ ，空间复杂度： $O(1)$ 。
+
+
+
+**代码**
+
+```python
+# 方法一
+class Solution:
+    def strStr(self, haystack: str, needle: str) -> int:
+        if needle == '':
+                return 0
+
+        nextList = self.buildNext(needle)
+        s = 0
+        p = 0
+
+        while s < len(haystack) and p < len(needle):
+            if p == -1 or haystack[s] == needle[p]:
+                s += 1
+                p += 1
+            else:
+                p = nextList[p]
+        
+        return s - len(needle) if p == len(needle) else -1
+
+
+    def buildNext(self, needle):
+        ans = [-1] * len(needle)
+        head = -1
+        tail = 0
+
+        while tail < len(needle) - 1:
+            if head == -1 or needle[head] == needle[tail]:
+                head += 1
+                tail += 1
+                ans[tail] = head 
+            else:
+                head = ans[head]
+
+        return ans
+
+# 方法eer
+# 官方题解
+class Solution:
+    def strStr(self, haystack: str, needle: str) -> int:
+        L, n = len(needle), len(haystack)
+        if L > n:
+            return -1
+        
+        # base value for the rolling hash function
+        a = 26
+        # modulus value for the rolling hash function to avoid overflow
+        modulus = 2**31
+        
+        # lambda-function to convert character to integer
+        h_to_int = lambda i : ord(haystack[i]) - ord('a')
+        needle_to_int = lambda i : ord(needle[i]) - ord('a')
+        
+        # compute the hash of strings haystack[:L], needle[:L]
+        h = ref_h = 0
+        for i in range(L):
+            h = (h * a + h_to_int(i)) % modulus
+            ref_h = (ref_h * a + needle_to_int(i)) % modulus
+        if h == ref_h:
+            return 0
+              
+        # const value to be used often : a**L % modulus
+        aL = pow(a, L, modulus) 
+        for start in range(1, n - L + 1):
+            # compute rolling hash in O(1) time
+            h = (h * a - h_to_int(start - 1) * aL + h_to_int(start + L - 1)) % modulus
+            if h == ref_h:
+                return start
+
+        return -1
+```
+
+
+
 
 # [33. 搜索旋转排序数组](https://leetcode-cn.com/problems/search-in-rotated-sorted-array/)
 
