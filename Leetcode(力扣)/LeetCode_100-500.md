@@ -1461,6 +1461,63 @@ var reverseList = function(head) {
 
 
 
+# [209. 长度最小的子数组](https://leetcode-cn.com/problems/minimum-size-subarray-sum/)
+
+难度 中等
+
+给定一个含有 **n** 个正整数的数组和一个正整数 **s ，**找出该数组中满足其和 **≥ s** 的长度最小的连续子数组，并返回其长度**。**如果不存在符合条件的连续子数组，返回 0。
+
+**示例:** 
+
+```
+输入: s = 7, nums = [2,3,1,2,4,3]
+输出: 2
+解释: 子数组 [4,3] 是该条件下的长度最小的连续子数组。
+```
+
+**进阶:**
+
+如果你已经完成了*O*(*n*) 时间复杂度的解法, 请尝试 *O*(*n* log *n*) 时间复杂度的解法。
+
+
+
+**解法**
+
+双指针。时间复杂度： $O(N)$ ，空间复杂度： $O(1)$ 
+
+
+
+**代码** 
+
+```python
+class Solution:
+    def minSubArrayLen(self, s: int, nums: List[int]) -> int:
+        if not nums:
+            return 0
+
+        count = nums[0]
+        left = 0
+        right = 0
+        ans = len(nums)
+        find = False
+
+        while True:
+            if count < s:
+                right += 1
+                if right >= len(nums):
+                    break
+                count += nums[right]
+            else:
+                ans = min(ans , right - left + 1)
+                find = True
+                count -= nums[left]
+                left += 1
+        
+        return ans if find else 0
+```
+
+
+
 # [210. 课程表 II](https://leetcode-cn.com/problems/course-schedule-ii/)
 
 难度 中等
@@ -1700,6 +1757,43 @@ class MyStack:
 
     def empty(self) -> bool:
         return len(self.q) == 0
+```
+
+
+
+# [215. 数组中的第K个最大元素](https://leetcode-cn.com/problems/kth-largest-element-in-an-array/)
+
+难度 中等
+
+在未排序的数组中找到第 **k** 个最大的元素。请注意，你需要找的是数组排序后的第 k 个最大的元素，而不是第 k 个不同的元素。
+
+**示例 1:**
+
+```
+输入: [3,2,1,5,6,4] 和 k = 2
+输出: 5
+```
+
+**示例 2:**
+
+```
+输入: [3,2,3,1,2,4,5,5,6] 和 k = 4
+输出: 4
+```
+
+**说明:**
+
+你可以假设 k 总是有效的，且 1 ≤ k ≤ 数组的长度。
+
+
+
+**代码**
+
+```python
+class Solution:
+    def findKthLargest(self, nums: List[int], k: int) -> int:
+        nums.sort()
+        return nums[-k]
 ```
 
 
