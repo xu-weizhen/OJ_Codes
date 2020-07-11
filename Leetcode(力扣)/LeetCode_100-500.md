@@ -2451,6 +2451,123 @@ class Solution:
 
 
 
+# 309. 最佳买卖股票时机含冷冻期
+
+难度 中等
+
+给定一个整数数组，其中第 i 个元素代表了第 i 天的股票价格 。
+
+设计一个算法计算出最大利润。在满足以下约束条件下，你可以尽可能地完成更多的交易（多次买卖一支股票）:
+
+- 你不能同时参与多笔交易（你必须在再次购买前出售掉之前的股票）。
+- 卖出股票后，你无法在第二天买入股票 (即冷冻期为 1 天)。
+
+
+**示例:**
+
+```
+输入: [1,2,3,0,2]
+输出: 3 
+解释: 对应的交易状态为: [买入, 卖出, 冷冻期, 买入, 卖出]
+```
+
+**解法**
+
+
+动态规划。详见代码。时间复杂度：$O(N)$  空间复杂度： $O(N)$ ， $N$ 为天数。
+
+
+**代码**
+
+```python
+class Solution:
+    def maxProfit(self, prices: List[int]) -> int:
+        if not prices:
+            return 0
+
+        f0 = -prices[0]
+        f1 = f2 = 0
+
+        # 0 : 目前持有一支股票，对应的「累计最大收益」
+        # 1 : 目前不持有任何股票，并且处于冷冻期中，对应的「累计最大收益」
+        # 2 : 目前不持有任何股票，并且不处于冷冻期中，对应的「累计最大收益」
+        for i in range(1, len(prices)):
+            f0, f1, f2 = max(f0, f2 - prices[i]), f0 + prices[i], max(f1, f2)
+
+        return max(f1, f2)
+```
+
+
+
+# 315. 计算右侧小于当前元素的个数
+
+难度 困难
+
+给定一个整数数组 nums，按要求返回一个新数组 counts。数组 counts 有该性质： counts[i] 的值是  nums[i] 右侧小于 nums[i] 的元素的数量。
+
+**示例:**
+
+```
+输入: [5,2,6,1]
+输出: [2,1,1,0] 
+解释:
+5 的右侧有 2 个更小的元素 (2 和 1).
+2 的右侧仅有 1 个更小的元素 (1).
+6 的右侧有 1 个更小的元素 (1).
+1 的右侧有 0 个更小的元素.
+```
+
+**解法**
+
+从尾部开始遍历数组。将依据遇到过的数字放入排序列表中。遇到新数字时在列表中进行二分查找。时间复杂度： $O(N (\log(N) + N))$ ，空间复杂度： $O(N)$ 。
+
+**代码**
+
+```python
+class Solution:
+    def countSmaller(self, nums: List[int]) -> List[int]:
+        
+        length = len(nums)
+        if length == 0:
+            return []
+        elif length == 1:
+            return [0]
+        
+        self.sortList = [nums[-1]]
+        ans = [0 for i in range(length)]
+
+        for i in range(length - 2, -1, -1):
+            ans[i] = self.search(nums[i])
+        
+        return ans 
+
+    def search(self, target):
+        left = 0
+        right = len(self.sortList) - 1
+        find = None
+
+        while left <= right:
+            mid = (left + right) // 2
+            if self.sortList[mid] < target:
+                left = mid + 1
+            elif self.sortList[mid] > target:
+                right = mid - 1
+            else:
+                find = mid 
+                break
+
+        if find != None:
+            while find >= 0 and self.sortList[find] == target:
+                find -= 1
+            self.sortList.insert(find + 1, target)
+            return find + 1 if find >= 0 else 0
+        else:
+            self.sortList.insert(left, target)
+            return right + 1
+```
+
+
+
 # [322. 零钱兑换](https://leetcode-cn.com/problems/coin-change/)
 
 难度 中等
@@ -2564,54 +2681,6 @@ class Solution:
                 ways[index] = min(ways[index], ways[index - coin] + 1)
         
         return ways[amount] if ways[amount] != int(1e9) else -1
-```
-
-
-
-# 309. 最佳买卖股票时机含冷冻期
-
-难度 中等
-
-给定一个整数数组，其中第 i 个元素代表了第 i 天的股票价格 。
-
-设计一个算法计算出最大利润。在满足以下约束条件下，你可以尽可能地完成更多的交易（多次买卖一支股票）:
-
-- 你不能同时参与多笔交易（你必须在再次购买前出售掉之前的股票）。
-- 卖出股票后，你无法在第二天买入股票 (即冷冻期为 1 天)。
-
-
-**示例:**
-
-```
-输入: [1,2,3,0,2]
-输出: 3 
-解释: 对应的交易状态为: [买入, 卖出, 冷冻期, 买入, 卖出]
-```
-
-**解法**
-
-
-动态规划。详见代码。时间复杂度：$O(N)$  空间复杂度： $O(N)$ ， $N$ 为天数。
-
-
-**代码**
-
-```python
-class Solution:
-    def maxProfit(self, prices: List[int]) -> int:
-        if not prices:
-            return 0
-
-        f0 = -prices[0]
-        f1 = f2 = 0
-
-        # 0 : 目前持有一支股票，对应的「累计最大收益」
-        # 1 : 目前不持有任何股票，并且处于冷冻期中，对应的「累计最大收益」
-        # 2 : 目前不持有任何股票，并且不处于冷冻期中，对应的「累计最大收益」
-        for i in range(1, len(prices)):
-            f0, f1, f2 = max(f0, f2 - prices[i]), f0 + prices[i], max(f1, f2)
-
-        return max(f1, f2)
 ```
 
 
