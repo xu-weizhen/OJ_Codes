@@ -775,6 +775,61 @@ class Solution:
 
 
 
+# [97. 交错字符串](https://leetcode-cn.com/problems/interleaving-string/)
+
+难度 困难
+
+给定三个字符串 *s1*, *s2*, *s3*, 验证 *s3* 是否是由 *s1* 和 *s2* 交错组成的。
+
+**示例 1:**
+
+```
+输入: s1 = "aabcc", s2 = "dbbca", s3 = "aadbbcbcac"
+输出: true
+```
+
+**示例 2:**
+
+```
+输入: s1 = "aabcc", s2 = "dbbca", s3 = "aadbbbaccc"
+输出: false
+```
+
+
+
+**解法**
+
+动态规划，并使用滚动字符串进行优化。时间复杂度： $O(MN)$ ，空间复杂度： $O(N)$ 。 $M,N$ 分别为字符串 `s1,s2` 的长度
+
+
+
+**代码**
+
+```python
+class Solution:
+    def isInterleave(self, s1: str, s2: str, s3: str) -> bool:
+
+        if len(s1) + len(s2) != len(s3):
+            return False
+
+        dp = [False for _ in range(len(s2) + 1)]
+        dp[0] = True
+
+        for i in range(0, len(s1) + 1):
+            for j in range(0, len(s2) + 1):
+                index = i + j - 1
+
+                if i > 0:
+                    dp[j] &= (s3[index] == s1[i - 1])
+                
+                if j > 0:
+                    dp[j] |= (dp[j - 1] and s3[index] == s2[j - 1]) 
+
+        return dp[-1]
+```
+
+
+
 # [98. 验证二叉搜索树](https://leetcode-cn.com/problems/validate-binary-search-tree/)
 
 难度 中等
