@@ -1408,5 +1408,180 @@ class Solution:
 ```
 
 
+# [1528. 重新排列字符串](https://leetcode-cn.com/problems/shuffle-string/)
+
+难度 简单
+
+给你一个字符串 `s` 和一个 长度相同 的整数数组 `indices` 。
+
+请你重新排列字符串 `s` ，其中第 `i` 个字符需要移动到 `indices[i]` 指示的位置。
+
+返回重新排列后的字符串。
+
+
+**示例 1：**
+
+![图片](https://assets.leetcode-cn.com/aliyun-lc-upload/uploads/2020/07/26/q1.jpg)
+
+```
+输入：s = "codeleet", indices = [4,5,6,7,0,2,1,3]
+输出："leetcode"
+解释：如图所示，"codeleet" 重新排列后变为 "leetcode" 。
+```
+
+**示例 2：**
+
+```
+输入：s = "abc", indices = [0,1,2]
+输出："abc"
+解释：重新排列后，每个字符都还留在原来的位置上。
+```
+
+**示例 3：**
+
+```
+输入：s = "aiohn", indices = [3,1,4,2,0]
+输出："nihao"
+```
+
+**示例 4：**
+
+```
+输入：s = "aaiougrt", indices = [4,0,2,6,7,3,1,5]
+输出："arigatou"
+```
+
+**示例 5：**
+
+```
+输入：s = "art", indices = [1,0,2]
+输出："rat"
+```
+
+**提示：**
+
++ `s.length == indices.length == n`
++ `1 <= n <= 100`
++ `s` 仅包含小写英文字母。
++ `0 <= indices[i] < n`
++ `indices` 的所有的值都是唯一的（也就是说，`indices` 是整数 `0` 到 `n - 1` 形成的一组排列）。
+
+
+**解法**
+
+创建一个新数组，根据 `indices` 将原字符串中字符填到新数组的对应位置。时间复杂度： $O(N)$ ， 空间复杂度： $O(N)$ 。
+
+**代码**
+
+```python
+# python
+class Solution:
+    def restoreString(self, s: str, indices: List[int]) -> str:
+        ans = ['' for _ in range(len(s))]
+        
+        for ch, index in zip(s, indices):
+            ans[index] = ch
+        
+        return ''.join(ans)
+```
+
+```cpp
+// c++
+class Solution {
+public:
+    string restoreString(string s, vector<int>& indices) {
+
+        string ans(s.length(), ' ');
+        // string ans = s;
+
+        for(int i=0; i<indices.size(); i++)
+            ans[indices[i]] = s[i];
+        
+        return ans;
+    }
+};
+```
+
+
+
+# [1529. 灯泡开关 IV](https://leetcode-cn.com/problems/bulb-switcher-iv/)
+
+难度 中等
+
+房间中有 `n` 个灯泡，编号从 `0` 到 `n-1` ，自左向右排成一行。最开始的时候，所有的灯泡都是 关 着的。
+
+请你设法使得灯泡的开关状态和 `target` 描述的状态一致，其中 `target[i]` 等于 `1` 第 `i` 个灯泡是开着的，等于 `0` 意味着第 `i` 个灯是关着的。
+
+有一个开关可以用于翻转灯泡的状态，翻转操作定义如下：
+
+选择当前配置下的任意一个灯泡（下标为 `i` ）
+翻转下标从 `i` 到 `n-1` 的每个灯泡
+翻转时，如果灯泡的状态为 `0` 就变为 `1` ，为 `1` 就变为 `0` 。
+
+返回达成 `target` 描述的状态所需的 **最少** 翻转次数。
 
  
+
+**示例 1：**
+
+```
+输入：target = "10111"
+输出：3
+解释：初始配置 "00000".
+从第 3 个灯泡（下标为 2）开始翻转 "00000" -> "00111"
+从第 1 个灯泡（下标为 0）开始翻转 "00111" -> "11000"
+从第 2 个灯泡（下标为 1）开始翻转 "11000" -> "10111"
+至少需要翻转 3 次才能达成 target 描述的状态
+```
+
+**示例 2：**
+
+```
+输入：target = "101"
+输出：3
+解释："000" -> "111" -> "100" -> "101".
+```
+
+**示例 3：**
+
+```
+输入：target = "00000"
+输出：0
+```
+
+**示例 4：**
+
+```
+输入：target = "001011101"
+输出：5
+```
+
+**提示：**
+
++ `1 <= target.length <= 10^5`
++ `target[i] == '0'` 或者 `target[i] == '1'`
+
+
+**解法**
+
+从左到右依次调整，使灯泡满足条件。时间复杂度： $O(N)$ ， 空间复杂度： $O(1)$ 。
+
+**代码**
+
+```python
+class Solution:
+    def minFlips(self, target: str) -> int:
+        light = False
+        ans = 0
+        
+        for ch in target:
+            if not light and ch == '0':
+                continue
+            elif light and ch == '1':
+                continue
+            else:
+                ans += 1
+                light = not light
+        
+        return ans
+```
