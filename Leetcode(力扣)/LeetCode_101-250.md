@@ -347,6 +347,80 @@ class Solution:
 
 
 
+# [114. 二叉树展开为链表](https://leetcode-cn.com/problems/flatten-binary-tree-to-linked-list/)
+
+难度 中等
+
+给定一个二叉树，[原地](https://baike.baidu.com/item/原地算法/8010757)将它展开为一个单链表。
+
+ 
+
+例如，给定二叉树
+
+```
+    1
+   / \
+  2   5
+ / \   \
+3   4   6
+```
+
+将其展开为：
+
+```
+1
+ \
+  2
+   \
+    3
+     \
+      4
+       \
+        5
+         \
+          6
+```
+
+
+
+**解法**
+
+在先序遍历的同时，记住前一个节点，在遍历的同时构建结果。时间复杂度： $O(N)$ ，空间复杂度： $O(N)$ 。
+
+
+
+**代码**
+
+```python
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
+class Solution:
+    def flatten(self, root: TreeNode) -> None:
+        if not root:
+            return
+        
+        stack = [root]
+        prev = None
+        
+        while stack:
+            curr = stack.pop()
+            if prev:
+                prev.left = None
+                prev.right = curr
+            left, right = curr.left, curr.right
+            if right:
+                stack.append(right)
+            if left:
+                stack.append(left)
+            prev = curr
+```
+
+
+
 # [120. 三角形最小路径和](https://leetcode-cn.com/problems/triangle/)
 
 难度 中等
