@@ -522,6 +522,84 @@ class Solution:
 
 
 
+# [337. 打家劫舍 III](https://leetcode-cn.com/problems/house-robber-iii/)
+
+难度中等510
+
+在上次打劫完一条街道之后和一圈房屋后，小偷又发现了一个新的可行窃的地区。这个地区只有一个入口，我们称之为“根”。 除了“根”之外，每栋房子有且只有一个“父“房子与之相连。一番侦察之后，聪明的小偷意识到“这个地方的所有房屋的排列类似于一棵二叉树”。 如果两个直接相连的房子在同一天晚上被打劫，房屋将自动报警。
+
+计算在不触动警报的情况下，小偷一晚能够盗取的最高金额。
+
+**示例 1:**
+
+```
+输入: [3,2,3,null,3,null,1]
+
+     3
+    / \
+   2   3
+    \   \ 
+     3   1
+
+输出: 7 
+解释: 小偷一晚能够盗取的最高金额 = 3 + 3 + 1 = 7.
+```
+
+**示例 2:**
+
+```
+输入: [3,4,5,1,3,null,1]
+
+     3
+    / \
+   4   5
+  / \   \ 
+ 1   3   1
+
+输出: 9
+解释: 小偷一晚能够盗取的最高金额 = 4 + 5 = 9.
+```
+
+
+
+**解法**
+
+深度优先搜索 + 动态规划。时间复杂度： $O(n)$ ，空间复杂度： $O(n)$ 。
+
+
+
+**代码**
+
+```python
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, x):
+#         self.val = x
+#         self.left = None
+#         self.right = None
+
+class Solution:
+    def rob(self, root: TreeNode) -> int:
+
+        self.do = collections.defaultdict(lambda :0)
+        self.donot = collections.defaultdict(lambda :0)
+
+        def dfs(root):
+            if root is None:
+                return 
+
+            dfs(root.left)
+            dfs(root.right)
+
+            self.do[root] = root.val + self.donot[root.left] + self.donot[root.right]
+            self.donot[root] = max(self.do[root.left], self.donot[root.left]) + max(self.do[root.right], self.donot[root.right])
+        
+        dfs(root)
+        return max(self.do[root], self.donot[root])
+```
+
+
+
 # [322. 零钱兑换](https://leetcode-cn.com/problems/coin-change/)
 
 难度 中等
@@ -1305,6 +1383,58 @@ class Solution:
 
         return left
 ```
+
+
+
+# [415. 字符串相加](https://leetcode-cn.com/problems/add-strings/)
+
+难度 简单
+
+给定两个字符串形式的非负整数 `num1` 和`num2` ，计算它们的和。
+
+ 
+
+**提示：**
+
+1. `num1` 和`num2` 的长度都小于 5100
+2. `num1` 和`num2` 都只包含数字 `0-9`
+3. `num1` 和`num2` 都不包含任何前导零
+4. **你不能使用任何內建 BigInteger 库， 也不能直接将输入的字符串转换为整数形式**
+
+
+
+**代码**
+
+```python
+class Solution:
+    def addStrings(self, num1: str, num2: str) -> str:
+
+        if len(num1) < len(num2):
+            num1, num2 = num2, num1
+        
+        index1 = len(num1) - 1
+        index2 = len(num2) - 1
+        carry = 0
+        ans = ''
+
+        while index1 >= 0:
+            if index2 >= 0:
+                r = ord(num1[index1]) + ord(num2[index2]) + carry - 2 * ord('0')
+                index2 -= 1
+            else:
+                r = ord(num1[index1]) + carry - ord('0')
+
+            carry = r // 10
+            r = r % 10
+            ans += str(r)
+            index1 -= 1
+            
+        if carry == 1:
+            ans += '1'
+            
+        return ans[::-1]
+```
+
 
 
 # [445. 两数相加 II](https://leetcode-cn.com/problems/add-two-numbers-ii/)
