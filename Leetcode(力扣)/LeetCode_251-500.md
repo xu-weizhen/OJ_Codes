@@ -786,6 +786,71 @@ class Solution:
 
 
 
+# [336. 回文对](https://leetcode-cn.com/problems/palindrome-pairs/)
+
+难度 困难
+
+给定一组 **互不相同** 的单词， 找出所有**不同** 的索引对`(i, j)`，使得列表中的两个单词， `words[i] + words[j]` ，可拼接成回文串。
+
+ 
+
+**示例 1：**
+
+```
+输入：["abcd","dcba","lls","s","sssll"]
+输出：[[0,1],[1,0],[3,2],[2,4]] 
+解释：可拼接成的回文串为 ["dcbaabcd","abcddcba","slls","llssssll"]
+```
+
+**示例 2：**
+
+```
+输入：["bat","tab","cat"]
+输出：[[0,1],[1,0]] 
+解释：可拼接成的回文串为 ["battab","tabbat"]
+```
+
+
+
+**解法**
+
+若字符串长度不相等，可将其拆分为两部分，一部分为回文串，另一部分为较短字符串的翻转。时间复杂度： $O(nm^2)$ ，空间复杂度： $O(nm)$ ，其中 $n$ 是字符串的数量，$m$ 是字符串的平均长度。
+
+
+
+**代码**
+
+```python
+class Solution:
+    def palindromePairs(self, words: List[str]) -> List[List[int]]:
+
+        def findWord(s: str, left: int, right: int) -> int:
+            return indices.get(s[left:right+1], -1)
+        
+        def isPalindrome(s: str, left: int, right: int) -> bool:
+            return (sub := s[left:right+1]) == sub[::-1]
+        
+        n = len(words)
+        indices = {word[::-1]: i for i, word in enumerate(words)}
+        
+        ret = list()
+        for i, word in enumerate(words):
+            m = len(word)
+            for j in range(m + 1):
+                if isPalindrome(word, j, m - 1):
+                    leftId = findWord(word, 0, j - 1)
+                    if leftId != -1 and leftId != i:
+                        ret.append([i, leftId])
+                if j and isPalindrome(word, 0, j - 1):
+                    rightId = findWord(word, j, m - 1)
+                    if rightId != -1 and rightId != i:
+                        ret.append([rightId, i])
+
+        return ret
+```
+
+
+
 # [343. 整数拆分](https://leetcode-cn.com/problems/integer-break/)
 
 难度 中等
