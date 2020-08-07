@@ -2390,6 +2390,157 @@ class Solution:
 
 
 
+# [29. 两数相除](https://leetcode-cn.com/problems/divide-two-integers/)
+
+难度 中等
+
+给定两个整数，被除数 `dividend` 和除数 `divisor`。将两数相除，要求不使用乘法、除法和 mod 运算符。
+
+返回被除数 `dividend` 除以除数 `divisor` 得到的商。
+
+整数除法的结果应当截去（`truncate`）其小数部分，例如：`truncate(8.345) = 8` 以及 `truncate(-2.7335) = -2`
+
+ 
+
+**示例 1:**
+
+```
+输入: dividend = 10, divisor = 3
+输出: 3
+解释: 10/3 = truncate(3.33333..) = truncate(3) = 3
+```
+
+**示例 2:**
+
+```
+输入: dividend = 7, divisor = -3
+输出: -2
+解释: 7/-3 = truncate(-2.33333..) = -2
+```
+
+ 
+
+**提示：**
+
+- 被除数和除数均为 32 位有符号整数。
+- 除数不为 0。
+- 假设我们的环境只能存储 32 位有符号整数，其数值范围是 [−231, 231 − 1]。本题中，如果除法结果溢出，则返回 231 − 1。
+
+
+
+**解法**
+
+除数每次乘以2，确定商所在区间，再用二分查找寻找商。时间复杂度： $O(\log n)$ ，空间复杂度： $O(1)$ 。
+
+
+
+**代码**
+
+```python
+class Solution:
+    def divide(self, dividend: int, divisor: int) -> int:
+
+        negitive = False
+
+        if (dividend > 0 and divisor < 0) or (dividend < 0 and divisor > 0):
+            negitive = True
+        
+        dividend = abs(dividend)
+        divisor = abs(divisor)
+
+        ret = 0
+        di = divisor
+        div = dividend
+
+        while div >= di:
+            div -= di
+            di <<= 1
+            ret += 1
+        
+        low = 2 ** ret
+        high = 2 ** (ret + 1)
+
+        while low <= high:
+            mid = low + (high - low) // 2
+            if mid * divisor == dividend:
+                return -mid if negitive else mid
+            elif mid * divisor < dividend:
+                low = mid + 1
+            else:
+                high = mid - 1
+
+        return -high if negitive else high
+```
+
+
+
+# [30. 串联所有单词的子串](https://leetcode-cn.com/problems/substring-with-concatenation-of-all-words/)
+
+难度 困难
+
+给定一个字符串 **s** 和一些长度相同的单词 **words。**找出 **s** 中恰好可以由 **words** 中所有单词串联形成的子串的起始位置。
+
+注意子串要与 **words** 中的单词完全匹配，中间不能有其他字符，但不需要考虑 **words** 中单词串联的顺序。
+
+ 
+
+**示例 1：**
+
+```
+输入：
+  s = "barfoothefoobarman",
+  words = ["foo","bar"]
+输出：[0,9]
+解释：
+从索引 0 和 9 开始的子串分别是 "barfoo" 和 "foobar" 。
+输出的顺序不重要, [9,0] 也是有效答案。
+```
+
+**示例 2：**
+
+```
+输入：
+  s = "wordgoodgoodgoodbestword",
+  words = ["word","good","best","word"]
+输出：[]
+```
+
+
+
+**解法**
+
+滑动窗口，判断窗口中的单词是否满足要求。时间复杂度： $O(nm)$ ，空间复杂度： $O(m)$ ， $n,m$ 分别为字符串长度和单词表总长度。
+
+
+
+**代码**
+
+```python
+class Solution:
+    def findSubstring(self, s: str, words: List[str]) -> List[int]:
+
+        if not s or not words:
+            return []
+
+        wordLen = len(words[0])
+        allLen = wordLen * len(words)
+        count = Counter(words)
+        ret = []
+
+        for i in range(0, len(s) - allLen + 1):
+            sub = s[i : i + allLen]
+
+            countTem = []
+            for j in range(0, len(sub) - wordLen + 1, wordLen):
+                countTem.append(sub[j : j + wordLen])
+            
+            if Counter(countTem) == count:
+                ret.append(i)
+
+        return ret
+```
+
+
 
 # [33. 搜索旋转排序数组](https://leetcode-cn.com/problems/search-in-rotated-sorted-array/)
 
