@@ -202,6 +202,68 @@ class Solution:
 
 
 
+# [567. 字符串的排列](https://leetcode-cn.com/problems/permutation-in-string/)
+
+难度 中等1
+
+给定两个字符串 **s1** 和 **s2**，写一个函数来判断 **s2** 是否包含 **s1** 的排列。
+
+换句话说，第一个字符串的排列之一是第二个字符串的子串。
+
+**示例1:**
+
+```
+输入: s1 = "ab" s2 = "eidbaooo"
+输出: True
+解释: s2 包含 s1 的排列之一 ("ba").
+```
+
+ 
+
+**示例2:**
+
+```
+输入: s1= "ab" s2 = "eidboaoo"
+输出: False
+```
+
+ 
+
+**注意：**
+
+1. 输入的字符串只包含小写字母
+2. 两个字符串的长度都在 [1, 10,000] 之间
+
+
+
+**解法**
+
+统计 `s1`  和 `s2` 子串中字符出现的次数，若相同，则找到。时间复杂度： $O(n)$ ，空间复杂度： $O(1)$ 。
+
+
+
+**代码**
+
+```python
+class Solution:
+    def checkInclusion(self, s1: str, s2: str) -> bool:
+        
+        target = Counter(s1)
+        
+        length = len(s1)
+        
+        for i in range(0, len(s2) - length + 1):
+            counter = Counter(s2[i : i + length])
+            if counter == target:
+                return True
+        
+        return False
+```
+
+
+
+
+
 # [572. 另一个树的子树](https://leetcode-cn.com/problems/subtree-of-another-tree/)
 
 难度 简单
