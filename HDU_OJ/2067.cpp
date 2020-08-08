@@ -9,7 +9,6 @@ using namespace std;
 int main()
 {
     int count = 1;
-
     int n = 0;
     cin >> n;
 
