@@ -828,6 +828,104 @@ class Solution:
 
 
 
+# [93. 复原IP地址](https://leetcode-cn.com/problems/restore-ip-addresses/)
+
+难度中等336
+
+给定一个只包含数字的字符串，复原它并返回所有可能的 IP 地址格式。
+
+有效的 IP 地址正好由四个整数（每个整数位于 0 到 255 之间组成），整数之间用 `'.' `分隔。
+
+ 
+
+**示例:**
+
+```
+输入: "25525511135"
+输出: ["255.255.11.135", "255.255.111.35"]
+```
+
+
+
+**解法**
+
++ 方法一：直接 `for ` 循环。时间复杂度： $O(1)$ ，空间复杂度： $O(1)$ 。
++ 方法二：递归。时间复杂度： $O(|s|)$ ，空间复杂度： $O(1)$ 。
+
+
+
+**代码**
+
+```python
+# 方法一
+class Solution:
+    def restoreIpAddresses(self, s: str) -> List[str]:
+        result = []
+
+        for a in range(1, 4):
+            for b in range(1, 4):
+                for c in range(1, 4):
+                    for d in range(1, 4):
+                        if a + b + c + d == len(s):
+                            if self.isLegal(s[:a], s[a:a + b], s[a + b : a + b + c], s[a + b + c:]):
+                                result.append(s[:a] + '.' + s[a:a + b] + '.' + s[a + b: a + b + c] + '.' + s[a + b + c:])  
+        return result 
+    
+    def isLegal(self, a, b, c, d):
+        r = [a, b, c, d]
+
+        for addr in r:
+            if len(addr) > 1 and addr[0] == '0':
+                return False
+            if int(addr) > 255:
+                return False 
+        
+        return True
+    
+# 方法二
+# 官方代码
+class Solution:
+    def restoreIpAddresses(self, s: str) -> List[str]:
+        SEG_COUNT = 4
+        ans = list()
+        segments = [0] * SEG_COUNT
+        
+        def dfs(segId: int, segStart: int):
+            # 如果找到了 4 段 IP 地址并且遍历完了字符串，那么就是一种答案
+            if segId == SEG_COUNT:
+                if segStart == len(s):
+                    ipAddr = ".".join(str(seg) for seg in segments)
+                    ans.append(ipAddr)
+                return
+            
+            # 如果还没有找到 4 段 IP 地址就已经遍历完了字符串，那么提前回溯
+            if segStart == len(s):
+                return
+
+            # 由于不能有前导零，如果当前数字为 0，那么这一段 IP 地址只能为 0
+            if s[segStart] == "0":
+                segments[segId] = 0
+                dfs(segId + 1, segStart + 1)
+            
+            # 一般情况，枚举每一种可能性并递归
+            addr = 0
+            for segEnd in range(segStart, len(s)):
+                addr = addr * 10 + (ord(s[segEnd]) - ord("0"))
+                if 0 < addr <= 0xFF:
+                    segments[segId] = addr
+                    dfs(segId + 1, segEnd + 1)
+                else:
+                    break
+        
+
+        dfs(0, 0)
+        return ans
+```
+
+
+
+
+
 # [95. 不同的二叉搜索树 II](https://leetcode-cn.com/problems/unique-binary-search-trees-ii/)
 
 难度 中等
@@ -1049,6 +1147,136 @@ class Solution:
 
         return ans
 ```
+
+
+
+# [99. 恢复二叉搜索树](https://leetcode-cn.com/problems/recover-binary-search-tree/)
+
+难度 困难
+
+二叉搜索树中的两个节点被错误地交换。
+
+请在不改变其结构的情况下，恢复这棵树。
+
+**示例 1:**
+
+```
+输入: [1,3,null,null,2]
+
+   1
+  /
+ 3
+  \
+   2
+
+输出: [3,1,null,null,2]
+
+   3
+  /
+ 1
+  \
+   2
+```
+
+**示例 2:**
+
+```
+输入: [3,1,4,null,null,2]
+
+  3
+ / \
+1   4
+   /
+  2
+
+输出: [2,1,4,null,null,3]
+
+  2
+ / \
+1   4
+   /
+  3
+```
+
+**进阶:**
+
+- 使用 O(*n*) 空间复杂度的解法很容易实现。
+- 你能想出一个只使用常数空间的解决方案吗？
+
+
+
+**解法**
+
+Morris 中序遍历。
+
+Morris 遍历算法整体步骤如下（假设当前遍历到的节点为 xx）：
+
+1. 如果 $x$ 无左孩子，则访问 $x$ 的右孩子，即 $x = x.\textit{right}$ 。
+2. 如果 $x$ 有左孩子，则找到 $x$ 左子树上最右的节点（即左子树中序遍历的最后一个节点，$x$ 在中序遍历中的前驱节点），我们记为 $\textit{predecessor}$。根据 $\textit{predecessor}$ 的右孩子是否为空，进行如下操作。
+    + 如果 $\textit{predecessor}$ 的右孩子为空，则将其右孩子指向 $x$，然后访问 $x$ 的左孩子，即 $x = x.\textit{left}$ 。
+    + 如果 $\textit{predecessor}$ 的右孩子不为空，则此时其右孩子指向 $x$，说明我们已经遍历完 $x$ 的左子树，我们将 $\textit{predecessor}$ 的右孩子置空，然后访问 $x$ 的右孩子，即 $x = x.\textit{right}$ 。
+3. 重复上述操作，直至访问完整棵树。
+
+时间复杂度： $O(N)$ ，其中 $N$ 为二叉搜索树的高度。空间复杂度： $O(1)$ 。
+
+
+
+**代码**
+
+``` python
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
+class Solution:
+    def recoverTree(self, root: TreeNode) -> None:
+        """
+        Do not return anything, modify root in-place instead.
+        """
+
+        x = None
+        y = None
+        pred = None 
+        predecessor = None
+
+        while root is not None:
+
+            if root.left is not None:
+                predecessor = root.left
+                while predecessor.right is not None and predecessor.right != root:
+                    predecessor = predecessor.right
+                
+                if predecessor.right is None:
+                    predecessor.right = root 
+                    root = root.left
+                
+                # 说明左子树已经访问完了，我们需要断开链接
+                else:
+                    if pred is not None and root.val < pred.val:
+                        y = root 
+                        if x is None:
+                            x = pred
+                    
+                    pred = root 
+                    predecessor.right = None
+                    root = root.right
+            
+            # 如果没有左孩子，则直接访问右孩子
+            else:
+                if pred is not None and root.val < pred.val:
+                    y = root 
+                    if x is None:
+                        x = pred 
+                
+                pred = root 
+                root = root.right
+        
+        x.val, y.val = y.val, x.val
+```
+
+
 
 
 
