@@ -584,6 +584,79 @@ class Solution:
 
 
 
+# [696. 计数二进制子串](https://leetcode-cn.com/problems/count-binary-substrings/)
+
+难度简单208
+
+给定一个字符串 `s`，计算具有相同数量0和1的非空(连续)子字符串的数量，并且这些子字符串中的所有0和所有1都是组合在一起的。
+
+重复出现的子串要计算它们出现的次数。
+
+**示例 1 :**
+
+```
+输入: "00110011"
+输出: 6
+解释: 有6个子串具有相同数量的连续1和0：“0011”，“01”，“1100”，“10”，“0011” 和 “01”。
+
+请注意，一些重复出现的子串要计算它们出现的次数。
+
+另外，“00110011”不是有效的子串，因为所有的0（和1）没有组合在一起。
+```
+
+**示例 2 :**
+
+```
+输入: "10101"
+输出: 4
+解释: 有4个子串：“10”，“01”，“10”，“01”，它们具有相同数量的连续1和0。
+```
+
+**注意：**
+
+- `s.length` 在1到50,000之间。
+- `s` 只包含“0”或“1”字符。
+
+
+
+**解法**
+
+统计字符连续出现的次数，两个相邻次数中较小者，就是这一部分字符中符合要求的子串数量。时间复杂度： $O(N)$ ，空间复杂度： $O(1)$ 。
+
+
+
+**代码**
+
+```python
+class Solution:
+    def countBinarySubstrings(self, s: str) -> int:
+
+        if len(s) <= 1:
+            return 0
+
+        index  = 0
+        ans = 0
+        lastCount = None
+
+        while index < len(s):
+            ch = s[index]
+            count = 0
+
+            while index < len(s) and s[index] == ch:
+                index += 1
+                count += 1
+
+            if lastCount:
+                ans += min(lastCount, count)
+            lastCount = count 
+        
+        return ans
+```
+
+
+
+
+
 # [718. 最长重复子数组](https://leetcode-cn.com/problems/maximum-length-of-repeated-subarray/)
 
 难度 中等
