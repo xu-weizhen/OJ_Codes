@@ -886,6 +886,250 @@ class Solution:
 
 
 
+# [130. 被围绕的区域](https://leetcode-cn.com/problems/surrounded-regions/)
+
+难度中等309
+
+给定一个二维的矩阵，包含 `'X'` 和 `'O'`（**字母 O**）。
+
+找到所有被 `'X'` 围绕的区域，并将这些区域里所有的 `'O'` 用 `'X'` 填充。
+
+**示例:**
+
+```
+X X X X
+X O O X
+X X O X
+X O X X
+```
+
+运行你的函数后，矩阵变为：
+
+```
+X X X X
+X X X X
+X X X X
+X O X X
+```
+
+**解释:**
+
+被围绕的区间不会存在于边界上，换句话说，任何边界上的 `'O'` 都不会被填充为 `'X'`。 任何不在边界上，或不与边界上的 `'O'` 相连的 `'O'` 最终都会被填充为 `'X'`。如果两个元素在水平或垂直方向相邻，则称它们是“相连”的。
+
+
+
+**解法**
+
+将边界的 `O` 入队，广度优先搜索与边界 `O` 相连的区域，并进行标记。最后将没有标记到的 `O` 区域即为所要找的区域。时间复杂度： $O(nm)$ ，空间复杂度： $O(nm)$ 。
+
+
+
+**代码**
+
+```python
+# 广度优先
+class Solution:
+    def solve(self, board: List[List[str]]) -> None:
+        """
+        Do not return anything, modify board in-place instead.
+        """
+        if board == []:
+            return 
+
+        dx = [-1, 1, 0, 0]
+        dy = [0, 0, -1, 1]
+
+        que = collections.deque()
+
+        for i in range(len(board)):
+            if board[i][0] == 'O':
+                que.append((i, 0))
+            if board[i][-1] == 'O':
+                que.append((i, len(board[0]) - 1))
+        for i in range(len(board[0])):
+            if board[0][i] == 'O':
+                que.append((0, i))
+            if board[-1][i] == 'O':
+                que.append((len(board) - 1, i))
+        
+        while que:
+            x, y = que.popleft()
+            board[x][y] = 'n'
+
+            for i in range(4):
+                xx = x + dx[i]
+                yy = y + dy[i]
+                # for xx, yy in [(x - 1, y), (x + 1, y), (x, y - 1), (x, y + 1)]
+                if xx >= 0 and xx < len(board) and yy >= 0 and yy < len(board[0]) and board[xx][yy] == 'O':
+                    que.append((xx, yy))
+        
+        for i in range(len(board)):
+            for j in range(len(board[0])):
+                if board[i][j] == 'O':
+                    board[i][j] = 'X'
+                elif board[i][j] == 'n':
+                    board[i][j] = 'O'
+                    
+        
+# 深度优先
+class Solution:
+    def solve(self, board: List[List[str]]) -> None:
+        """
+        Do not return anything, modify board in-place instead.
+        """
+        if board == []:
+            return 
+
+        def dfs(x, y):
+            board[x][y] = 'n'
+
+            for xx, yy in [(x - 1, y), (x + 1, y), (x, y + 1), (x, y - 1)]:
+                if xx >= 0 and xx < len(board) and yy >= 0 and yy < len(board[0]) and board[xx][yy] == 'O':
+                    dfs(xx, yy)
+
+        for i in range(len(board)):
+            if board[i][0] == 'O':
+                dfs(i, 0)
+            if board[i][-1] == 'O':
+                dfs(i, len(board[0]) - 1)
+        for i in range(len(board[0])):
+            if board[0][i] == 'O':
+                dfs(0, i)
+            if board[-1][i] == 'O':
+                dfs(len(board) - 1, i)
+
+        for i in range(len(board)):
+            for j in range(len(board[0])):
+                if board[i][j] == 'O':
+                    board[i][j] = 'X'
+                elif board[i][j] == 'n':
+                    board[i][j] = 'O'
+```
+
+
+
+# [133. 克隆图](https://leetcode-cn.com/problems/clone-graph/)
+
+难度 中等
+
+给你无向 **[连通](https://baike.baidu.com/item/连通图/6460995?fr=aladdin)** 图中一个节点的引用，请你返回该图的 [**深拷贝**](https://baike.baidu.com/item/深拷贝/22785317?fr=aladdin)（克隆）。
+
+图中的每个节点都包含它的值 `val`（`int`） 和其邻居的列表（`list[Node]`）。
+
+```
+class Node {
+    public int val;
+    public List<Node> neighbors;
+}
+```
+
+ 
+
+**测试用例格式：**
+
+简单起见，每个节点的值都和它的索引相同。例如，第一个节点值为 1（`val = 1`），第二个节点值为 2（`val = 2`），以此类推。该图在测试用例中使用邻接列表表示。
+
+**邻接列表** 是用于表示有限图的无序列表的集合。每个列表都描述了图中节点的邻居集。
+
+给定节点将始终是图中的第一个节点（值为 1）。你必须将 **给定节点的拷贝** 作为对克隆图的引用返回。
+
+ 
+
+**示例 1：**
+
+![img](https://assets.leetcode-cn.com/aliyun-lc-upload/uploads/2020/02/01/133_clone_graph_question.png)
+
+```
+输入：adjList = [[2,4],[1,3],[2,4],[1,3]]
+输出：[[2,4],[1,3],[2,4],[1,3]]
+解释：
+图中有 4 个节点。
+节点 1 的值是 1，它有两个邻居：节点 2 和 4 。
+节点 2 的值是 2，它有两个邻居：节点 1 和 3 。
+节点 3 的值是 3，它有两个邻居：节点 2 和 4 。
+节点 4 的值是 4，它有两个邻居：节点 1 和 3 。
+```
+
+**示例 2：**
+
+![img](https://assets.leetcode-cn.com/aliyun-lc-upload/uploads/2020/02/01/graph.png)
+
+```
+输入：adjList = [[]]
+输出：[[]]
+解释：输入包含一个空列表。该图仅仅只有一个值为 1 的节点，它没有任何邻居。
+```
+
+**示例 3：**
+
+```
+输入：adjList = []
+输出：[]
+解释：这个图是空的，它不含任何节点。
+```
+
+**示例 4：**
+
+![img](https://assets.leetcode-cn.com/aliyun-lc-upload/uploads/2020/02/01/graph-1.png)
+
+```
+输入：adjList = [[2],[1]]
+输出：[[2],[1]]
+```
+
+ 
+
+**提示：**
+
+1. 节点数不超过 100 。
+2. 每个节点值 `Node.val` 都是唯一的，`1 <= Node.val <= 100`。
+3. 无向图是一个[简单图](https://baike.baidu.com/item/简单图/1680528?fr=aladdin)，这意味着图中没有重复的边，也没有自环。
+4. 由于图是无向的，如果节点 *p* 是节点 *q* 的邻居，那么节点 *q* 也必须是节点 *p* 的邻居。
+5. 图是连通图，你可以从给定节点访问到所有节点。
+
+
+
+**解法**
+
+广度优先搜索或深度优先搜索。时间复杂度： $O(n)$ ，空间复杂度： $O(n)$ 。
+
+
+
+**代码**
+
+```python
+"""
+# Definition for a Node.
+class Node:
+    def __init__(self, val = 0, neighbors = []):
+        self.val = val
+        self.neighbors = neighbors
+"""
+
+class Solution:
+    def cloneGraph(self, node: 'Node') -> 'Node':
+        if node is None:
+            return None
+
+        visited = {}
+        que = collections.deque()
+        que.append(node)
+        visited[node] = Node(node.val, [])
+
+        while que:
+            n = que.popleft()
+            
+            for neighbor in n.neighbors:
+                if neighbor not in visited:
+                    visited[neighbor] = Node(neighbor.val, [])
+                    que.append(neighbor)
+                visited[n].neighbors.append(visited[neighbor])
+
+        return visited[node]
+```
+
+
+
 # [136. 只出现一次的数字](https://leetcode-cn.com/problems/single-number/)
 
 难度 简单
