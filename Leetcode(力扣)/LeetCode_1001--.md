@@ -142,7 +142,7 @@ class Solution:
 
 只有在爱丽丝在游戏中取得胜利时才返回 `True`，否则返回 `false`。假设两个玩家都以最佳状态参与游戏。
 
- 
+
 **示例 1：**
 
 ```
@@ -1585,3 +1585,333 @@ class Solution:
         
         return ans
 ```
+
+
+
+# [1550. 存在连续三个奇数的数组](https://leetcode-cn.com/problems/three-consecutive-odds/)
+
+难度 简单
+
+给你一个整数数组 `arr`，请你判断数组中是否存在连续三个元素都是奇数的情况：如果存在，请返回 `true` ；否则，返回 `false` 。
+
+ 
+
+**示例 1：**
+
+```
+输入：arr = [2,6,4,1]
+输出：false
+解释：不存在连续三个元素都是奇数的情况。
+```
+
+**示例 2：**
+
+```
+输入：arr = [1,2,34,3,4,5,7,23,12]
+输出：true
+解释：存在连续三个元素都是奇数的情况，即 [5,7,23] 。
+```
+
+ 
+
+**提示：**
+
+- `1 <= arr.length <= 1000`
+- `1 <= arr[i] <= 1000`
+
+
+
+**解法**
+
+滑动窗口，记录窗口中有多少个奇数。时间复杂度： $O(N)$ ，空间复杂度： $O(1)$ 。
+
+
+
+**代码**
+
+```python
+class Solution:
+    def threeConsecutiveOdds(self, arr: List[int]) -> bool:
+        if len(arr) < 3:
+            return False
+        
+        odd = 0
+        for i in range(0, 2):
+            if arr[i] % 2 == 1:
+                odd += 1
+
+        left = 0
+        right = 2
+        while right < len(arr):
+            if arr[right] % 2 == 1:
+                odd += 1
+            if odd == 3:
+                return True
+            if arr[left] % 2 == 1:
+                odd -= 1
+            left += 1
+            right += 1
+            
+        return False
+```
+
+
+
+# [1551. 使数组中所有元素相等的最小操作数](https://leetcode-cn.com/problems/minimum-operations-to-make-array-equal/)
+
+难度 中等
+
+存在一个长度为 `n` 的数组 `arr` ，其中 `arr[i] = (2 * i) + 1` （ `0 <= i < n` ）。
+
+一次操作中，你可以选出两个下标，记作 `x` 和 `y` （ `0 <= x, y < n` ）并使 `arr[x]` 减去 `1` 、`arr[y]` 加上 `1` （即 `arr[x] -=1 `且 `arr[y] += 1` ）。最终的目标是使数组中的所有元素都 **相等** 。题目测试用例将会 **保证** ：在执行若干步操作后，数组中的所有元素最终可以全部相等。
+
+给你一个整数 `n`，即数组的长度。请你返回使数组 `arr` 中所有元素相等所需的 **最小操作数** 。
+
+ 
+
+**示例 1：**
+
+```
+输入：n = 3
+输出：2
+解释：arr = [1, 3, 5]
+第一次操作选出 x = 2 和 y = 0，使数组变为 [2, 3, 4]
+第二次操作继续选出 x = 2 和 y = 0，数组将会变成 [3, 3, 3]
+```
+
+**示例 2：**
+
+```
+输入：n = 6
+输出：9
+```
+
+ 
+
+**提示：**
+
+- `1 <= n <= 10^4`
+
+
+
+**解法**
+
+先求出最后所有元素相等时，值为 `n/2` ，以该值为中心，向数组两端时，每个数值需要修改的次数成等差数列，根据等差数列公式进行求和并乘2。时间复杂度： $O(1)$ ，空间复杂度： $O(1)$ 。
+
+
+
+**代码**
+
+```python
+class Solution:
+    def minOperations(self, n: int) -> int:
+        time = n // 2
+        
+        if n % 2 == 0:
+            return time * time
+        else:
+            return time * time + time
+```
+
+
+
+# [1552. 两球之间的磁力](https://leetcode-cn.com/problems/magnetic-force-between-two-balls/)
+
+难度 中等
+
+在代号为 C-137 的地球上，Rick 发现如果他将两个球放在他新发明的篮子里，它们之间会形成特殊形式的磁力。Rick 有 `n` 个空的篮子，第 `i` 个篮子的位置在 `position[i]` ，Morty 想把 `m` 个球放到这些篮子里，使得任意两球间 **最小磁力** 最大。
+
+已知两个球如果分别位于 `x` 和 `y` ，那么它们之间的磁力为 `|x - y|` 。
+
+给你一个整数数组 `position` 和一个整数 `m` ，请你返回最大化的最小磁力。
+
+ 
+
+**示例 1：**
+
+![img](https://assets.leetcode-cn.com/aliyun-lc-upload/uploads/2020/08/16/q3v1.jpg)
+
+```
+输入：position = [1,2,3,4,7], m = 3
+输出：3
+解释：将 3 个球分别放入位于 1，4 和 7 的三个篮子，两球间的磁力分别为 [3, 3, 6]。最小磁力为 3 。我们没办法让最小磁力大于 3 。
+```
+
+**示例 2：**
+
+```
+输入：position = [5,4,3,2,1,1000000000], m = 2
+输出：999999999
+解释：我们使用位于 1 和 1000000000 的篮子时最小磁力最大。
+```
+
+ 
+
+**提示：**
+
+- `n == position.length`
+- `2 <= n <= 10^5`
+- `1 <= position[i] <= 10^9`
+- 所有 `position` 中的整数 **互不相同** 。
+- `2 <= m <= position.length`
+
+
+
+**解法**
+
+二分查找，得到可能的结果。对该结果进行验证。时间复杂度： $O(n\log m)$ ，空间复杂度： $O(1)$ ，其中 $n$ 为 `position` 数组长度， $m$ 为 `position` 中的最大值。
+
+
+
+
+
+**代码**
+
+```python
+class Solution:
+    def maxDistance(self, position: List[int], m: int) -> int:
+        position.sort()
+        self.pos = position
+        self.m = m
+
+        left = 1
+        right = position[-1]
+        find = False
+
+        while left <= right:
+            mid = left + (right - left) // 2
+            ret = self.check(mid)
+
+            if ret:
+                left = mid + 1
+            else:
+                right = mid - 1
+        
+        return right
+
+
+    def check(self, target):
+        count = 1
+        index = 1
+        last = self.pos[0]
+
+        while index < len(self.pos) and count < self.m:
+            if self.pos[index] - last >= target:
+                count += 1
+                last = self.pos[index]
+            
+            index += 1
+        
+        return count == self.m
+```
+
+
+
+# [1553. 吃掉 N 个橘子的最少天数](https://leetcode-cn.com/problems/minimum-number-of-days-to-eat-n-oranges/)
+
+难度 困难
+
+厨房里总共有 `n` 个橘子，你决定每一天选择如下方式之一吃这些橘子：
+
+- 吃掉一个橘子。
+- 如果剩余橘子数 `n` 能被 2 整除，那么你可以吃掉 `n/2` 个橘子。
+- 如果剩余橘子数 `n` 能被 3 整除，那么你可以吃掉 `2*(n/3)` 个橘子。
+
+每天你只能从以上 3 种方案中选择一种方案。
+
+请你返回吃掉所有 `n` 个橘子的最少天数。
+
+ 
+
+**示例 1：**
+
+```
+输入：n = 10
+输出：4
+解释：你总共有 10 个橘子。
+第 1 天：吃 1 个橘子，剩余橘子数 10 - 1 = 9。
+第 2 天：吃 6 个橘子，剩余橘子数 9 - 2*(9/3) = 9 - 6 = 3。（9 可以被 3 整除）
+第 3 天：吃 2 个橘子，剩余橘子数 3 - 2*(3/3) = 3 - 2 = 1。
+第 4 天：吃掉最后 1 个橘子，剩余橘子数 1 - 1 = 0。
+你需要至少 4 天吃掉 10 个橘子。
+```
+
+**示例 2：**
+
+```
+输入：n = 6
+输出：3
+解释：你总共有 6 个橘子。
+第 1 天：吃 3 个橘子，剩余橘子数 6 - 6/2 = 6 - 3 = 3。（6 可以被 2 整除）
+第 2 天：吃 2 个橘子，剩余橘子数 3 - 2*(3/3) = 3 - 2 = 1。（3 可以被 3 整除）
+第 3 天：吃掉剩余 1 个橘子，剩余橘子数 1 - 1 = 0。
+你至少需要 3 天吃掉 6 个橘子。
+```
+
+**示例 3：**
+
+```
+输入：n = 1
+输出：1
+```
+
+**示例 4：**
+
+```
+输入：n = 56
+输出：6
+```
+
+ 
+
+**提示：**
+
+- `1 <= n <= 2*10^9`
+
+
+
+**解法**
+
+广度优先搜索，遍历所有可能的结果，同时使用集合保存已经经历的状态，从而减少计算量。时间复杂度： $O(q)$ ，空间复杂度： $O(q)$ 。
+
+
+
+**代码**
+
+```python
+# 方法一
+class Solution:
+    def minDays(self, n: int) -> int:
+        
+        s = set()
+        q = deque()
+        q.append((n, 0))
+        
+        while q:
+            left, day = q.popleft()
+            
+            if left == 0:
+                return day
+            
+            if left in s:
+                continue
+                
+            s.add(left)
+            
+            q.append((left - 1, day + 1))
+            if left % 3 == 0:
+                q.append((left / 3, day + 1))
+            if left % 2 == 0:
+                q.append((left / 2, day + 1))
+
+# 方法二
+class Solution:
+    @lru_cache(None)
+    def minDays(self, n: int) -> int:
+        if n == 0:
+            return 0
+        if n == 1:
+            return 1
+        return 1 + min(self.minDays(n // 2) + n % 2, self.minDays(n // 3) + n % 3)
+```
+
