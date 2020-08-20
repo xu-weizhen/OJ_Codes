@@ -2542,6 +2542,64 @@ class Solution:
 
 
 
+# [31. 下一个排列](https://leetcode-cn.com/problems/next-permutation/)
+
+难度 中等
+
+实现获取下一个排列的函数，算法需要将给定数字序列重新排列成字典序中下一个更大的排列。
+
+如果不存在下一个更大的排列，则将数字重新排列成最小的排列（即升序排列）。
+
+必须**[原地](https://baike.baidu.com/item/原地算法)**修改，只允许使用额外常数空间。
+
+以下是一些例子，输入位于左侧列，其相应输出位于右侧列。
+`1,2,3` → `1,3,2`
+`3,2,1` → `1,2,3`
+`1,1,5` → `1,5,1`
+
+
+
+**解法**
+
+<img src="https://pic.leetcode-cn.com/dd4e79b184b1922429d8cda6148a3f0b7579869e85626e04ba29ba88e8052729-file_1555696116786" style="zoom:80%;" />
+
+从右向左，找到数值减少的第 `i` 个节点 `a` 。从数列尾部开始，找到第一个比 `a` 大的节点，交换这两个节点。并将 `i` 右侧的节点倒序。时间复杂度： $O(n)$ ，空间复杂度： $O(1)$ 。
+
+
+
+**代码**
+
+```python
+class Solution:
+    def nextPermutation(self, nums: List[int]) -> None:
+        """
+        Do not return anything, modify nums in-place instead.
+        """
+        i = len(nums) - 2
+        for i in range(len(nums) - 2, -1, -1):
+            if nums[i] < nums[i + 1]:
+                break
+        if i >= 0:
+            for j in range(len(nums) - 1, -1, -1):
+                if nums[j] > nums[i]:
+                    nums[i], nums[j] = nums[j], nums[i]
+                    break
+            nums = nums[0 : i + 1] + nums[-1: i : -1]
+        else:
+            nums = nums[::-1]
+```
+
+```cpp
+class Solution {
+public:
+    void nextPermutation(vector<int>& nums) {
+        next_permutation(nums.begin(),nums.end());
+    }
+};
+```
+
+
+
 # [33. 搜索旋转排序数组](https://leetcode-cn.com/problems/search-in-rotated-sorted-array/)
 
 难度 中等
