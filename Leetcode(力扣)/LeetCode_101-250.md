@@ -432,6 +432,70 @@ class Solution:
 
 
 
+# [111. 二叉树的最小深度](https://leetcode-cn.com/problems/minimum-depth-of-binary-tree/)
+
+难度 简单
+
+给定一个二叉树，找出其最小深度。
+
+最小深度是从根节点到最近叶子节点的最短路径上的节点数量。
+
+**说明:** 叶子节点是指没有子节点的节点。
+
+**示例:**
+
+给定二叉树 `[3,9,20,null,null,15,7]`,
+
+```
+    3
+   / \
+  9  20
+    /  \
+   15   7
+```
+
+返回它的最小深度  2.
+
+
+
+**解法**
+
+广度优先搜索。时间复杂度： $O(n)$ ，空间复杂度： $O(n)$ 。
+
+
+
+**代码**
+
+```python
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, x):
+#         self.val = x
+#         self.left = None
+#         self.right = None
+
+class Solution:
+    def minDepth(self, root: TreeNode) -> int:
+        if not root:
+            return 0
+
+        que = deque()
+        que.append((root, 1))
+
+        while que:
+            node, deep = que.popleft()
+            if node.left is None and node.right is None:
+                break
+            if node.left:
+                que.append((node.left, deep + 1))
+            if node.right:
+                que.append((node.right, deep + 1))
+        
+        return deep
+```
+
+
+
 # [112. 路径总和](https://leetcode-cn.com/problems/path-sum/)
 
 难度 简单
@@ -2131,6 +2195,54 @@ class Solution:
         
         return ans
 ```
+
+
+
+# [201. 数字范围按位与](https://leetcode-cn.com/problems/bitwise-and-of-numbers-range/)
+
+难度 中等
+
+给定范围 [m, n]，其中 0 <= m <= n <= 2147483647，返回此范围内所有数字的按位与（包含 m, n 两端点）。
+
+**示例 1:** 
+
+```
+输入: [5,7]
+输出: 4
+```
+
+**示例 2:**
+
+```
+输入: [0,1]
+输出: 0
+```
+
+
+
+**解法**
+
+[Brian Kernighan 算法](https://leetcode-cn.com/problems/bitwise-and-of-numbers-range/solution/shu-zi-fan-wei-an-wei-yu-by-leetcode-solution/) ，每次对 `number` 和 `number-1` 之间进行按位与运算后，`number` 中最右边的 `1` 会被抹去变成 `0` 。基于上述技巧，可以用它来计算两个二进制字符串的公共前缀。时间复杂度： $O(\log n)$ ，空间复杂度： $O(1)$ 。
+
+<img src="https://assets.leetcode-cn.com/solution-static/201/9.png" style="zoom: 40%;" />
+
+
+
+**代码**
+
+```python
+# 官方题解
+class Solution:
+    def rangeBitwiseAnd(self, m: int, n: int) -> int:
+        while m < n:
+            # 抹去最右边的 1
+            n = n & (n - 1)    
+        return n
+```
+
+
+
+
 
 
 
