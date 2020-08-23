@@ -2600,6 +2600,76 @@ public:
 
 
 
+# [32. 最长有效括号](https://leetcode-cn.com/problems/longest-valid-parentheses/)
+
+难度 困难
+
+给定一个只包含 `'('` 和 `')'` 的字符串，找出最长的包含有效括号的子串的长度。
+
+**示例 1:**
+
+```
+输入: "(()"
+输出: 2
+解释: 最长有效括号子串为 "()"
+```
+
+**示例 2:**
+
+```
+输入: ")()())"
+输出: 4
+解释: 最长有效括号子串为 "()()"
+```
+
+
+
+**解法**
+
+先从左到右搜索，当左括号数量和右括号相等时，进行记录。若右括号数量大于左括号，重置左右括号数量。再从右向左搜索，思路类似。时间复杂度： $O(n)$ ，空间复杂度： $O(1)$ 。
+
+
+
+**代码**
+
+```python
+class Solution:
+    def longestValidParentheses(self, s: str) -> int:
+        ans = 0
+        left = 0
+        right = 0
+
+        for ch in s:
+            if ch == '(':
+                left += 1
+            else:
+                right += 1
+
+            if left == right:
+                ans = max(ans, left * 2)
+            elif right > left:
+                left = 0
+                right = 0
+        
+        left = 0
+        right = 0
+        for i in range(len(s) - 1, -1, -1):
+            if s[i] == '(':
+                left += 1
+            else:
+                right += 1
+
+            if left == right:
+                ans = max(ans, left * 2)
+            elif left > right:
+                left = 0
+                right = 0
+        
+        return ans
+```
+
+
+
 # [33. 搜索旋转排序数组](https://leetcode-cn.com/problems/search-in-rotated-sorted-array/)
 
 难度 中等
