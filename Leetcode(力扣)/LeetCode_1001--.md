@@ -1915,3 +1915,653 @@ class Solution:
         return 1 + min(self.minDays(n // 2) + n % 2, self.minDays(n // 3) + n % 3)
 ```
 
+
+
+# [1556. 千位分隔数](https://leetcode-cn.com/problems/thousand-separator/)
+
+难度 简单
+
+给你一个整数 `n`，请你每隔三位添加点（即 "." 符号）作为千位分隔符，并将结果以字符串格式返回。
+
+ 
+
+**示例 1：**
+
+```
+输入：n = 987
+输出："987"
+```
+
+**示例 2：**
+
+```
+输入：n = 1234
+输出："1.234"
+```
+
+**示例 3：**
+
+```
+输入：n = 123456789
+输出："123.456.789"
+```
+
+**示例 4：**
+
+```
+输入：n = 0
+输出："0"
+```
+
+ 
+
+**提示：**
+
+- `0 <= n < 2^31`
+
+
+
+**代码**
+
+```python
+class Solution:
+    def thousandSeparator(self, n: int) -> str:
+        if n == 0:
+            return "0"
+        
+        ans = ""
+        count = 0
+        
+        while n:
+            if count == 3:
+                ans = ans + "."
+                count = 0
+                
+            ans = ans + str(n % 10)
+            n = n // 10
+            count += 1
+            
+        
+        ans = ans[::-1]
+        return ans
+```
+
+
+
+# [1557. 可以到达所有点的最少点数目](https://leetcode-cn.com/problems/minimum-number-of-vertices-to-reach-all-nodes/)
+
+难度中等4
+
+给你一个 **有向无环图** ， `n` 个节点编号为 `0` 到 `n-1` ，以及一个边数组 `edges` ，其中 `edges[i] = [fromi, toi]` 表示一条从点 `fromi` 到点 `toi` 的有向边。
+
+找到最小的点集使得从这些点出发能到达图中所有点。题目保证解存在且唯一。
+
+你可以以任意顺序返回这些节点编号。
+
+ 
+
+**示例 1：**
+
+![img](https://assets.leetcode-cn.com/aliyun-lc-upload/uploads/2020/08/22/5480e1.png)
+
+```
+输入：n = 6, edges = [[0,1],[0,2],[2,5],[3,4],[4,2]]
+输出：[0,3]
+解释：从单个节点出发无法到达所有节点。从 0 出发我们可以到达 [0,1,2,5] 。从 3 出发我们可以到达 [3,4,2,5] 。所以我们输出 [0,3] 。
+```
+
+**示例 2：**
+
+![img](https://assets.leetcode-cn.com/aliyun-lc-upload/uploads/2020/08/22/5480e2.png)
+
+```
+输入：n = 5, edges = [[0,1],[2,1],[3,1],[1,4],[2,4]]
+输出：[0,2,3]
+解释：注意到节点 0，3 和 2 无法从其他节点到达，所以我们必须将它们包含在结果点集中，这些点都能到达节点 1 和 4 。
+```
+
+ 
+
+**提示：**
+
+- `2 <= n <= 10^5`
+- `1 <= edges.length <= min(10^5, n * (n - 1) / 2)`
+- `edges[i].length == 2`
+- `0 <= fromi, toi < n`
+- 所有点对 `(fromi, toi)` 互不相同。
+
+
+
+**解法**
+
+统计入度为 0 的节点的数目。时间复杂度： $O(n)$ ，空间复杂度： $O(n)$ 。
+
+
+
+**代码**
+
+```python
+class Solution:
+    def findSmallestSetOfVertices(self, n: int, edges: List[List[int]]) -> List[int]:
+        
+        du = [0] * n
+        for edge in edges:
+            du[edge[1]] += 1
+        
+        ans = []
+        for i, d in enumerate(du):
+            if d == 0:
+                ans.append(i)
+
+        return ans 
+```
+
+
+
+# [1558. 得到目标数组的最少函数调用次数](https://leetcode-cn.com/problems/minimum-numbers-of-function-calls-to-make-target-array/)
+
+难度 中等
+
+![img](https://assets.leetcode.com/uploads/2020/07/10/sample_2_1887.png)
+
+给你一个与 `nums` 大小相同且初始值全为 0 的数组 `arr` ，请你调用以上函数得到整数数组 `nums` 。
+
+请你返回将 `arr` 变成 `nums` 的最少函数调用次数。
+
+答案保证在 32 位有符号整数以内。
+
+ 
+
+**示例 1：**
+
+```
+输入：nums = [1,5]
+输出：5
+解释：给第二个数加 1 ：[0, 0] 变成 [0, 1] （1 次操作）。
+将所有数字乘以 2 ：[0, 1] -> [0, 2] -> [0, 4] （2 次操作）。
+给两个数字都加 1 ：[0, 4] -> [1, 4] -> [1, 5] （2 次操作）。
+总操作次数为：1 + 2 + 2 = 5 。
+```
+
+**示例 2：**
+
+```
+输入：nums = [2,2]
+输出：3
+解释：给两个数字都加 1 ：[0, 0] -> [0, 1] -> [1, 1] （2 次操作）。
+将所有数字乘以 2 ： [1, 1] -> [2, 2] （1 次操作）。
+总操作次数为： 2 + 1 = 3 。
+```
+
+**示例 3：**
+
+```
+输入：nums = [4,2,5]
+输出：6
+解释：（初始）[0,0,0] -> [1,0,0] -> [1,0,1] -> [2,0,2] -> [2,1,2] -> [4,2,4] -> [4,2,5] （nums 数组）。
+```
+
+**示例 4：**
+
+```
+输入：nums = [3,2,2,4]
+输出：7
+```
+
+**示例 5：**
+
+```
+输入：nums = [2,4,8,16]
+输出：8
+```
+
+ 
+
+**提示：**
+
+- `1 <= nums.length <= 10^5`
+- `0 <= nums[i] <= 10^9`
+
+
+
+**解法**
+
++ 解法一：逆向操作，将奇数项减一，再整体除以二，重复直到所有数值为 0 。时间复杂度： $O(n)$ ，空间复杂度： $O(1)$ 。
++ 解法二：操作的次数由最大的一个数决定。对于乘二操作，相当于移位。判断最大数的移位次数即可。
+
+
+
+**代码**
+
+```python
+class Solution:
+    def minOperations(self, nums: List[int]) -> int:
+        
+        zero = 0
+        ans = 0
+        even = False
+        
+        for num in nums:
+            if num == 0:
+                zero += 1
+        
+        while zero < len(nums):
+            if not even:
+                for i in range(len(nums)):
+                    if nums[i] % 2 != 0:
+                        nums[i] -= 1
+                        if nums[i] == 0:
+                            zero += 1
+                        ans += 1
+                even = True
+            else:
+                for i in range(len(nums)):
+                    nums[i] /= 2
+                ans += 1
+                even = False
+            
+        return ans
+```
+
+
+
+# [1559. 二维网格图中探测环](https://leetcode-cn.com/problems/detect-cycles-in-2d-grid/)
+
+难度 困难
+
+给你一个二维字符网格数组 `grid` ，大小为 `m x n` ，你需要检查 `grid` 中是否存在 **相同值** 形成的环。
+
+一个环是一条开始和结束于同一个格子的长度 **大于等于 4** 的路径。对于一个给定的格子，你可以移动到它上、下、左、右四个方向相邻的格子之一，可以移动的前提是这两个格子有 **相同的值** 。
+
+同时，你也不能回到上一次移动时所在的格子。比方说，环 `(1, 1) -> (1, 2) -> (1, 1)` 是不合法的，因为从 `(1, 2)` 移动到 `(1, 1)` 回到了上一次移动时的格子。
+
+如果 `grid` 中有相同值形成的环，请你返回 `true` ，否则返回 `false` 。
+
+ 
+
+**示例 1：**
+
+**![img](https://assets.leetcode-cn.com/aliyun-lc-upload/uploads/2020/08/22/5482e1.png)**
+
+```
+输入：grid = [["a","a","a","a"],["a","b","b","a"],["a","b","b","a"],["a","a","a","a"]]
+输出：true
+解释：如下图所示，有 2 个用不同颜色标出来的环：
+```
+
+**示例 2：**
+
+**![img](https://assets.leetcode-cn.com/aliyun-lc-upload/uploads/2020/08/22/5482e2.png)**
+
+```
+输入：grid = [["c","c","c","a"],["c","d","c","c"],["c","c","e","c"],["f","c","c","c"]]
+输出：true
+解释：如下图所示，只有高亮所示的一个合法环：
+```
+
+**示例 3：**
+
+**![img](https://assets.leetcode-cn.com/aliyun-lc-upload/uploads/2020/08/22/5482e3.png)**
+
+```
+输入：grid = [["a","b","b"],["b","z","b"],["b","b","a"]]
+输出：false
+```
+
+ 
+
+**提示：**
+
+- `m == grid.length`
+- `n == grid[i].length`
+- `1 <= m <= 500`
+- `1 <= n <= 500`
+- `grid` 只包含小写英文字母。
+
+
+
+**解法**
+
+广度优先搜索。对矩阵中的每一个点，将这个点的四领域加入队列，进行广度优先搜索，如果搜索到的位置位于队列中，则说明出现了环。时间复杂度： $O(nm)$ ，空间复杂度： $O(nm)$ 。
+
+
+
+**代码**
+
+```python
+class Solution:
+    def containsCycle(self, grid: List[List[str]]) -> bool:
+
+        m = len(grid)
+        n = len(grid[0])
+        
+        visited = [[0 for _ in range(n)] for _ in range(m)]
+
+        ans = False
+        
+        for i in range(0, m):
+            for j in range(0, n):
+                if visited[i][j] == 0:
+                    que = deque()
+                    visited[i][j] = 1
+                    
+                    for xx, yy in [[i - 1, j], [i + 1, j], [i, j - 1], [i, j + 1]]:
+                        if xx >= 0 and xx < m and yy >= 0 and yy < n and grid[xx][yy] == grid[i][j] and visited[xx][yy] == 0:
+                            que.append((xx, yy))
+                            visited[xx][yy] = 1
+                    
+                    while que:
+                        x, y = que.popleft()
+                        visited[x][y] = 1
+                        
+                        for xx, yy in [[x - 1, y], [x + 1, y], [x, y - 1], [x, y + 1]]:
+                            if xx >= 0 and xx < m and yy >= 0 and yy < n and grid[xx][yy] == grid[x][y] and visited[xx][yy] == 0:
+                                if que.count((xx, yy)) > 0:
+                                    return True
+                                que.append((xx, yy))
+
+        return False
+```
+
+
+
+# [1560. 圆形赛道上经过次数最多的扇区](https://leetcode-cn.com/problems/most-visited-sector-in-a-circular-track/)
+
+难度 简单
+
+给你一个整数 `n` 和一个整数数组 `rounds` 。有一条圆形赛道由 `n` 个扇区组成，扇区编号从 `1` 到 `n` 。现将在这条赛道上举办一场马拉松比赛，该马拉松全程由 `m` 个阶段组成。其中，第 `i` 个阶段将会从扇区 `rounds[i - 1]` 开始，到扇区 `rounds[i]` 结束。举例来说，第 `1` 阶段从 `rounds[0]` 开始，到 `rounds[1]` 结束。
+
+请你以数组形式返回经过次数最多的那几个扇区，按扇区编号 **升序** 排列。
+
+注意，赛道按扇区编号升序逆时针形成一个圆（请参见第一个示例）。
+
+ 
+
+**示例 1：**
+
+![img](https://assets.leetcode-cn.com/aliyun-lc-upload/uploads/2020/08/22/3rd45e.jpg)
+
+```
+输入：n = 4, rounds = [1,3,1,2]
+输出：[1,2]
+解释：本场马拉松比赛从扇区 1 开始。经过各个扇区的次序如下所示：
+1 --> 2 --> 3（阶段 1 结束）--> 4 --> 1（阶段 2 结束）--> 2（阶段 3 结束，即本场马拉松结束）
+其中，扇区 1 和 2 都经过了两次，它们是经过次数最多的两个扇区。扇区 3 和 4 都只经过了一次。
+```
+
+**示例 2：**
+
+```
+输入：n = 2, rounds = [2,1,2,1,2,1,2,1,2]
+输出：[2]
+```
+
+**示例 3：**
+
+```
+输入：n = 7, rounds = [1,3,5,7]
+输出：[1,2,3,4,5,6,7]
+```
+
+ 
+
+**提示：**
+
+- `2 <= n <= 100`
+- `1 <= m <= 100`
+- `rounds.length == m + 1`
+- `1 <= rounds[i] <= n`
+- `rounds[i] != rounds[i + 1]` ，其中 `0 <= i < m`
+
+
+
+**解法**
+
++ 解法一：模拟。时间复杂度： $O(n)$ ，空间复杂度： $O(n)$ 。
++ 解法二：中间部分对于结果没有影响，只考虑起点和终点即可。时间复杂度： $O(n)$ ，空间复杂度： $O(1)$ 。
+
+
+
+**代码**
+
+```python
+# 解法一
+class Solution:
+    def mostVisited(self, n: int, rounds: List[int]) -> List[int]:
+        
+        time = [0] * (n + 1)
+        
+        def run(a, b):
+            if a <= b:
+                for i in range(a + 1, b + 1):
+                    time[i] += 1
+            else:
+                for i in range(a + 1, n + 1):
+                    time[i] += 1
+                for i in range(1, b + 1):
+                    time[i] += 1
+        
+        time[rounds[0]] += 1
+        index = 0
+        while index + 1 < len(rounds):
+            run(rounds[index], rounds[index + 1])
+            index += 1
+        
+        m = max(time)
+        ans = []
+        for i in range(1, n + 1):
+            if time[i] == m:
+                ans.append(i)
+        
+        return ans
+    
+# 解法二
+class Solution:
+    def mostVisited(self, n: int, rounds: List[int]) -> List[int]:
+        start, end = rounds[0], rounds[-1]
+        if start <= end:
+            # 起点小于终点
+            return list(range(start, end + 1))
+        else:
+            # 起点大于终点
+            return list(range(1, end + 1)) + list(range(start, n + 1))
+```
+
+
+
+# [1561. 你可以获得的最大硬币数目](https://leetcode-cn.com/problems/maximum-number-of-coins-you-can-get/)
+
+难度 中等
+
+有 3n 堆数目不一的硬币，你和你的朋友们打算按以下方式分硬币：
+
+- 每一轮中，你将会选出 **任意** 3 堆硬币（不一定连续）。
+- Alice 将会取走硬币数量最多的那一堆。
+- 你将会取走硬币数量第二多的那一堆。
+- Bob 将会取走最后一堆。
+- 重复这个过程，直到没有更多硬币。
+
+给你一个整数数组 `piles` ，其中 `piles[i]` 是第 `i` 堆中硬币的数目。
+
+返回你可以获得的最大硬币数目。
+
+ 
+
+**示例 1：**
+
+```
+输入：piles = [2,4,1,2,7,8]
+输出：9
+解释：选出 (2, 7, 8) ，Alice 取走 8 枚硬币的那堆，你取走 7 枚硬币的那堆，Bob 取走最后一堆。
+选出 (1, 2, 4) , Alice 取走 4 枚硬币的那堆，你取走 2 枚硬币的那堆，Bob 取走最后一堆。
+你可以获得的最大硬币数目：7 + 2 = 9.
+考虑另外一种情况，如果选出的是 (1, 2, 8) 和 (2, 4, 7) ，你就只能得到 2 + 4 = 6 枚硬币，这不是最优解。
+```
+
+**示例 2：**
+
+```
+输入：piles = [2,4,5]
+输出：4
+```
+
+**示例 3：**
+
+```
+输入：piles = [9,8,7,6,5,1,2,3,4]
+输出：18
+```
+
+ 
+
+**提示：**
+
+- `3 <= piles.length <= 10^5`
+- `piles.length % 3 == 0`
+- `1 <= piles[i] <= 10^4`
+
+
+
+**解法**
+
+贪心法。每次取出最大的两堆和最小的一堆。时间复杂度： $O(n \log n)$ ，空间复杂度： $O(1)$ 。
+
+
+
+**代码**
+
+```python
+class Solution:
+    def maxCoins(self, piles: List[int]) -> int:
+        piles.sort()
+        
+        ans = 0
+        head = 0
+        tail = len(piles) - 1
+        while head < tail:
+            ans += piles[tail - 1]
+            head += 1
+            tail -= 2
+            
+        return ans 
+```
+
+
+
+# [1562. 查找大小为 M 的最新分组](https://leetcode-cn.com/problems/find-latest-group-of-size-m/)
+
+难度 中等
+
+给你一个数组 `arr` ，该数组表示一个从 `1` 到 `n` 的数字排列。有一个长度为 `n` 的二进制字符串，该字符串上的所有位最初都设置为 `0` 。
+
+在从 `1` 到 `n` 的每个步骤 `i` 中（假设二进制字符串和 `arr` 都是从 `1` 开始索引的情况下），二进制字符串上位于位置 `arr[i]` 的位将会设为 `1` 。
+
+给你一个整数 `m` ，请你找出二进制字符串上存在长度为 `m` 的一组 `1` 的最后步骤。一组 `1` 是一个连续的、由 `1` 组成的子串，且左右两边不再有可以延伸的 `1` 。
+
+返回存在长度 **恰好** 为 `m` 的 **一组 `1`** 的最后步骤。如果不存在这样的步骤，请返回 `-1` 。
+
+ 
+
+**示例 1：**
+
+```
+输入：arr = [3,5,1,2,4], m = 1
+输出：4
+解释：
+步骤 1："00100"，由 1 构成的组：["1"]
+步骤 2："00101"，由 1 构成的组：["1", "1"]
+步骤 3："10101"，由 1 构成的组：["1", "1", "1"]
+步骤 4："11101"，由 1 构成的组：["111", "1"]
+步骤 5："11111"，由 1 构成的组：["11111"]
+存在长度为 1 的一组 1 的最后步骤是步骤 4 。
+```
+
+**示例 2：**
+
+```
+输入：arr = [3,1,5,4,2], m = 2
+输出：-1
+解释：
+步骤 1："00100"，由 1 构成的组：["1"]
+步骤 2："10100"，由 1 构成的组：["1", "1"]
+步骤 3："10101"，由 1 构成的组：["1", "1", "1"]
+步骤 4："10111"，由 1 构成的组：["1", "111"]
+步骤 5："11111"，由 1 构成的组：["11111"]
+不管是哪一步骤都无法形成长度为 2 的一组 1 。
+```
+
+**示例 3：**
+
+```
+输入：arr = [1], m = 1
+输出：1
+```
+
+**示例 4：**
+
+```
+输入：arr = [2,1], m = 2
+输出：2
+```
+
+ 
+
+**提示：**
+
+- `n == arr.length`
+- `1 <= n <= 10^5`
+- `1 <= arr[i] <= n`
+- `arr` 中的所有整数 **互不相同**
+- `1 <= m <= arr.length`
+
+
+
+**解法**
+
+在每个连续的 1 的位置，连续 1 的第一位记录连续 1 的最后一位的下标，连续 1 的最后一位记录连续 1 的第一位的下标。每次修改时判断左右是否有连续 1 。使用字典保存不同长度的连续 1 的数目。时间复杂度： $O(n)$ ，空间复杂度： $O(n)$ 。
+
+
+
+**代码**
+
+```python
+class Solution:
+    def findLatestStep(self, arr: List[int], m: int) -> int:
+        n = len(arr)
+        s = [0] * (n + 1)
+        ans = -2
+        dic = collections.defaultdict(int)
+
+        for i, pos in enumerate(arr):
+            # 两边有 1
+            if pos - 1 >= 0 and s[pos - 1] != 0 and pos + 1 < n + 1 and s[pos + 1] != 0:
+                left = s[pos - 1]
+                right = s[pos + 1]
+                dic[pos - left] -= 1
+                dic[right - pos] -= 1
+                s[left] = right
+                s[right] = left
+                dic[right - left + 1] += 1
+            # 左边有 1
+            elif pos - 1 >= 0 and s[pos - 1] != 0:
+                left = s[pos - 1]
+                dic[pos - left] -= 1
+                s[pos] = left
+                s[left] = pos
+                dic[pos - left + 1] += 1
+            # 右边有 1
+            elif pos + 1 < n + 1 and s[pos + 1] != 0:
+                right = s[pos + 1]
+                dic[right - pos] -= 1
+                s[pos] = right
+                s[right] = pos
+                dic[right - pos + 1] += 1
+            else:
+                dic[1] += 1
+                s[pos] = pos
+            
+            if dic[m] >= 1:
+                ans = i
+        return ans + 1
+```
+
