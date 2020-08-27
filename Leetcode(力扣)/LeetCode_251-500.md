@@ -716,6 +716,7 @@ class Solution:
 ```
 
 
+
 # [329. 矩阵中的最长递增路径](https://leetcode-cn.com/problems/longest-increasing-path-in-a-matrix/)
 
 难度 困难
@@ -782,6 +783,66 @@ class Solution:
             for j in range(columns):
                 ans = max(ans, dfs(i, j))
         return ans
+```
+
+
+
+# [332. 重新安排行程](https://leetcode-cn.com/problems/reconstruct-itinerary/)
+
+难度 中等
+
+给定一个机票的字符串二维数组 `[from, to]`，子数组中的两个成员分别表示飞机出发和降落的机场地点，对该行程进行重新规划排序。所有这些机票都属于一个从 JFK（肯尼迪国际机场）出发的先生，所以该行程必须从 JFK 开始。
+
+**说明:**
+
+1. 如果存在多种有效的行程，你可以按字符自然排序返回最小的行程组合。例如，行程 ["JFK", "LGA"] 与 ["JFK", "LGB"] 相比就更小，排序更靠前
+2. 所有的机场都用三个大写字母表示（机场代码）。
+3. 假定所有机票至少存在一种合理的行程。
+
+**示例 1:**
+
+```
+输入: [["MUC", "LHR"], ["JFK", "MUC"], ["SFO", "SJC"], ["LHR", "SFO"]]
+输出: ["JFK", "MUC", "LHR", "SFO", "SJC"]
+```
+
+**示例 2:**
+
+```
+输入: [["JFK","SFO"],["JFK","ATL"],["SFO","ATL"],["ATL","JFK"],["ATL","SFO"]]
+输出: ["JFK","ATL","JFK","SFO","ATL","SFO"]
+解释: 另一种有效的行程是 ["JFK","SFO","ATL","JFK","ATL","SFO"]。但是它自然排序更大更靠后。
+```
+
+
+
+**解法**
+
+深度优先搜索，将搜索结果逆序，得到最终结果。时间复杂度： $O(m \log m)$ ，空间复杂度： $O(m)$ 。其中 $m$ 是边的数量。
+
+
+
+**代码**
+
+```python
+class Solution:
+    def findItinerary(self, tickets: List[List[str]]) -> List[str]:
+        
+        def dfs(curr: str):
+            while vec[curr]:
+                tmp = heapq.heappop(vec[curr])
+                dfs(tmp)
+            stack.append(curr)
+
+        vec = collections.defaultdict(list)
+        for depart, arrive in tickets:
+            vec[depart].append(arrive)
+        for key in vec:
+            heapq.heapify(vec[key])
+        
+        stack = list()
+        dfs("JFK")
+        return stack[::-1]
 ```
 
 
@@ -1572,6 +1633,78 @@ class Solution:
 
 
 
+# [459. 重复的子字符串](https://leetcode-cn.com/problems/repeated-substring-pattern/)
+
+难度 简单
+
+给定一个非空的字符串，判断它是否可以由它的一个子串重复多次构成。给定的字符串只含有小写英文字母，并且长度不超过10000。
+
+**示例 1:**
+
+```
+输入: "abab"
+
+输出: True
+
+解释: 可由子字符串 "ab" 重复两次构成。
+```
+
+**示例 2:**
+
+```
+输入: "aba"
+
+输出: False
+```
+
+**示例 3:**
+
+```
+输入: "abcabcabcabc"
+
+输出: True
+
+解释: 可由子字符串 "abc" 重复四次构成。 (或者子字符串 "abcabc" 重复两次构成。)
+```
+
+
+
+**解法**
+
+将字符串复制并拼接到字符串尾部，去掉拼接得到的字符串的头尾，如果能在新字符串还能找到原来的字符串，则说明满足题目要求。时间复杂度： $O(n^2)$ ，空间复杂度： $O(1)$ 。
+
+
+
+**代码**
+
+```python
+class Solution:
+    def repeatedSubstringPattern(self, s: str) -> bool:
+        def kmp(query: str, pattern: str) -> bool:
+            n, m = len(query), len(pattern)
+            fail = [-1] * m
+            for i in range(1, m):
+                j = fail[i - 1]
+                while j != -1 and pattern[j + 1] != pattern[i]:
+                    j = fail[j]
+                if pattern[j + 1] == pattern[i]:
+                    fail[i] = j + 1
+            match = -1
+            for i in range(1, n - 1):
+                while match != -1 and pattern[match + 1] != query[i]:
+                    match = fail[match]
+                if pattern[match + 1] == query[i]:
+                    match += 1
+                    if match == m - 1:
+                        return True
+            return False
+        
+        return kmp(s + s, s)
+        # return (s + s).find(s, 1) != len(s)
+```
+
+
+
 # [460. LFU缓存](https://leetcode-cn.com/problems/lfu-cache/)
 
 难度 困难 
@@ -1773,4 +1906,60 @@ class Solution:
         return ans // n2
 ```
 
+
+
+# [491. 递增子序列](https://leetcode-cn.com/problems/increasing-subsequences/)
+
+难度 中等
+
+给定一个整型数组, 你的任务是找到所有该数组的递增子序列，递增子序列的长度至少是2。
+
+**示例:**
+
+```
+输入: [4, 6, 7, 7]
+输出: [[4, 6], [4, 7], [4, 6, 7], [4, 6, 7, 7], [6, 7], [6, 7, 7], [7,7], [4,7,7]]
+```
+
+**说明:**
+
+1. 给定数组的长度不会超过15。
+2. 数组中的整数范围是 [-100,100]。
+3. 给定数组中可能包含重复数字，相等的数字应该被视为递增的一种情况。
+
+
+
+**解法**
+
+枚举 + 减枝。时间复杂度： $O(2^n n)$ ，空间复杂度： $O(n)$ 。
+
+
+
+**代码**
+
+```python
+class Solution:
+    def findSubsequences(self, nums: List[int]) -> List[List[int]]:
+        import copy
+        
+        ans = []
+        temp = []
+
+        def dfs(index, last):
+            if index == len(nums):
+                if len(temp) >= 2:
+                    ans.append(copy.copy(temp))
+                return 
+            
+            if nums[index] >= last:
+                temp.append(nums[index])
+                dfs(index + 1, nums[index])
+                temp.pop()
+            
+            if nums[index] != last:
+                dfs(index + 1, last)
+        
+        dfs(0, -101)
+        return ans
+```
 
