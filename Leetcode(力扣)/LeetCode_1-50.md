@@ -2740,6 +2740,90 @@ class Solution:
 
 
 
+# [34. 在排序数组中查找元素的第一个和最后一个位置](https://leetcode-cn.com/problems/find-first-and-last-position-of-element-in-sorted-array/)
+
+难度 中等
+
+给定一个按照升序排列的整数数组 `nums`，和一个目标值 `target`。找出给定目标值在数组中的开始位置和结束位置。
+
+你的算法时间复杂度必须是 *O*(log *n*) 级别。
+
+如果数组中不存在目标值，返回 `[-1, -1]`。
+
+**示例 1:**
+
+```
+输入: nums = [5,7,7,8,8,10], target = 8
+输出: [3,4]
+```
+
+**示例 2:**
+
+```
+输入: nums = [5,7,7,8,8,10], target = 6
+输出: [-1,-1]
+```
+
+
+
+**解法**
+
+二分查找。查找到目标后，继续进行查找。时间复杂度： $O(\log n)$ ，空间复杂度： $O(1)$ 。
+
+
+
+**代码**
+
+```python
+class Solution:
+    def searchRange(self, nums: List[int], target: int) -> List[int]:
+
+        l = 0
+        r = len(nums) - 1
+
+        left = None
+        while l <= r:
+            m = l + (r - l) // 2
+            if nums[m] == target:
+                left = l 
+                right = r 
+                mid = m
+                break
+            elif nums[m] < target:
+                l = m + 1
+            else:
+                r = m - 1
+        
+        if left is None:
+            return [-1, -1]
+        
+        # 找左端点
+        l = left
+        r = mid 
+        while l <= r:
+            m = l + (r - l) // 2
+            if nums[m] >= target:
+                r = m - 1
+            else:
+                l = m + 1
+        left = l 
+
+        # 找右端点
+        l = mid
+        r = right
+        while l <= r:
+            m = l + (r - l) // 2
+            if nums[m] > target:
+                r = m - 1
+            else:
+                l = m + 1
+        right = r 
+
+        return [left, right]
+```
+
+
+
 # [35. 搜索插入位置](https://leetcode-cn.com/problems/search-insert-position/)
 
 难度 简单
@@ -2812,6 +2896,111 @@ class Solution:
             return left + 1
         else:
             return left
+```
+
+
+
+# [36. 有效的数独](https://leetcode-cn.com/problems/valid-sudoku/)
+
+难度 中等
+
+判断一个 9x9 的数独是否有效。只需要**根据以下规则**，验证已经填入的数字是否有效即可。
+
+1. 数字 `1-9` 在每一行只能出现一次。
+2. 数字 `1-9` 在每一列只能出现一次。
+3. 数字 `1-9` 在每一个以粗实线分隔的 `3x3` 宫内只能出现一次。
+
+![img](https://upload.wikimedia.org/wikipedia/commons/thumb/f/ff/Sudoku-by-L2G-20050714.svg/250px-Sudoku-by-L2G-20050714.svg.png)
+
+上图是一个部分填充的有效的数独。
+
+数独部分空格内已填入了数字，空白格用 `'.'` 表示。
+
+**示例 1:**
+
+```
+输入:
+[
+  ["5","3",".",".","7",".",".",".","."],
+  ["6",".",".","1","9","5",".",".","."],
+  [".","9","8",".",".",".",".","6","."],
+  ["8",".",".",".","6",".",".",".","3"],
+  ["4",".",".","8",".","3",".",".","1"],
+  ["7",".",".",".","2",".",".",".","6"],
+  [".","6",".",".",".",".","2","8","."],
+  [".",".",".","4","1","9",".",".","5"],
+  [".",".",".",".","8",".",".","7","9"]
+]
+输出: true
+```
+
+**示例 2:**
+
+```
+输入:
+[
+  ["8","3",".",".","7",".",".",".","."],
+  ["6",".",".","1","9","5",".",".","."],
+  [".","9","8",".",".",".",".","6","."],
+  ["8",".",".",".","6",".",".",".","3"],
+  ["4",".",".","8",".","3",".",".","1"],
+  ["7",".",".",".","2",".",".",".","6"],
+  [".","6",".",".",".",".","2","8","."],
+  [".",".",".","4","1","9",".",".","5"],
+  [".",".",".",".","8",".",".","7","9"]
+]
+输出: false
+解释: 除了第一行的第一个数字从 5 改为 8 以外，空格内其他数字均与 示例1 相同。
+     但由于位于左上角的 3x3 宫内有两个 8 存在, 因此这个数独是无效的。
+```
+
+**说明:**
+
+- 一个有效的数独（部分已被填充）不一定是可解的。
+- 只需要根据以上规则，验证已经填入的数字是否有效即可。
+- 给定数独序列只包含数字 `1-9` 和字符 `'.'` 。
+- 给定数独永远是 `9x9` 形式的。
+
+
+
+**解法**
+
+使用集合进行记录，遍历一次。时间复杂度： $O(1)$ ，空间复杂度： $(1)$ 。
+
+
+
+**代码**
+
+```python
+class Solution:
+    def isValidSudoku(self, board: List[List[str]]) -> bool:
+
+        row = [set() for _ in range(9)]
+        col = [set() for _ in range(9)]
+        box = [set() for _ in range(9)]
+
+        for i in range(len(board)):
+            for j in range(len(board)):
+                num = board[i][j]
+                if num == '.':
+                    continue
+
+                if num not in row[i]:
+                    row[i].add(num)
+                else:
+                    return False
+                
+                if num not in col[j]:
+                    col[j].add(num)
+                else:
+                    return False
+                
+                if num not in box[(i // 3) * 3 + j // 3]:
+                    box[(i // 3) * 3 + j // 3].add(num)
+                else:
+                    return False
+        
+        return True
 ```
 
 
