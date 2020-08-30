@@ -336,6 +336,44 @@ public:
 
 
 
+# [557. 反转字符串中的单词 III](https://leetcode-cn.com/problems/reverse-words-in-a-string-iii/)
+
+难度 简单
+
+给定一个字符串，你需要反转字符串中每个单词的字符顺序，同时仍保留空格和单词的初始顺序。
+
+ 
+
+**示例：**
+
+```
+输入："Let's take LeetCode contest"
+输出："s'teL ekat edoCteeL tsetnoc"
+```
+
+ 
+
+**提示：**
+
+- 在字符串中，每个单词由单个空格分隔，并且字符串中不会有任何额外的空格。
+
+
+
+**代码**
+
+```python
+class Solution:
+    def reverseWords(self, s: str) -> str:
+        l = s.split(' ')
+        
+        for i in range(len(l)):
+            l[i] = l[i][::-1]
+        
+        return ' '.join(l)
+```
+
+
+
 # [560. 和为K的子数组](https://leetcode-cn.com/problems/subarray-sum-equals-k/)
 
 难度 中等
@@ -747,6 +785,55 @@ public:
         return ans;
     }
 };
+```
+
+
+
+# [657. 机器人能否返回原点](https://leetcode-cn.com/problems/robot-return-to-origin/)
+
+难度 简单
+
+在二维平面上，有一个机器人从原点 (0, 0) 开始。给出它的移动顺序，判断这个机器人在完成移动后是否在 **(0, 0) 处结束**。
+
+移动顺序由字符串表示。字符 move[i] 表示其第 i 次移动。机器人的有效动作有 `R`（右），`L`（左），`U`（上）和 `D`（下）。如果机器人在完成所有动作后返回原点，则返回 true。否则，返回 false。
+
+**注意：**机器人“面朝”的方向无关紧要。 “R” 将始终使机器人向右移动一次，“L” 将始终向左移动等。此外，假设每次移动机器人的移动幅度相同。
+
+ 
+
+**示例 1:**
+
+```
+输入: "UD"
+输出: true
+解释：机器人向上移动一次，然后向下移动一次。所有动作都具有相同的幅度，因此它最终回到它开始的原点。因此，我们返回 true。
+```
+
+**示例 2:**
+
+```
+输入: "LL"
+输出: false
+解释：机器人向左移动两次。它最终位于原点的左侧，距原点有两次 “移动” 的距离。我们返回 false，因为它在移动结束时没有返回原点。
+```
+
+
+
+**解法**
+
+统计各个方向移动的次数，对比左移和右移，上移和下移次数是否相等。时间复杂度： $O(n)$ ，空间复杂度： $O(1)$ 。
+
+
+
+**代码**
+
+```python
+class Solution:
+    def judgeCircle(self, moves: str) -> bool:
+        d = collections.defaultdict(int)
+        for ch in moves:
+            d[ch] += 1
+        return d['U'] == d['D'] and d['L'] == d['R']
 ```
 
 
