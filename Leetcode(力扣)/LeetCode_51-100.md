@@ -2,6 +2,102 @@
 
 
 
+# [51. N 皇后](https://leetcode-cn.com/problems/n-queens/)
+
+难度 困难
+
+*n* 皇后问题研究的是如何将 *n* 个皇后放置在 *n*×*n* 的棋盘上，并且使皇后彼此之间不能相互攻击。
+
+![img](https://assets.leetcode-cn.com/aliyun-lc-upload/uploads/2018/10/12/8-queens.png)
+
+上图为 8 皇后问题的一种解法。
+
+给定一个整数 *n*，返回所有不同的 *n* 皇后问题的解决方案。
+
+每一种解法包含一个明确的 *n* 皇后问题的棋子放置方案，该方案中 `'Q'` 和 `'.'` 分别代表了皇后和空位。
+
+ 
+
+**示例：**
+
+```
+输入：4
+输出：[
+ [".Q..",  // 解法 1
+  "...Q",
+  "Q...",
+  "..Q."],
+
+ ["..Q.",  // 解法 2
+  "Q...",
+  "...Q",
+  ".Q.."]
+]
+解释: 4 皇后问题存在两个不同的解法。
+```
+
+ 
+
+**提示：**
+
+- 皇后彼此不能相互攻击，也就是说：任何两个皇后都不能处于同一条横行、纵行或斜线上。
+
+
+
+**解法**
+
+递归。使用集合表示当前不可用的列和对角线。时间复杂度： $O(N!)$ ，空间复杂度： $O(n)$ 。使用位替代集合，可将时间复杂度降为 $O(1)$ 。
+
+
+
+**代码**
+
+```python
+class Solution:
+    def solveNQueens(self, n: int) -> List[List[str]]:
+
+        ans = []
+        now = []
+        col = set()
+        dia1 = set()
+        dia2 = set()
+
+        def vis():
+            a = []
+            for num in now:
+                r = ['.'] * n 
+                r[num] = 'Q'
+                r = ''.join(r)
+                a.append(r)
+            ans.append(a)
+
+
+        def backtrack(row):
+            if row == n:
+                vis()
+            else:
+                for i in range(n):
+                    if i in col or i - row in dia1 or i + row in dia2:
+                        continue 
+                    now.append(i)
+
+                    col.add(i)
+                    dia1.add(i - row)
+                    dia2.add(i + row)
+
+                    backtrack(row + 1)
+
+                    col.remove(i)
+                    dia1.remove(i - row)
+                    dia2.remove(i + row)
+                    now.pop()
+        
+        backtrack(0)
+        return ans
+```
+
+
+
 # [53. 最大子序和](https://leetcode-cn.com/problems/maximum-subarray/)
 
 难度 简单
