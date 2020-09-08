@@ -931,6 +931,70 @@ public:
 
 
 
+# [77. 组合](https://leetcode-cn.com/problems/combinations/)
+
+难度 中等
+
+给定两个整数 *n* 和 *k*，返回 1 ... *n* 中所有可能的 *k* 个数的组合。
+
+**示例:**
+
+```
+输入: n = 4, k = 2
+输出:
+[
+  [2,4],
+  [3,4],
+  [2,3],
+  [1,2],
+  [1,3],
+  [1,4],
+]
+```
+
+
+
+**解法**
+
+递归。时间复杂度： $O(n!)$ ，空间复杂度： $O(k^2)$ 。
+
+
+
+**代码**
+
+```python
+class Solution:
+    def combine(self, n: int, k: int) -> List[List[int]]:
+        # return list(itertools.combinations(range(1,n+1),k))
+        
+        import copy
+
+        ans = []
+
+        def dfs(index, k):
+            tans.append(index)
+
+            if k == 1:
+                ans.append(copy.copy(tans))
+                tans.pop()
+                return 
+            
+            nonlocal n 
+            
+            for i in range(index + 1, n + 1):
+                dfs(i, k - 1)
+            
+            tans.pop()
+        
+        for i in range(1, n + 1):
+            tans = []
+            dfs(i, k)
+
+        return ans 
+```
+
+
+
 # [84. 柱状图中最大的矩形](https://leetcode-cn.com/problems/largest-rectangle-in-histogram/)
 
 难度 困难
