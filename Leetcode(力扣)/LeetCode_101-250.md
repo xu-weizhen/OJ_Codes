@@ -279,6 +279,109 @@ class Solution:
 
 
 
+# [107. 二叉树的层次遍历 II](https://leetcode-cn.com/problems/binary-tree-level-order-traversal-ii/)
+
+难度简单
+
+给定一个二叉树，返回其节点值自底向上的层次遍历。 （即按从叶子节点所在层到根节点所在的层，逐层从左向右遍历）
+
+例如：
+给定二叉树 `[3,9,20,null,null,15,7]`,
+
+```
+    3
+   / \
+  9  20
+    /  \
+   15   7
+```
+
+返回其自底向上的层次遍历为：
+
+```
+[
+  [15,7],
+  [9,20],
+  [3]
+]
+```
+
+
+
+**解法**
+
+广度优先搜索，当搜索到一层的结尾时，保存当前队列的队尾元素，该元素即为下一层的队尾。时间复杂度： $O(n)$  ，空间复杂度： $O(n)$ 。
+
+
+
+**代码**
+
+```python
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, x):
+#         self.val = x
+#         self.left = None
+#         self.right = None
+
+# 方法一
+class Solution:
+    def levelOrderBottom(self, root: TreeNode) -> List[List[int]]:
+
+        if not root:
+            return []
+
+        que = deque()
+        que.append(root)
+
+        right = root
+        ans = []
+        t = []
+
+        while que:
+            node = que.popleft()
+            t.append(node.val)
+            
+            if node.left:
+                que.append(node.left)
+            if node.right:
+                que.append(node.right)
+            
+            if node == right:
+                ans.append(t)
+                t = []
+                if que:
+                    right = que.pop()
+                    que.append(right)
+        
+        return ans[::-1]
+    
+# 方法二
+# 官方题解
+class Solution:
+    def levelOrderBottom(self, root: TreeNode) -> List[List[int]]:
+        levelOrder = list()
+        if not root:
+            return levelOrder
+        
+        q = collections.deque([root])
+        while q:
+            level = list()
+            size = len(q)
+            for _ in range(size):
+                node = q.popleft()
+                level.append(node.val)
+                if node.left:
+                    q.append(node.left)
+                if node.right:
+                    q.append(node.right)
+            levelOrder.append(level)
+
+        return levelOrder[::-1]
+```
+
+
+
 # [109. 有序链表转换二叉搜索树](https://leetcode-cn.com/problems/convert-sorted-list-to-binary-search-tree/)
 
 难度 中等
