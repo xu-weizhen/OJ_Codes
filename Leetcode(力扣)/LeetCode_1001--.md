@@ -2565,3 +2565,573 @@ class Solution:
         return ans + 1
 ```
 
+
+
+# [1572. 矩阵对角线元素的和](https://leetcode-cn.com/problems/matrix-diagonal-sum/)
+
+难度 简单
+
+给你一个正方形矩阵 `mat`，请你返回矩阵对角线元素的和。
+
+请你返回在矩阵主对角线上的元素和副对角线上且不在主对角线上元素的和。
+
+ 
+
+**示例 1：**
+
+![img](https://assets.leetcode.com/uploads/2020/08/14/sample_1911.png)
+
+```
+输入：mat = [[1,2,3],
+            [4,5,6],
+            [7,8,9]]
+输出：25
+解释：对角线的和为：1 + 5 + 9 + 3 + 7 = 25
+请注意，元素 mat[1][1] = 5 只会被计算一次。
+```
+
+**示例 2：**
+
+```
+输入：mat = [[1,1,1,1],
+            [1,1,1,1],
+            [1,1,1,1],
+            [1,1,1,1]]
+输出：8
+```
+
+**示例 3：**
+
+```
+输入：mat = [[5]]
+输出：5
+```
+
+ 
+
+**提示：**
+
+- `n == mat.length == mat[i].length`
+- `1 <= n <= 100`
+- `1 <= mat[i][j] <= 100`
+
+
+
+**解法**
+
+注意矩阵列数即可。时间复杂度： $O(n)$ ， 空间复杂度： $O(1)$ 。
+
+
+
+**代码**
+
+```python
+class Solution:
+    def diagonalSum(self, mat: List[List[int]]) -> int:
+        length = len(mat)
+        
+        if length == 1:
+            return mat[0][0]
+        
+        ans = 0
+        for i in range(length):
+            ans += mat[i][i]
+            ans += mat[i][length - 1 - i]
+        
+        if length % 2 == 1:
+            ans -= mat[length // 2][length // 2]
+        
+        return ans
+```
+
+
+
+# [1573. 分割字符串的方案数](https://leetcode-cn.com/problems/number-of-ways-to-split-a-string/)
+
+难度 中等
+
+给你一个二进制串 `s` （一个只包含 0 和 1 的字符串），我们可以将 `s` 分割成 3 个 **非空** 字符串 s1, s2, s3 （s1 + s2 + s3 = s）。
+
+请你返回分割 `s` 的方案数，满足 s1，s2 和 s3 中字符 '1' 的数目相同。
+
+由于答案可能很大，请将它对 10^9 + 7 取余后返回。
+
+ 
+
+**示例 1：**
+
+```
+输入：s = "10101"
+输出：4
+解释：总共有 4 种方法将 s 分割成含有 '1' 数目相同的三个子字符串。
+"1|010|1"
+"1|01|01"
+"10|10|1"
+"10|1|01"
+```
+
+**示例 2：**
+
+```
+输入：s = "1001"
+输出：0
+```
+
+**示例 3：**
+
+```
+输入：s = "0000"
+输出：3
+解释：总共有 3 种分割 s 的方法。
+"0|0|00"
+"0|00|0"
+"00|0|0"
+```
+
+**示例 4：**
+
+```
+输入：s = "100100010100110"
+输出：12
+```
+
+ 
+
+**提示：**
+
+- `s[i] == '0'` 或者 `s[i] == '1'`
+- `3 <= s.length <= 10^5`
+
+
+
+**解法**
+
+将字符串分成三份具有相同数量 `1` 的字符串，以及三份字符串中间的只有 `0` 的两份字符串，计算这两份字符串可分割方法的数量。时间复杂度： $O(n)$ ，空间复杂度： $O(1)$ 。
+
+
+
+**代码**
+
+```python
+class Solution:
+    def numWays(self, s: str) -> int:
+        
+        count = 0
+        for ch in s:
+            if ch == '1':
+                count += 1
+        
+        if count % 3 != 0:
+            return 0
+        
+        if count == 0:
+            length = len(s)
+            return ((length - 1) * (length - 2) // 2) % 1000000007
+
+        index = 0
+        c = 0
+        while index < len(s):
+            if s[index] == '1':
+                c += 1
+            index += 1
+            if c == count // 3:
+                left = index
+                break
+                
+        right = left
+        while right < len(s) and s[right] == '0':
+            right += 1
+        
+        left0 = right - left
+        
+        index = right
+        c = 0
+        while index < len(s):
+            if s[index] == '1':
+                c += 1
+            index += 1
+            if c == count // 3:
+                left = index
+                break
+                
+        right = left
+        while right < len(s) and s[right] == '0':
+            right += 1
+        
+        right0 = right - left
+        
+        return ((left0 + 1) * (right0 + 1)) % 1000000007
+```
+
+
+
+# [1574. 删除最短的子数组使剩余数组有序](https://leetcode-cn.com/problems/shortest-subarray-to-be-removed-to-make-array-sorted/)
+
+难度 中等
+
+给你一个整数数组 `arr` ，请你删除一个子数组（可以为空），使得 `arr` 中剩下的元素是 **非递减** 的。
+
+一个子数组指的是原数组中连续的一个子序列。
+
+请你返回满足题目要求的最短子数组的长度。
+
+ 
+
+**示例 1：**
+
+```
+输入：arr = [1,2,3,10,4,2,3,5]
+输出：3
+解释：我们需要删除的最短子数组是 [10,4,2] ，长度为 3 。剩余元素形成非递减数组 [1,2,3,3,5] 。
+另一个正确的解为删除子数组 [3,10,4] 。
+```
+
+**示例 2：**
+
+```
+输入：arr = [5,4,3,2,1]
+输出：4
+解释：由于数组是严格递减的，我们只能保留一个元素。所以我们需要删除长度为 4 的子数组，要么删除 [5,4,3,2]，要么删除 [4,3,2,1]。
+```
+
+**示例 3：**
+
+```
+输入：arr = [1,2,3]
+输出：0
+解释：数组已经是非递减的了，我们不需要删除任何元素。
+```
+
+**示例 4：**
+
+```
+输入：arr = [1]
+输出：0
+```
+
+ 
+
+**提示：**
+
+- `1 <= arr.length <= 10^5`
+- `0 <= arr[i] <= 10^9`
+
+
+
+**解法**
+
+**该解法有误**，但能AC。先找两侧的字符串，考虑删除中间字符串，或删除左边字符串，或删除右边字符串。时间复杂度： $O(n)$ ，空间复杂度： $O(1)$ 。
+
+
+
+**代码**
+
+```python
+# AC
+# 用例 [1,2,2,3,3,78,5,2,3,2,4,7] 错误
+class Solution:
+    def findLengthOfShortestSubarray(self, arr: List[int]) -> int:
+
+        if len(arr) == 1:
+            return 0
+
+        for left in range(0, len(arr) - 1):
+            if arr[left] > arr[left + 1]:
+                break
+        
+        if left == len(arr) - 2 and arr[left + 1] >= arr[left]:
+            return 0
+
+        for right in range(len(arr) - 1, 0, -1):
+            if arr[right] < arr[right - 1]:
+                break
+        
+        if arr[left] <= arr[right]:
+            return right - left - 1
+        
+        a = len(arr) + 1
+        for lt in range(left - 1, -1, -1):
+            if arr[lt] <= arr[right]:
+                a = right - lt - 1
+                break
+        
+        b = len(arr) + 1
+        for rt in range(right + 1, len(arr)):
+            if arr[rt] >= arr[left]:
+                b =  rt - left - 1
+                break
+        
+        return min(a, b, right, len(arr) - left - 1)
+```
+
+
+
+# [1576. 替换所有的问号](https://leetcode-cn.com/problems/replace-all-s-to-avoid-consecutive-repeating-characters/)
+
+难度 简单
+
+给你一个仅包含小写英文字母和 `'?'` 字符的字符串 `s`<var> </var>，请你将所有的 `'?'` 转换为若干小写字母，使最终的字符串不包含任何 **连续重复** 的字符。
+
+注意：你 **不能** 修改非 `'?'` 字符。
+
+题目测试用例保证 **除** `'?'` 字符 **之外**，不存在连续重复的字符。
+
+在完成所有转换（可能无需转换）后返回最终的字符串。如果有多个解决方案，请返回其中任何一个。可以证明，在给定的约束条件下，答案总是存在的。
+
+ 
+
+**示例 1：**
+
+```
+输入：s = "?zs"
+输出："azs"
+解释：该示例共有 25 种解决方案，从 "azs" 到 "yzs" 都是符合题目要求的。只有 "z" 是无效的修改，因为字符串 "zzs" 中有连续重复的两个 'z' 。
+```
+
+**示例 2：**
+
+```
+输入：s = "ubv?w"
+输出："ubvaw"
+解释：该示例共有 24 种解决方案，只有替换成 "v" 和 "w" 不符合题目要求。因为 "ubvvw" 和 "ubvww" 都包含连续重复的字符。
+```
+
+**示例 3：**
+
+```
+输入：s = "j?qg??b"
+输出："jaqgacb"
+```
+
+**示例 4：**
+
+```
+输入：s = "??yw?ipkj?"
+输出："acywaipkja"
+```
+
+ 
+
+**提示：**
+
+- `1 <= s.length <= 100`
+- `s` 仅包含小写英文字母和 `'?'` 字符
+
+
+
+**解法**
+
+将 `?` 替换成于其左右字符不同的字符。时间复杂度： $O(n)$ ，空间复杂度： $O(1)$ 。
+
+
+
+**代码**
+
+```python
+class Solution:
+    def modifyString(self, s: str) -> str:
+
+        if len(s) == 0:
+            return s
+        
+        if len(s) == 1:
+            if s[0] == '?':
+                return 'a'
+            else:
+                return s
+        
+        alp = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n',
+             'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z' ]
+        
+        ans = list(s)
+        
+        for i in range(len(s)):
+            if ans[i] == '?':
+                for a in alp:
+                    if i - 1 >= 0 and ans[i - 1] != a and i + 1 < len(s) and ans[i + 1] != a:
+                        ans[i] = a
+                        break
+                    elif i == 0 and i + 1 < len(s) and ans[i + 1] != a:
+                        ans[i] = a
+                        break
+                    elif i + 1 == len(s) and i - 1 >= 0 and ans[i - 1] != a:
+                        ans[i] = a
+                        break
+        
+        return ''.join(ans)
+```
+
+
+
+# [1577. 数的平方等于两数乘积的方法数](https://leetcode-cn.com/problems/number-of-ways-where-square-of-number-is-equal-to-product-of-two-numbers/)
+
+难度 中等
+
+给你两个整数数组 `nums1` 和 `nums2` ，请你返回根据以下规则形成的三元组的数目（类型 1 和类型 2 ）：
+
+- 类型 1：三元组 `(i, j, k)` ，如果 $nums1[i]^2 == nums2[j] * nums2[k]$ 其中 `0 <= i < nums1.length` 且 `0 <= j < k < nums2.length`
+- 类型 2：三元组 `(i, j, k)` ，如果 $nums2[i]^2 == nums1[j] * nums1[k]$ 其中 `0 <= i < nums2.length` 且 `0 <= j < k < nums1.length`
+
+ 
+
+**示例 1：**
+
+```
+输入：nums1 = [7,4], nums2 = [5,2,8,9]
+输出：1
+解释：类型 1：(1,1,2), nums1[1]^2 = nums2[1] * nums2[2] (4^2 = 2 * 8)
+```
+
+**示例 2：**
+
+```
+输入：nums1 = [1,1], nums2 = [1,1,1]
+输出：9
+解释：所有三元组都符合题目要求，因为 1^2 = 1 * 1
+类型 1：(0,0,1), (0,0,2), (0,1,2), (1,0,1), (1,0,2), (1,1,2), nums1[i]^2 = nums2[j] * nums2[k]
+类型 2：(0,0,1), (1,0,1), (2,0,1), nums2[i]^2 = nums1[j] * nums1[k]
+```
+
+**示例 3：**
+
+```
+输入：nums1 = [7,7,8,3], nums2 = [1,2,9,7]
+输出：2
+解释：有两个符合题目要求的三元组
+类型 1：(3,0,2), nums1[3]^2 = nums2[0] * nums2[2]
+类型 2：(3,0,1), nums2[3]^2 = nums1[0] * nums1[1]
+```
+
+**示例 4：**
+
+```
+输入：nums1 = [4,7,9,11,23], nums2 = [3,5,1024,12,18]
+输出：0
+解释：不存在符合题目要求的三元组
+```
+
+ 
+
+**提示：**
+
+- `1 <= nums1.length, nums2.length <= 1000`
+- `1 <= nums1[i], nums2[i] <= 10^5`
+
+
+
+**解法**
+
+使用字典保存两个列表中两数的乘积出现的次数，对列表中每个数求平方并在字典中查找是否存在这一值。时间复杂度： $O(mn)$ ，空间复杂度： $O(\max(m,n))$ 。
+
+
+
+**代码**
+
+```python
+class Solution:
+    def numTriplets(self, nums1: List[int], nums2: List[int]) -> int:
+        import collections
+
+        ans = 0
+
+        d = collections.defaultdict(int)
+
+        for i in range(len(nums1)):
+            for j in range(i + 1, len(nums1)):
+                d[nums1[i] * nums1[j]] += 1
+        
+        for n in nums2:
+            ans += d[n * n]
+        
+        d.clear()
+        for i in range(len(nums2)):
+            for j in range(i + 1, len(nums2)):
+                d[nums2[i] * nums2[j]] += 1
+        
+        for n in nums1:
+            ans += d[n * n]
+        
+        return ans
+```
+
+
+
+# [1578. 避免重复字母的最小删除成本](https://leetcode-cn.com/problems/minimum-deletion-cost-to-avoid-repeating-letters/)
+
+难度 中等
+
+给你一个字符串 `s` 和一个整数数组 `cost` ，其中 `cost[i]` 是从 `s` 中删除字符 `i` 的代价。
+
+返回使字符串任意相邻两个字母不相同的最小删除成本。
+
+请注意，删除一个字符后，删除其他字符的成本不会改变。
+
+ 
+
+**示例 1：**
+
+```
+输入：s = "abaac", cost = [1,2,3,4,5]
+输出：3
+解释：删除字母 "a" 的成本为 3，然后得到 "abac"（字符串中相邻两个字母不相同）。
+```
+
+**示例 2：**
+
+```
+输入：s = "abc", cost = [1,2,3]
+输出：0
+解释：无需删除任何字母，因为字符串中不存在相邻两个字母相同的情况。
+```
+
+**示例 3：**
+
+```
+输入：s = "aabaa", cost = [1,2,3,4,1]
+输出：2
+解释：删除第一个和最后一个字母，得到字符串 ("aba") 。
+```
+
+ 
+
+**提示：**
+
+- `s.length == cost.length`
+- `1 <= s.length, cost.length <= 10^5`
+- `1 <= cost[i] <= 10^4`
+- `s` 中只含有小写英文字母
+
+
+
+**解法**
+
+查找连续的相同字符字串，保留字串中删除成本最小的一个。时间复杂度： $O(n)$ ，空间复杂度： $O(1)$ 。
+
+
+
+**代码**
+
+```python
+class Solution:
+    def minCost(self, s: str, cost: List[int]) -> int:
+
+        left = 0
+        ans = 0
+
+        while left < len(s) - 1:
+            if s[left] == s[left + 1]:
+                for right in range(left + 1, len(s)):
+                    if s[right] != s[left]:
+                        break 
+                
+                if right == len(s) - 1 and s[right] == s[left]:
+                    right += 1
+                    
+                ans += sum(cost[left : right]) - max(cost[left : right])
+                left = right
+            else:
+                left += 1
+                
+        return ans 
+```
+
