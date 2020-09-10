@@ -3005,6 +3005,170 @@ class Solution:
 
 
 
+# [39. 组合总和](https://leetcode-cn.com/problems/combination-sum/)
+
+难度 中等
+
+给定一个**无重复元素**的数组 `candidates` 和一个目标数 `target` ，找出 `candidates` 中所有可以使数字和为 `target` 的组合。
+
+`candidates` 中的数字可以无限制重复被选取。
+
+**说明：**
+
+- 所有数字（包括 `target`）都是正整数。
+- 解集不能包含重复的组合。 
+
+**示例 1：**
+
+```
+输入：candidates = [2,3,6,7], target = 7,
+所求解集为：
+[
+  [7],
+  [2,2,3]
+]
+```
+
+**示例 2：**
+
+```
+输入：candidates = [2,3,5], target = 8,
+所求解集为：
+[
+  [2,2,2,2],
+  [2,3,3],
+  [3,5]
+]
+```
+
+ 
+
+**提示：**
+
+- `1 <= candidates.length <= 30`
+- `1 <= candidates[i] <= 200`
+- `candidate` 中的每个元素都是独一无二的。
+- `1 <= target <= 500`
+
+
+
+**解法**
+
+回溯。时间复杂度： $O(S)$ ，空间复杂度： $O(target)$ ， $S$ 为所有可行解的长度之和，很难给出一个比较紧的上界， $O(n \times 2^n)$ 是一个比较松的上界，剪枝后的时间复杂度会小于这个上界。
+
+
+
+**代码**
+
+```python
+class Solution:
+    def combinationSum(self, candidates: List[int], target: int) -> List[List[int]]:
+        import copy
+        ans = []
+        tans = []
+
+        def dfs(index):
+            nonlocal target
+
+            tans.append(candidates[index])
+
+            if sum(tans) == target:
+                ans.append(copy.copy(tans))
+                tans.pop()
+                return
+            if sum(tans) > target:
+                tans.pop()
+                return
+            
+            for i in range(index, len(candidates)):
+                dfs(i)
+            
+            tans.pop()
+        
+        for i in range(len(candidates)):
+            tans = []
+            dfs(i)
+
+        return ans 
+```
+
+
+
+# [40. 组合总和 II](https://leetcode-cn.com/problems/combination-sum-ii/)
+
+难度 中等
+
+给定一个数组 `candidates` 和一个目标数 `target` ，找出 `candidates` 中所有可以使数字和为 `target` 的组合。
+
+`candidates` 中的每个数字在每个组合中只能使用一次。
+
+**说明：**
+
+- 所有数字（包括目标数）都是正整数。
+- 解集不能包含重复的组合。 
+
+**示例 1:**
+
+```
+输入: candidates = [10,1,2,7,6,1,5], target = 8,
+所求解集为:
+[
+  [1, 7],
+  [1, 2, 5],
+  [2, 6],
+  [1, 1, 6]
+]
+```
+
+**示例 2:**
+
+```
+输入: candidates = [2,5,2,1,2], target = 5,
+所求解集为:
+[
+  [1,2,2],
+  [5]
+]
+```
+
+
+
+**解法**
+
+统计 `candidates ` 中每个字符出现的个数并排序，从排序后的结果中依次选取数字拼入数组。时间复杂度： $O(n \times 2^n)$ ，空间复杂度： $O(n)$ 。
+
+
+
+**代码**
+
+```python
+class Solution:
+    def combinationSum2(self, candidates: List[int], target: int) -> List[List[int]]:
+        def dfs(pos: int, rest: int):
+            nonlocal sequence
+            if rest == 0:
+                ans.append(sequence[:])
+                return
+            if pos == len(freq) or rest < freq[pos][0]:
+                return
+            
+            dfs(pos + 1, rest)
+
+            most = min(rest // freq[pos][0], freq[pos][1])
+            for i in range(1, most + 1):
+                sequence.append(freq[pos][0])
+                dfs(pos + 1, rest - i * freq[pos][0])
+            sequence = sequence[:-most]
+        
+        freq = sorted(collections.Counter(candidates).items())
+        ans = list()
+        sequence = list()
+        dfs(0, target)
+        return ans
+```
+
+
+
 # [41. 缺失的第一个正数](https://leetcode-cn.com/problems/first-missing-positive/)
 
 难度 困难
