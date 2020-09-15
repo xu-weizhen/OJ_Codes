@@ -995,6 +995,81 @@ class Solution:
 
 
 
+# [79. 单词搜索](https://leetcode-cn.com/problems/word-search/)
+
+难度 中等
+
+给定一个二维网格和一个单词，找出该单词是否存在于网格中。
+
+单词必须按照字母顺序，通过相邻的单元格内的字母构成，其中“相邻”单元格是那些水平相邻或垂直相邻的单元格。同一个单元格内的字母不允许被重复使用。
+
+ 
+
+**示例:**
+
+```
+board =
+[
+  ['A','B','C','E'],
+  ['S','F','C','S'],
+  ['A','D','E','E']
+]
+
+给定 word = "ABCCED", 返回 true
+给定 word = "SEE", 返回 true
+给定 word = "ABCB", 返回 false
+```
+
+ 
+
+**提示：**
+
+- `board` 和 `word` 中只包含大写和小写英文字母。
+- `1 <= board.length <= 200`
+- `1 <= board[i].length <= 200`
+- `1 <= word.length <= 10^3`
+
+
+
+**解法**
+
+深度优先搜索。时间复杂度： $O(nm \times 3^L)$ ，空间复杂度： $O(nm)$ ，其中 $3$ 为每次遍历向三个方向深入， $L$ 为字符串长度。 
+
+
+
+**代码**
+
+```python
+class Solution:
+    def exist(self, board: List[List[str]], word: str) -> bool:
+
+        def dfs(x, y, s):
+            if board[x][y] != s[0]:
+                return False
+            elif board[x][y] == s[0] and len(s) == 1:
+                return True
+            else:
+                visited[x][y] = 1
+                for xx, yy in [(x - 1, y), (x, y - 1), (x, y + 1), (x + 1, y)]:
+                    if xx >= 0 and xx < len(board) and yy >= 0  and yy < len(board[0]) and visited[xx][yy] == 0:
+                        if dfs(xx, yy, s[1:]):
+                            return True
+                visited[x][y] = 0
+        
+
+        visited = [ [0 for _ in range(len(board[0]))] for _ in range(len(board))]
+
+        for i in range(len(board)):
+            for j in range(len(board[0])):
+                if board[i][j] == word[0]:
+                    if dfs(i, j, word):
+                        return True 
+        
+        return False
+```
+
+
+
 # [84. 柱状图中最大的矩形](https://leetcode-cn.com/problems/largest-rectangle-in-histogram/)
 
 难度 困难
@@ -1151,6 +1226,92 @@ class Solution:
         
 
         dfs(0, 0)
+        return ans
+```
+
+
+
+# [94. 二叉树的中序遍历](https://leetcode-cn.com/problems/binary-tree-inorder-traversal/)
+
+难度 中等
+
+给定一个二叉树，返回它的*中序* 遍历。
+
+**示例:**
+
+```
+输入: [1,null,2,3]
+   1
+    \
+     2
+    /
+   3
+
+输出: [1,3,2]
+```
+
+**进阶:** 递归算法很简单，你可以通过迭代算法完成吗？
+
+
+
+**代码**
+
+```python
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, x):
+#         self.val = x
+#         self.left = None
+#         self.right = None
+
+# 递归
+class Solution:
+    def inorderTraversal(self, root: TreeNode) -> List[int]:
+        
+        ans = []
+        
+        def dfs(root):
+            if root is None:
+                return
+            
+            if root.left:
+                dfs(root.left)
+            
+            ans.append(root.val)
+            
+            if root.right:
+                dfs(root.right)
+        
+        dfs(root)
+        return ans
+
+# 迭代
+class Solution:
+    def inorderTraversal(self, root: TreeNode) -> List[int]:
+        
+        if not root:
+            return []
+        
+        stack = []
+        ans = []
+        
+        stack.append(root)
+        
+        while root.left:
+            root = root.left
+            stack.append(root)
+            
+        while stack:  
+            root = stack.pop()
+            ans.append(root.val)
+            
+            if root.right:
+                root = root.right
+                stack.append(root)
+                while root.left:
+                    root = root.left
+                    stack.append(root)
+            
         return ans
 ```
 
