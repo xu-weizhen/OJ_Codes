@@ -654,6 +654,88 @@ class Solution:
 
 
 
+# [637. 二叉树的层平均值](https://leetcode-cn.com/problems/average-of-levels-in-binary-tree/)
+
+难度 简单
+
+给定一个非空二叉树, 返回一个由每层节点平均值组成的数组。
+
+ 
+
+**示例 1：**
+
+```
+输入：
+    3
+   / \
+  9  20
+    /  \
+   15   7
+输出：[3, 14.5, 11]
+解释：
+第 0 层的平均值是 3 ,  第1层是 14.5 , 第2层是 11 。因此返回 [3, 14.5, 11] 。
+```
+
+ 
+
+**提示：**
+
+- 节点值的范围在32位有符号整数范围内。
+
+
+
+**解法**
+
+层次遍历，遍历到层的最后一个节点时计算该层的平均值。时间复杂度： $O(n)$ ，空间复杂度： $O(1)$ 。
+
+
+
+**代码**
+
+```python
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, x):
+#         self.val = x
+#         self.left = None
+#         self.right = None
+
+class Solution:
+    def averageOfLevels(self, root: TreeNode) -> List[float]:
+
+        if not root:
+            return []
+            
+        q = deque()
+        q.append(root)
+        
+        end = len(q)
+        ans = []
+        summ = 0
+        count = 0
+
+        while q:
+            node = q.popleft()
+            end -= 1
+            count += 1
+            summ += node.val
+
+            if node.left:
+                q.append(node.left)
+            if node.right:
+                q.append(node.right)
+            
+            if end == 0:
+                end = len(q)
+                ans.append(summ / count)
+                summ = 0
+                count = 0
+        
+        return ans
+```
+
+
+
 # [647. 回文子串](https://leetcode-cn.com/problems/palindromic-substrings/)
 
 难度 中等
