@@ -2780,6 +2780,78 @@ class Solution:
 
 
 
+# [216. 组合总和 III](https://leetcode-cn.com/problems/combination-sum-iii/)
+
+难度中等174
+
+找出所有相加之和为 ***n*** 的 ***k\*** 个数的组合***。\***组合中只允许含有 1 - 9 的正整数，并且每种组合中不存在重复的数字。
+
+**说明：**
+
+- 所有数字都是正整数。
+- 解集不能包含重复的组合。 
+
+**示例 1:**
+
+```
+输入: k = 3, n = 7
+输出: [[1,2,4]]
+```
+
+**示例 2:**
+
+```
+输入: k = 3, n = 9
+输出: [[1,2,6], [1,3,5], [2,3,4]]
+```
+
+
+
+**解法**
+
+递归 + 剪枝。时间复杂度：  $O(k)$  ，空间复杂度： $O(1)$ 。
+
+
+
+**代码**
+
+```python
+class Solution:
+    def combinationSum3(self, k: int, n: int) -> List[List[int]]:
+
+        nums = [i for i in range(1, 10)]
+        ans = []
+
+        def dfs(index):
+
+            nonlocal k 
+
+            tAns.append(nums[index])
+            s = sum(tAns)
+            
+            if s > n or len(tAns) > k:
+                tAns.pop()
+                return
+            
+            if s == n and len(tAns) == k:
+                ans.append(tAns[:])
+                tAns.pop()
+                return 
+
+            for i in range(index + 1, 9):
+                dfs(i)
+            
+            tAns.pop()
+        
+        for i in range(0, 10 - k):
+            tAns = []
+            dfs(i)
+        
+        return ans
+```
+
+
+
 # [221. 最大正方形](https://leetcode-cn.com/problems/maximal-square/)
 
 难度 中等
