@@ -1509,6 +1509,63 @@ class Solution:
 
 
 
+# [404. 左叶子之和](https://leetcode-cn.com/problems/sum-of-left-leaves/)
+
+难度 简单
+
+计算给定二叉树的所有左叶子之和。
+
+**示例：**
+
+```
+    3
+   / \
+  9  20
+    /  \
+   15   7
+
+在这个二叉树中，有两个左叶子，分别是 9 和 15，所以返回 24
+```
+
+
+
+**解法**
+
+深度优先搜索。标记节点是否为左子节点，若是左子节点且为叶节点，则计算答案。时间复杂度： $O(n)$ ，空间复杂度： $O(n)$ 。
+
+
+
+**代码**
+
+```python
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, x):
+#         self.val = x
+#         self.left = None
+#         self.right = None
+
+class Solution:
+    def sumOfLeftLeaves(self, root: TreeNode) -> int:
+
+        ans = 0
+
+        def dfs(root, isLeft):
+            if root is None:
+                return 
+
+            if isLeft and root.left is None and root.right is None:
+                nonlocal ans
+                ans += root.val
+            
+            dfs(root.left, True)
+            dfs(root.right, False)
+        
+        dfs(root, False)
+        return ans
+```
+
+
 
 # [409. 最长回文串](https://leetcode-cn.com/problems/longest-palindrome/)
 
