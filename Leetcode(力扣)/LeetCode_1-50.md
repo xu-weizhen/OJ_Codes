@@ -3662,6 +3662,62 @@ class Solution:
 
 
 
+# [47. 全排列 II](https://leetcode-cn.com/problems/permutations-ii/)
+
+难度 中等
+
+给定一个可包含重复数字的序列，返回所有不重复的全排列。如果 `self.nums[i] and self.nums[i - 1] and not vis[i - 1])` 则跳过。时间复杂度：$O(n\times n!)$ ，空间复杂度： $O(n)
+
+**示例:**
+
+```
+输入: [1,1,2]
+输出:
+[
+  [1,1,2],
+  [1,2,1],
+  [2,1,1]
+]
+```
+
+
+
+**解法**
+
+对 `nums` 数组进行排序，使用 `vis` 数组记录已经访问的字符，如果 `nums[i] == nums[i - 1] and not vis[i - 1]` 则跳过。时间复杂度： $O(n \times n !)$ ，空间复杂度： $O(n)$ 。
+
+
+
+**代码**
+
+```python
+class Solution:
+    def permuteUnique(self, nums: List[int]) -> List[List[int]]:
+        self.ans = []
+        self.vis = [0] * len(nums)
+        nums.sort()
+        self.nums = nums
+        self.backtrack(0, [])
+        return self.ans
+    
+    def backtrack(self, idx, perm):
+        if idx == len(self.nums):
+            self.ans.append(perm[:])
+            return 
+        
+        for i in range(len(self.nums)):
+            if self.vis[i] or (i > 0 and self.nums[i] == self.nums[i - 1] and not self.vis[i - 1]):
+                continue
+
+            perm.append(self.nums[i])
+            self.vis[i] = 1
+            self.backtrack(idx + 1, perm)
+            self.vis[i] = 0
+            perm.pop()
+```
+
+
+
 # [50. Pow(x, n)](https://leetcode-cn.com/problems/powx-n/)
 
 难度 中等
