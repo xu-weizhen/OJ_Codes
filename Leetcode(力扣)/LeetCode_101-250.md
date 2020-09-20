@@ -2780,6 +2780,43 @@ class Solution:
 
 
 
+# [215. 数组中的第K个最大元素](https://leetcode-cn.com/problems/kth-largest-element-in-an-array/)
+
+难度 中等
+
+在未排序的数组中找到第 **k** 个最大的元素。请注意，你需要找的是数组排序后的第 k 个最大的元素，而不是第 k 个不同的元素。
+
+**示例 1:**
+
+```
+输入: [3,2,1,5,6,4] 和 k = 2
+输出: 5
+```
+
+**示例 2:**
+
+```
+输入: [3,2,3,1,2,4,5,5,6] 和 k = 4
+输出: 4
+```
+
+**说明:**
+
+你可以假设 k 总是有效的，且 1 ≤ k ≤ 数组的长度。
+
+
+
+**代码**
+
+```python
+class Solution:
+    def findKthLargest(self, nums: List[int], k: int) -> int:
+        nums.sort()
+        return nums[-k]
+```
+
+
+
 # [216. 组合总和 III](https://leetcode-cn.com/problems/combination-sum-iii/)
 
 难度中等174
@@ -3006,39 +3043,78 @@ class MyStack:
 
 
 
-# [215. 数组中的第K个最大元素](https://leetcode-cn.com/problems/kth-largest-element-in-an-array/)
+# [226. 翻转二叉树](https://leetcode-cn.com/problems/invert-binary-tree/)
 
-难度 中等
+难度 简单
 
-在未排序的数组中找到第 **k** 个最大的元素。请注意，你需要找的是数组排序后的第 k 个最大的元素，而不是第 k 个不同的元素。
+翻转一棵二叉树。
 
-**示例 1:**
+**示例：**
 
-```
-输入: [3,2,1,5,6,4] 和 k = 2
-输出: 5
-```
-
-**示例 2:**
+输入：
 
 ```
-输入: [3,2,3,1,2,4,5,5,6] 和 k = 4
-输出: 4
+     4
+   /   \
+  2     7
+ / \   / \
+1   3 6   9
 ```
 
-**说明:**
+输出：
 
-你可以假设 k 总是有效的，且 1 ≤ k ≤ 数组的长度。
+```
+     4
+   /   \
+  7     2
+ / \   / \
+9   6 3   1
+```
+
+**备注:**
+这个问题是受到 [Max Howell ](https://twitter.com/mxcl)的 [原问题](https://twitter.com/mxcl/status/608682016205344768) 启发的 ：
+
+> 谷歌：我们90％的工程师使用您编写的软件(Homebrew)，但是您却无法在面试时在白板上写出翻转二叉树这道题，这太糟糕了。
+
+
+
+**解法**
+
+迭代或递归。时间复杂度： $O(n)$ ，空间复杂度： $O(n)$ 。
 
 
 
 **代码**
 
 ```python
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, x):
+#         self.val = x
+#         self.left = None
+#         self.right = None
+
 class Solution:
-    def findKthLargest(self, nums: List[int], k: int) -> int:
-        nums.sort()
-        return nums[-k]
+    def invertTree(self, root: TreeNode) -> TreeNode:
+
+        if not root:
+            return root
+            
+        q = deque()
+        q.append(root)
+
+        while q:
+            node = q.popleft()
+            
+            if node.left:
+                q.append(node.left)
+            
+            if node.right:
+                q.append(node.right)
+            
+            node.left, node.right = node.right, node.left
+        
+        return root
 ```
 
 
